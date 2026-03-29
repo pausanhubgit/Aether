@@ -13,6 +13,11 @@ const nextConfig = {
         pathname: '/**',
       },
       {
+        protocol: 'http',
+        hostname: 'res.cloudinary.com',
+        pathname: '/dvn9252w4/**',
+      },
+      {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
         pathname: '/dvn9252w4/**',
