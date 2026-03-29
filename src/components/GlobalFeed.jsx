@@ -74,12 +74,7 @@ export default function GlobalFeed({ limit = 25 }) {
   }
 
   if (!feed.length) {
-    return (
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center">
-        <p className="text-lg font-semibold text-[var(--foreground)]/80">No content shared yet.</p>
-        <p className="mt-2 text-sm text-[var(--muted)]">Be the first to share something!</p>
-      </div>
-    );
+    return null;
   }
 
   return (
