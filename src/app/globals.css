@@ -1,26 +1,141 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
-@theme inline {
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #ffffff;
+  --foreground: #1a0533;
+  --muted: #6b21a8;
+  --primary: #7c3aed; /* Strong Purple */
+  --secondary: #fdfbff;
+  --surface: #ffffff;
+  --border: #e9d5ff;
+  --font-geist-sans: "Geist Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-geist-mono: "Geist Mono", SF;
+}
+
+html,
+body {
+  height: 100%;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
+main {
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans);
+}
+
+a {
+  color: var(--primary);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Manual Theme Overrides */
+.dark {
+  --background: #0d0118; 
+  --foreground: #f8fafc; /* Max visibility white-slate */
+  --muted: #e9d5ff;
+  --primary: #c084fc; 
+  --secondary: #1e0a35;
+  --surface: #0f021b; 
+  --border: #4c1d95;
+  color-scheme: dark;
+}
+
+.light {
+  --background: #ffffff;
+  --foreground: #1a0533;
+  --muted: #6b21a8;
+  --surface: #ffffff;
+  --border: #e9d5ff;
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Standard Responsive Layout Utilities */
+.container-responsive {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-responsive {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container-responsive {
+    max-width: 768px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-responsive {
+    max-width: 1024px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-responsive {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container-responsive {
+    max-width: 1536px;
+  }
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Natural Sizing & Spacing */
+section {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  section {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
 }
