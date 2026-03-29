@@ -95,8 +95,8 @@ const DashboardHome = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white px-4 py-10">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen px-4 sm:px-6 py-8 sm:py-10" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+      <div className="max-w-7xl mx-auto w-full">
         {/* Header */}
         <div className="mb-10">
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">Welcome back, Creator! 👋</h1>

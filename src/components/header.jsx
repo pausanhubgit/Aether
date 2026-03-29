@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
@@ -38,38 +38,54 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-20 w-full border-b shadow-sm transition-colors duration-300" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
-      <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-4 py-4">
-        <div className="flex items-center gap-6">
+    <header
+      className="sticky top-0 z-20 w-full border-b shadow-sm transition-colors duration-300"
+      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+    >
+      <div className="mx-auto flex w-full max-w-screen-xl items-center justify-between px-3 sm:px-4 lg:px-6 py-3">
+
+        {/* LEFT: Logo + Nav */}
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Logo />
           <NavMenu />
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4">
-          {/* Theme Toggle Button */}
+        {/* RIGHT: Actions */}
+        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+
+          {/* Theme Toggle */}
           {mounted && (
             <button
               onClick={() => dispatch(toggleTheme())}
-              className="p-1.5 text-primary hover:text-primary/70 dark:hover:text-primary/90 transition-all active:scale-90 outline-none focus:outline-none border-none focus:ring-0"
+              className="p-1.5 text-primary hover:text-primary/70 transition-all active:scale-90 outline-none border-none focus:outline-none focus:ring-0 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/30"
               aria-label="Toggle Theme"
             >
-              {theme === DARK_THEME ? <IoSunnyOutline size={22} /> : <IoMoonOutline size={22} />}
+              {theme === DARK_THEME
+                ? <IoSunnyOutline size={20} />
+                : <IoMoonOutline size={20} />
+              }
             </button>
           )}
 
+          {/* Cart */}
           <Link href="/arts/cart">
-            <div className="p-1.5 text-primary hover:text-primary/70 dark:hover:text-primary/90 transition-all cursor-pointer active:scale-90" aria-label="Cart">
-              <MdOutlineAddShoppingCart size={22} />
+            <div
+              className="p-1.5 text-primary hover:text-primary/70 transition-all cursor-pointer active:scale-90 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/30"
+              aria-label="Cart"
+            >
+              <MdOutlineAddShoppingCart size={20} />
             </div>
           </Link>
 
+          {/* Auth Buttons */}
           {mounted && (
             isAuthenticated ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 sm:gap-2">
 
+                {/* Profile Avatar */}
                 <Link
                   href="/profile"
-                  className="text-gray-700 dark:text-purple-200 hover:text-purple-700 transition p-1 rounded-full bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 flex items-center justify-center overflow-hidden h-9 w-9"
+                  className="text-gray-700 dark:text-purple-200 hover:text-purple-700 transition p-0.5 rounded-full bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 flex items-center justify-center overflow-hidden h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0"
                   aria-label="Profile"
                 >
                   {user?.profileImageUrl ? (
@@ -79,29 +95,34 @@ const Header = () => {
                       className="h-full w-full object-cover rounded-full"
                     />
                   ) : (
-                    <FaUserCircle size={22} />
+                    <FaUserCircle size={20} />
                   )}
                 </Link>
+
+                {/* Logout — icon only on sm/md, icon+text on xl+ */}
                 <button
                   onClick={handleLogout}
-                  className="text-sm font-bold px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-900/30 hover:bg-red-50 dark:hover:bg-red-950/30 text-red-600 transition flex items-center gap-1.5"
+                  className="flex items-center gap-1.5 p-1.5 xl:px-3 xl:py-1.5 rounded-lg border border-red-200 dark:border-red-900/30 hover:bg-red-50 dark:hover:bg-red-950/30 text-red-600 transition-all active:scale-95 flex-shrink-0"
+                  aria-label="Logout"
                 >
-                  <FaSignOutAlt className="text-red-600" size={18} /> Logout
+                  <FaSignOutAlt size={16} className="text-red-600 flex-shrink-0" />
+                  <span className="hidden xl:inline text-sm font-bold whitespace-nowrap">Logout</span>
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => router.push('/login')}
-                className="text-sm font-bold px-4 py-2 rounded-lg bg-purple-600 !text-white hover:bg-purple-700 transition flex items-center justify-center gap-2 shadow-sm"
+                className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-purple-600 !text-white hover:bg-purple-700 transition text-sm font-bold shadow-sm flex-shrink-0"
               >
-                <CiLogin size={20} /> Login
+                <CiLogin size={18} />
+                <span className="hidden sm:inline">Login</span>
               </button>
             )
           )}
         </div>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

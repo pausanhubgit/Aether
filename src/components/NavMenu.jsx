@@ -1,27 +1,62 @@
 "use client";
 import navLinks from "@/constants/navlinks";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 
-const NavMenu = () => {
+const NavMenu = ({ onClose }) => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // Close on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  const handleLinkClick = () => {
+    setIsOpen(false);
+    onClose?.();
+  };
 
   return (
-    <>
-      {/* Hamburger Menu Button for Small Screens */}
+    <div ref={menuRef} className="relative">
+      {/* Hamburger — visible below lg (< 1024px) */}
       <button
-        className="sm:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1"
+        className="lg:hidden flex flex-col justify-center items-center w-9 h-9 space-y-1.5 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/40 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle navigation menu"
       >
-        <span className={`block w-6 h-0.5 bg-gray-600 dark:bg-purple-300 transition-transform ${isOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-        <span className={`block w-6 h-0.5 bg-gray-600 dark:bg-purple-300 transition-opacity ${isOpen ? 'opacity-0' : ''}`}></span>
-        <span className={`block w-6 h-0.5 bg-gray-600 dark:bg-purple-300 transition-transform ${isOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+        <span
+          className={`block w-5 h-0.5 bg-gray-600 dark:bg-purple-300 transition-all duration-300 origin-center ${
+            isOpen ? "rotate-45 translate-y-2" : ""
+          }`}
+        />
+        <span
+          className={`block w-5 h-0.5 bg-gray-600 dark:bg-purple-300 transition-all duration-300 ${
+            isOpen ? "opacity-0 scale-x-0" : ""
+          }`}
+        />
+        <span
+          className={`block w-5 h-0.5 bg-gray-600 dark:bg-purple-300 transition-all duration-300 origin-center ${
+            isOpen ? "-rotate-45 -translate-y-2" : ""
+          }`}
+        />
       </button>
 
-      {/* Navigation Menu */}
-      <nav style={isOpen ? { backgroundColor: 'var(--surface)', borderColor: 'var(--border)' } : {}} className={`sm:flex items-center gap-1 px-2 py-2 ${isOpen ? 'flex flex-col absolute top-16 left-0 right-0 border-b z-50' : 'hidden'}`}>
+      {/* Desktop nav — visible at lg+ */}
+      <nav className="hidden lg:flex items-center gap-0.5">
         {navLinks.map((link) => {
           const isActive =
             pathname === link.route ||
@@ -30,19 +65,51 @@ const NavMenu = () => {
             <Link
               key={link.route}
               href={link.route}
-              className={`px-3 py-2 rounded-lg text-sm transition ${
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                 isActive
                   ? "text-purple-600 border-b-2 border-purple-600 dark:text-purple-400 dark:border-purple-400"
-                  : "text-slate-600 dark:text-purple-300/80 hover:text-purple-600 dark:hover:text-purple-400"
-              } ${isOpen ? 'w-full text-center' : ''}`}
-              onClick={() => setIsOpen(false)}
+                  : "text-slate-600 dark:text-purple-300/80 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/30"
+              }`}
             >
               {link.label}
             </Link>
           );
         })}
       </nav>
-    </>
+
+      {/* Mobile dropdown — visible below lg */}
+      {isOpen && (
+        <div
+          className="lg:hidden absolute top-full left-0 mt-2 w-52 rounded-xl shadow-xl border z-50 overflow-hidden"
+          style={{
+            backgroundColor: "var(--surface)",
+            borderColor: "var(--border)",
+          }}
+        >
+          <nav className="flex flex-col py-2">
+            {navLinks.map((link) => {
+              const isActive =
+                pathname === link.route ||
+                (link.route !== "/" && pathname.startsWith(link.route));
+              return (
+                <Link
+                  key={link.route}
+                  href={link.route}
+                  onClick={handleLinkClick}
+                  className={`px-4 py-2.5 text-sm font-medium transition-colors ${
+                    isActive
+                      ? "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 border-l-2 border-purple-600 dark:border-purple-400"
+                      : "text-slate-600 dark:text-purple-300/80 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/30"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      )}
+    </div>
   );
 };
 
