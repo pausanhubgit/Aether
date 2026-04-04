@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import orderApi from "@/api/order";
 import { FaCheckCircle, FaTruck, FaBox, FaClock } from "react-icons/fa";
 
-const OrderStatus = () => {
+const OrderStatusContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -186,6 +186,18 @@ const OrderStatus = () => {
         )}
       </div>
     </div>
+  );
+};
+
+const OrderStatus = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full"></div>
+      </div>
+    }>
+      <OrderStatusContent />
+    </Suspense>
   );
 };
 
