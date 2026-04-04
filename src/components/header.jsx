@@ -44,16 +44,16 @@ const Header = () => {
       className="fixed top-0 left-0 z-[60] w-full border-b shadow-sm transition-colors duration-300"
       style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
     >
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 sm:px-4 lg:px-6 py-3">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-5 lg:px-6 py-3">
 
         {/* LEFT: Logo + Nav */}
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
           <Logo />
           <NavMenu />
         </div>
 
         {/* RIGHT: Actions */}
-        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-shrink-0">
 
           {/* Theme Toggle */}
           {mounted && (

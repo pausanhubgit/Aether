@@ -126,26 +126,27 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="bg-white dark:bg-[#160327] p-8 rounded-[2rem] shadow-xl border border-gray-100 dark:border-slate-700 overflow-hidden">
-        <div className="flex items-center gap-3 mb-10">
-          <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl">
+      <div className="bg-white dark:bg-[#160327] p-4 sm:p-6 md:p-8 rounded-[2rem] shadow-xl border border-gray-100 dark:border-slate-700 overflow-hidden">
+        <div className="flex items-center gap-3 mb-6 md:mb-10">
+          <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl shrink-0">
             <FaChartBar className="text-xl text-indigo-600" />
           </div>
           <div>
-            <h3 className="font-bold text-xl text-gray-800 dark:text-gray-200">
+            <h3 className="font-bold text-lg md:text-xl text-gray-800 dark:text-gray-200">
               {isAdmin ? "Platform Growth Trends" : "My Content Analysis"}
             </h3>
             <p className="text-sm text-gray-400 font-medium mt-0.5">Cumulative counts — actual database entries</p>
           </div>
         </div>
 
-        <div className="h-[360px] w-full">
+        <div className="w-full overflow-x-auto">
+          <div className="h-[320px] sm:h-[400px] md:h-[480px] min-w-[280px]">
           {isMounted ? (
-            <ResponsiveContainer width="99%" height={360} minWidth={0}>
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               {isAdmin ? (
                 <AreaChart
                   data={chartData}
-                  margin={{ top: 30, right: 30, left: 10, bottom: 0 }}
+                  margin={{ top: 30, right: 10, left: 0, bottom: 0 }}
                 >
                   <defs>
                     <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
@@ -162,14 +163,15 @@ const Dashboard = () => {
                     dataKey="name"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fontWeight: 700, fill: '#6b7280' }}
+                    tick={{ fontSize: 11, fontWeight: 700, fill: '#6b7280' }}
                     dy={10}
                   />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fontWeight: 600, fill: '#9ca3af' }}
+                    tick={{ fontSize: 11, fontWeight: 600, fill: '#9ca3af' }}
                     allowDecimals={false}
+                    width={30}
                   />
                   <Tooltip
                     contentStyle={{
@@ -205,7 +207,7 @@ const Dashboard = () => {
                   />
                 </AreaChart>
               ) : (
-                <BarChart data={merchantChartData} margin={{ top: 30, right: 30, left: 10, bottom: 0 }}>
+                <BarChart data={merchantChartData} margin={{ top: 30, right: 10, left: 0, bottom: 0 }} barCategoryGap="25%">
                   <defs>
                     <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8}/>
@@ -213,10 +215,14 @@ const Dashboard = () => {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: '#6b7280' }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 600, fill: '#9ca3af' }} allowDecimals={false} />
-                  <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '20px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', padding: '12px 16px', fontWeight: '700' }} />
-                  <Bar dataKey="count" fill="url(#colorCount)" radius={[8, 8, 0, 0]} barSize={40} animationDuration={1200} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fontWeight: 700, fill: '#6b7280' }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fontWeight: 600, fill: '#9ca3af' }} allowDecimals={false} width={30} />
+                  <Tooltip cursor={{ fill: 'rgba(139,92,246,0.05)' }} contentStyle={{ borderRadius: '20px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', padding: '12px 16px', fontWeight: '700' }}
+                    formatter={(val, name) => [`${val}`, name === 'count' ? 'Count' : name]}
+                  />
+                  <Bar dataKey="count" fill="url(#colorCount)" radius={[8, 8, 0, 0]} animationDuration={1200}>
+                    <LabelList dataKey="count" position="top" style={{ fontSize: 12, fontWeight: 700, fill: '#7c3aed' }} />
+                  </Bar>
                 </BarChart>
               )}
             </ResponsiveContainer>
@@ -224,6 +230,7 @@ const Dashboard = () => {
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400 font-medium">Loading content analysis...</div>
           )}
+          </div>
         </div>
       </div>
     </div>

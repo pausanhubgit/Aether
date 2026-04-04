@@ -15,12 +15,12 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'res.cloudinary.com',
-        pathname: '/dvn9252w4/**',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
-        pathname: '/dvn9252w4/**',
+        pathname: '/**',
       },
       {
         protocol: 'https',
@@ -31,6 +31,32 @@ const nextConfig = {
         protocol: 'http',
         hostname: 'localhost',
         port: '5000',
+        pathname: '/**',
+      },
+      // Google OAuth profile images
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh1.googleusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh2.googleusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.googleusercontent.com',
         pathname: '/**',
       },
     ],

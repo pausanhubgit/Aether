@@ -261,7 +261,7 @@ export default function MediaCard({ item, type, view }) {
 
   // GRID VIEW - FULL COVER STYLE
   return (
-    <div className="group relative aspect-[3/4] md:aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-slate-900 shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/30 h-full min-h-[350px]">
+    <div className="group relative aspect-[3/4] md:aspect-[4/5] overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-slate-900 shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/30 h-full min-h-[260px] sm:min-h-[320px]">
       {/* Background Media */}
       <div className="absolute inset-0 z-0">
         <MediaContent className="w-full h-full" />
@@ -269,7 +269,7 @@ export default function MediaCard({ item, type, view }) {
       </div>
 
       {/* Overlay Content */}
-      <div className="absolute inset-0 z-10 flex flex-col justify-between p-6">
+      <div className="absolute inset-0 z-10 flex flex-col justify-between p-3 sm:p-6">
         {/* Top Actions */}
         <div className="flex justify-between items-start translate-y-[-10px] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
           <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest">
@@ -292,8 +292,8 @@ export default function MediaCard({ item, type, view }) {
 
         {/* Bottom Info */}
         <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-          <div className="mb-4">
-             <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="block text-2xl font-bold text-white mb-1 hover:text-primary transition-colors line-clamp-2">
+          <div className="mb-3">
+             <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="block text-lg sm:text-2xl font-bold text-white mb-1 hover:text-primary transition-colors line-clamp-2">
                {item.title || item.name}
              </Link>
              {item.createdBy && (
@@ -303,17 +303,17 @@ export default function MediaCard({ item, type, view }) {
              )}
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-white/10">
+          <div className="flex flex-wrap items-center justify-between pt-3 border-t border-white/10 gap-2">
             <div>
                {type === 'art' ? (
-                 <div className="text-lg font-bold text-white">Rs. {item.price?.toLocaleString()}</div>
+                 <div className="text-base sm:text-lg font-bold text-white">Rs. {item.price?.toLocaleString()}</div>
                ) : (
                  <div className="text-xs font-bold text-white/50 uppercase tracking-widest">{type} content</div>
                )}
             </div>
             <Link 
               href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`}
-              className="bg-primary !text-white px-5 py-2.5 rounded-full hover:bg-primary/90 transition-all shadow-xl active:scale-90 flex items-center gap-2 font-bold text-sm"
+              className="bg-primary !text-white px-4 py-2 rounded-full hover:bg-primary/90 transition-all shadow-xl active:scale-90 flex items-center gap-2 font-bold text-sm whitespace-nowrap"
             >
               <span className="!text-white">View</span>
               <FaShare className="rotate-45" size={12} />

@@ -120,18 +120,20 @@ const OrdersPage = () => {
       <h1 className="text-3xl md:text-4xl font-semibold text-black dark:text-white mb-6 md:mb-8 tracking-tight">My Orders</h1>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-none">
-        {['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'].map((status) => (
-          <button
-            key={status}
-            onClick={() => router.push(`/orders?status=${status}`)}
-            className={`px-6 py-2 rounded-full text-sm font-bold capitalize transition whitespace-nowrap ${
-              statusFilter === status ? 'bg-purple-600 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:border-purple-200'
-            }`}
-          >
-            {status}
-          </button>
-        ))}
+      <div className="-mx-4 px-4 mb-8 overflow-x-auto pb-2 scrollbar-none">
+        <div className="flex gap-2 min-w-max">
+          {['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'].map((status) => (
+            <button
+              key={status}
+              onClick={() => router.push(`/orders?status=${status}`)}
+              className={`px-5 py-2 rounded-full text-sm font-bold capitalize transition whitespace-nowrap flex-shrink-0 ${
+                statusFilter === status ? 'bg-purple-600 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:border-purple-200'
+              }`}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
       </div>
 
       {loading ? (

@@ -52,26 +52,32 @@ const MediaSearch = ({ placeholder = "Search..." }) => {
   }
 
   return (
-    <div className="relative w-full max-w-md group">
-      <button onClick={handleSearch} className="absolute inset-y-0 start-0 flex items-center ps-4 transition-colors group-focus-within:text-purple-500">
-        <FaMagnifyingGlass className="w-4 h-4 text-gray-400 group-focus-within:text-purple-500 transition-colors hover:text-purple-600" />
+    <div className="relative w-full max-w-md flex items-center gap-2">
+      <div className="relative w-full group">
+        <input
+          type="text"
+          className="block w-full rounded-2xl border border-gray-200 bg-white/50 backdrop-blur-sm py-2.5 px-4 pe-10 text-sm text-black focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 dark:border-gray-600 dark:bg-[#160327] dark:text-white transition-all shadow-sm"
+          placeholder={placeholder}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={handleSearch}
+        />
+        {searchTerm && (
+          <button
+            onClick={clearSearch}
+            className="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <MdClose className="h-5 w-5" />
+          </button>
+        )}
+      </div>
+      <button 
+        onClick={handleSearch} 
+        className="flex items-center justify-center p-2.5 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition shadow-sm flex-shrink-0"
+        aria-label="Search"
+      >
+        <FaMagnifyingGlass className="w-5 h-5" />
       </button>
-      <input
-        type="text"
-        className="block w-full rounded-2xl border border-gray-200 bg-white/50 backdrop-blur-sm py-2.5 ps-11 pe-10 text-sm text-black focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 dark:border-gray-600 dark:bg-[#160327] dark:text-white transition-all shadow-sm"
-        placeholder={placeholder}
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        onKeyDown={handleSearch}
-      />
-      {searchTerm && (
-        <button
-          onClick={clearSearch}
-          className="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          <MdClose className="h-5 w-5" />
-        </button>
-      )}
     </div>
   );
 };

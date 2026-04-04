@@ -12,7 +12,7 @@ const Features = () => {
           </h2>
           <p className="text-gray-600 dark:text-purple-300/80 text-center">
             We provide the best shopping experience with our premium quality
-           Arts and all videoes and music you can upload.
+           Arts and all videos and music you can upload.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-5 gap-x-8">
