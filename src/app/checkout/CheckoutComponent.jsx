@@ -55,7 +55,7 @@ function CheckoutPage() {
       const orderData = {
         userId: user.id,
         items: items.map(item => ({
-          productId: item.id,
+          productId: item.id || item._id,
           productType: item.type || 'art',
           quantity: item.quantity,
           price: item.price,
@@ -70,19 +70,9 @@ function CheckoutPage() {
 
       const response = await orderAPI.createOrder(orderData);
       
-      // Handle payment based on method
-      if (paymentMethod === 'khalti') {
-        // Integrate Khalti payment
-        initializeKhaltiPayment(response.data);
-      } else if (paymentMethod === 'stripe') {
-        // Integrate Stripe payment
-        initializeStripePayment(response.data);
-      } else {
-        // Cash on delivery
-        toast.success('Order placed successfully! Pay on delivery');
-        dispatch(clearCart());
-        router.push(`/order-status/${response.data.orderId}`);
-      }
+      toast.success('Order securely saved! Please complete your payment.');
+      dispatch(clearCart());
+      router.push(`/orders?status=pending`);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to place order');
     } finally {
@@ -278,17 +268,17 @@ function CheckoutPage() {
           <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Order Summary</h2>
 
           <div className="space-y-3 mb-6 max-h-64 overflow-y-auto">
-            {items.map(item => (
-              <div key={item.id} className="flex justify-between pb-3 border-b border-gray-200 dark:border-gray-700">
-                <div>
-                  <p className="font-medium text-gray-800 dark:text-white">
+            {items.map((item, index) => (
+              <div key={item.id || index} className="flex justify-between pb-3 gap-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-800 dark:text-white truncate">
                     {item.title || item.name}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     x{item.quantity}
                   </p>
                 </div>
-                <p className="font-semibold text-gray-800 dark:text-white">
+                <p className="font-semibold text-gray-800 dark:text-white shrink-0">
                   Rs. {(item.price * item.quantity).toFixed(2)}
                 </p>
               </div>

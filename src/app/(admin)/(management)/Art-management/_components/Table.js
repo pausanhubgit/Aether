@@ -77,7 +77,7 @@ const ArtsTable = () => {
   async function getAllArts(query) {
     setLoading(true);
     try {
-      const isAdmin = user?.roles?.includes(ADMIN_ROLE);
+      const isAdmin = user?.roles?.some(r => r.toUpperCase() === ADMIN_ROLE.toUpperCase());
       const apiQuery = isAdmin ? query : { ...query, createdBy: user._id };
       
       const response = await artsAPI.getArt(apiQuery);
@@ -160,7 +160,7 @@ const ArtsTable = () => {
                   </div>
                 </th>
               ))}
-              <th scope="col" className="px-6 py-4 text-center">
+              <th scope="col" className="px-6 py-4 text-center sticky right-0 bg-gray-50/50 dark:bg-[#160327]/50 shadow-[-5px_0_10px_rgba(0,0,0,0.02)]">
                 <FaCog className="mx-auto" />
               </th>
             </tr>
@@ -192,7 +192,7 @@ const ArtsTable = () => {
                         height={48}
                         width={48}
                         src={art.imageUrls?.[0] || "/placeholder.jpg"}
-                        alt={art.name}
+                        alt={art.name || "Art Thumbnail"}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -223,13 +223,13 @@ const ArtsTable = () => {
                 <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs font-medium">
                   {art.createdAt ? format(new Date(art.createdAt), "MMM dd, yyyy") : "---"}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 sticky right-0 bg-white dark:bg-[#160327] shadow-[-5px_0_10px_rgba(0,0,0,0.02)] group-hover:bg-primary/[0.02] dark:group-hover:bg-[#1c0433] transition-colors">
                   <div className="flex items-center gap-3 justify-center">
                     <Link
                       href={`${ART_MANAGEMENT_ROUTE}/edit/${art._id}`}
                       className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
                     >
-                      <FaPencil />
+                      <FaPencil /> <span className="text-xs font-semibold text-blue-500">Edit</span>
                     </Link>
                     <DeleteArtButton id={art._id} />
                   </div>

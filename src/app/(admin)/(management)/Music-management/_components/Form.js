@@ -31,20 +31,20 @@ const MusicForm = ({ music, isEditing = false }) => {
     formdata.append("artist", data.artist);
     formdata.append("category", data.category);
     formdata.append("subcategory", data.subcategory);
-    formdata.append("brand", data.brand);
+    formdata.append("brand", data.artist); // mapping artist to brand for consistency
     formdata.append("stock", data.stock ?? 1);
 
     if (data.description) formdata.append("description", data.description);
 
     if (musicImages.length > 0) {
-      musicImages.map((image) => {
-        formdata.append("images", image);
+      musicImages.forEach((image) => {
+        formdata.append("image", image);
       });
     }
 
     if (mediaFiles.length > 0) {
-      mediaFiles.map((file) => {
-        formdata.append("images", file);
+      mediaFiles.forEach((file) => {
+        formdata.append("media", file);
       });
     }
 
@@ -70,6 +70,8 @@ const MusicForm = ({ music, isEditing = false }) => {
       reset();
 
       toast.success("Music created successfully.", { autoClose: 1500 });
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Failed to save music.");
     } finally {
       setLoading(false);
       setLocalImageUrls([]);

@@ -3,24 +3,35 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FaCartPlus, FaImage, FaStar, FaEye } from "react-icons/fa6";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "@/redux/cart/cartSlice";
 import { toast } from "react-toastify";
 import { ART_ROUTE } from "@/constants/routes";
+import cartApi from "@/api/cart";
 
 const ArtCard = ({ art }) => {
   const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
-  const handleAddToCart = (e) => {
+  const handleAddToCart = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Aligned with cartSlice requirement (expects art or artId object)
+    // Optimistic local update
     dispatch(addToCart(art));
     toast.success(`${art.title || art.name} added to cart!`, {
-      position: "bottom-right",
       autoClose: 2000,
     });
+
+    // Sync with backend if logged in
+    if (isAuthenticated) {
+      const artId = art._id || art.id;
+      try {
+        await cartApi.addToCart(artId);
+      } catch (err) {
+        console.warn("Cart sync failed:", err?.response?.data || err.message);
+      }
+    }
   };
 
   return (
@@ -64,9 +75,9 @@ const ArtCard = ({ art }) => {
             <h3 className="font-bold text-lg text-slate-800 dark:text-purple-100 line-clamp-1">
                 {art.title || art.name}
             </h3>
-            <div className="flex items-center gap-1 text-amber-500">
-                <FaStar size={12} />
-                <span className="text-xs font-bold">{art.likes?.length || 0}</span>
+            <div className="flex items-center gap-1.5 text-amber-500 bg-amber-50 dark:bg-amber-950/20 px-2.5 py-1 rounded-lg border border-amber-100 dark:border-amber-900/30">
+                <FaStar size={10} className="mb-0.5" />
+                <span className="text-xs font-bold font-mono">{Math.max(0, art.likes?.length || 0)}</span>
             </div>
         </div>
         
@@ -74,17 +85,17 @@ const ArtCard = ({ art }) => {
             {art.description || "Beautiful handcrafted artwork available for your collection."}
         </p>
 
-        <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 dark:border-purple-900/30">
-          <div>
-            <p className="text-[10px] text-slate-400 dark:text-purple-400/60 uppercase font-bold tracking-widest mb-1">Price</p>
-            <p className="text-xl font-semibold text-primary">
-              Rs.{art.price || 0}
+        <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 dark:border-purple-900/30 gap-4">
+          <div className="shrink-0">
+            <p className="text-[10px] text-slate-400 dark:text-purple-400/60 uppercase font-bold tracking-widest mb-0.5">Price</p>
+            <p className="text-lg md:text-xl font-bold text-primary">
+              Rs.{art.price?.toLocaleString() || 0}
             </p>
           </div>
           
           <button 
             onClick={handleAddToCart}
-            className="flex items-center gap-1.5 md:gap-2 bg-primary text-white px-3.5 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl font-bold text-[11px] md:text-sm hover:scale-105 transition-all shadow-lg shadow-primary/20 active:scale-95 whitespace-nowrap group/btn"
+            className="flex-grow flex items-center justify-center gap-2 bg-primary text-white py-2.5 md:py-3 px-4 rounded-xl md:rounded-2xl font-bold text-[11px] md:text-sm hover:shadow-primary/40 transition-all shadow-lg shadow-primary/20 active:scale-95 whitespace-nowrap group/btn min-w-[100px] md:min-w-[120px]"
           >
             <FaCartPlus className="text-sm md:text-base transition-transform group-hover/btn:-rotate-12" />
             <span>Add To Cart</span>

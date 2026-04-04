@@ -22,6 +22,8 @@ const Header = () => {
   const { logout } = useAuth();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const { theme } = useSelector((state) => state.userPreferences);
+  const cart = useSelector((state) => state.cart);
+  const cartItemsCount = cart?.items?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 0;
   const [mounted, setMounted] = useState(false);
 
   React.useEffect(() => {
@@ -39,10 +41,10 @@ const Header = () => {
 
   return (
     <header
-      className="sticky top-0 z-20 w-full border-b shadow-sm transition-colors duration-300"
+      className="fixed top-0 left-0 z-[60] w-full border-b shadow-sm transition-colors duration-300"
       style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
     >
-      <div className="mx-auto flex w-full max-w-screen-xl items-center justify-between px-3 sm:px-4 lg:px-6 py-3">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 sm:px-4 lg:px-6 py-3">
 
         {/* LEFT: Logo + Nav */}
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -70,10 +72,15 @@ const Header = () => {
           {/* Cart */}
           <Link href="/arts/cart">
             <div
-              className="p-1.5 text-primary hover:text-primary/70 transition-all cursor-pointer active:scale-90 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/30"
+              className="p-1.5 text-primary hover:text-primary/70 transition-all cursor-pointer active:scale-90 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/30 relative"
               aria-label="Cart"
             >
               <MdOutlineAddShoppingCart size={20} />
+              {mounted && cartItemsCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm">
+                  {cartItemsCount}
+                </span>
+              )}
             </div>
           </Link>
 

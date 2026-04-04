@@ -53,21 +53,25 @@ const DashboardHome = () => {
         const videos = allVideos.filter(v => v.merchant?._id === user._id || v.merchant === user._id);
 
         setStats({
-          totalArts: arts.length,
-          totalMusic: music.length,
-          totalVideos: videos.length,
-          totalLikes: arts.reduce((sum, art) => sum + (art.likes || 0), 0) +
-                      music.reduce((sum, m) => sum + (m.likes || 0), 0) +
-                      videos.reduce((sum, v) => sum + (v.likes || 0), 0),
-          totalViews: arts.reduce((sum, art) => sum + (art.views || 0), 0) +
-                      music.reduce((sum, m) => sum + (m.views || 0), 0) +
-                      videos.reduce((sum, v) => sum + (v.views || 0), 0),
+          totalArts: Math.max(0, arts.length),
+          totalMusic: Math.max(0, music.length),
+          totalVideos: Math.max(0, videos.length),
+          totalLikes: Math.max(0,
+            arts.reduce((sum, art) => sum + Math.max(0, art.likes || 0), 0) +
+            music.reduce((sum, m) => sum + Math.max(0, m.likes || 0), 0) +
+            videos.reduce((sum, v) => sum + Math.max(0, v.likes || 0), 0)
+          ),
+          totalViews: Math.max(0,
+            arts.reduce((sum, art) => sum + Math.max(0, art.views || 0), 0) +
+            music.reduce((sum, m) => sum + Math.max(0, m.views || 0), 0) +
+            videos.reduce((sum, v) => sum + Math.max(0, v.views || 0), 0)
+          ),
         });
 
         setContentBreakdown({
-          arts: arts.length,
-          music: music.length,
-          videos: videos.length,
+          arts: Math.max(0, arts.length),
+          music: Math.max(0, music.length),
+          videos: Math.max(0, videos.length),
         });
       } catch (err) {
         console.error("Failed to load dashboard data:", err);
@@ -154,58 +158,107 @@ const DashboardHome = () => {
         </div>
 
         {/* Content Breakdown */}
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-10">
-          <h2 className="text-xl font-semibold mb-6">Content Breakdown</h2>
+        <div className="bg-white dark:bg-[#160327] border border-gray-100 dark:border-slate-700 rounded-2xl p-8 mb-10 shadow-sm">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">Content Breakdown</h2>
+              <p className="text-xs text-gray-400 font-medium mt-1 uppercase tracking-widest">Distribution across all content types</p>
+            </div>
+            <span className="text-2xl font-black text-gray-900 dark:text-white">
+              {totalContent} <span className="text-sm font-bold text-gray-400">total</span>
+            </span>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {/* 0 - 100 Scale Header */}
+          <div className="flex items-center justify-between text-[10px] font-bold text-gray-300 dark:text-gray-600 uppercase tracking-widest mb-3 px-1">
+            <span>0%</span>
+            <span>25%</span>
+            <span>50%</span>
+            <span>75%</span>
+            <span>100%</span>
+          </div>
+          {/* Scale tick marks */}
+          <div className="relative h-1 bg-gray-100 dark:bg-slate-800 rounded-full mb-8">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-gray-300 dark:bg-slate-600 rounded-full"></div>
+            <div className="absolute left-1/4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-gray-300 dark:bg-slate-600 rounded-full"></div>
+            <div className="absolute left-1/2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-gray-300 dark:bg-slate-600 rounded-full"></div>
+            <div className="absolute left-3/4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-gray-300 dark:bg-slate-600 rounded-full"></div>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-gray-300 dark:bg-slate-600 rounded-full"></div>
+          </div>
+
+          <div className="space-y-6">
             {/* Arts */}
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <FaImage className="text-purple-600" />
-                <span className="font-semibold">Arts</span>
-                <span className="text-sm text-gray-600">({stats.totalArts})</span>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <FaImage className="text-purple-500 text-sm" />
+                  <span className="font-bold text-gray-700 dark:text-gray-200 text-sm">Visual Arts</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-gray-400">{stats.totalArts} piece{stats.totalArts !== 1 ? 's' : ''}</span>
+                  <span className="text-sm font-black text-purple-600 w-12 text-right">{artsPercent}%</span>
+                </div>
               </div>
-              <div className="bg-gray-200 rounded-full h-3 mb-2">
+              <div className="relative bg-gray-100 dark:bg-slate-800 rounded-full h-4 overflow-hidden">
                 <div
-                  className="bg-purple-600 h-3 rounded-full transition-all"
-                  style={{ width: `${artsPercent}%` }}
-                ></div>
+                  className="h-4 rounded-full bg-gradient-to-r from-purple-500 to-purple-700 transition-all duration-700 ease-out flex items-center justify-end pr-2"
+                  style={{ width: `${Math.max(artsPercent, 0)}%`, minWidth: artsPercent > 0 ? '2rem' : '0' }}
+                >
+                  {artsPercent >= 10 && <span className="text-[9px] font-black text-white">{artsPercent}%</span>}
+                </div>
               </div>
-              <p className="text-sm text-gray-600">{artsPercent}% of content</p>
             </div>
 
             {/* Music */}
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <FaMusic className="text-blue-600" />
-                <span className="font-semibold">Music</span>
-                <span className="text-sm text-gray-600">({stats.totalMusic})</span>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <FaMusic className="text-blue-500 text-sm" />
+                  <span className="font-bold text-gray-700 dark:text-gray-200 text-sm">Music Tracks</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-gray-400">{stats.totalMusic} track{stats.totalMusic !== 1 ? 's' : ''}</span>
+                  <span className="text-sm font-black text-blue-600 w-12 text-right">{musicPercent}%</span>
+                </div>
               </div>
-              <div className="bg-gray-200 rounded-full h-3 mb-2">
+              <div className="relative bg-gray-100 dark:bg-slate-800 rounded-full h-4 overflow-hidden">
                 <div
-                  className="bg-blue-600 h-3 rounded-full transition-all"
-                  style={{ width: `${musicPercent}%` }}
-                ></div>
+                  className="h-4 rounded-full bg-gradient-to-r from-blue-500 to-blue-700 transition-all duration-700 ease-out flex items-center justify-end pr-2"
+                  style={{ width: `${Math.max(musicPercent, 0)}%`, minWidth: musicPercent > 0 ? '2rem' : '0' }}
+                >
+                  {musicPercent >= 10 && <span className="text-[9px] font-black text-white">{musicPercent}%</span>}
+                </div>
               </div>
-              <p className="text-sm text-gray-600">{musicPercent}% of content</p>
             </div>
 
             {/* Videos */}
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <FaVideo className="text-green-600" />
-                <span className="font-semibold">Videos</span>
-                <span className="text-sm text-gray-600">({stats.totalVideos})</span>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <FaVideo className="text-green-500 text-sm" />
+                  <span className="font-bold text-gray-700 dark:text-gray-200 text-sm">Videos</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-gray-400">{stats.totalVideos} video{stats.totalVideos !== 1 ? 's' : ''}</span>
+                  <span className="text-sm font-black text-green-600 w-12 text-right">{videosPercent}%</span>
+                </div>
               </div>
-              <div className="bg-gray-200 rounded-full h-3 mb-2">
+              <div className="relative bg-gray-100 dark:bg-slate-800 rounded-full h-4 overflow-hidden">
                 <div
-                  className="bg-green-600 h-3 rounded-full transition-all"
-                  style={{ width: `${videosPercent}%` }}
-                ></div>
+                  className="h-4 rounded-full bg-gradient-to-r from-green-500 to-green-700 transition-all duration-700 ease-out flex items-center justify-end pr-2"
+                  style={{ width: `${Math.max(videosPercent, 0)}%`, minWidth: videosPercent > 0 ? '2rem' : '0' }}
+                >
+                  {videosPercent >= 10 && <span className="text-[9px] font-black text-white">{videosPercent}%</span>}
+                </div>
               </div>
-              <p className="text-sm text-gray-600">{videosPercent}% of content</p>
             </div>
           </div>
+
+          {totalContent === 0 && (
+            <div className="text-center py-8 text-gray-400 text-sm font-medium italic">
+              No content yet — start creating to see your breakdown!
+            </div>
+          )}
         </div>
 
         {/* Quick Actions */}

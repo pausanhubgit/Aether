@@ -31,20 +31,21 @@ const VideoForm = ({ video, isEditing = false }) => {
     formdata.append("artist", data.artist);
     formdata.append("category", data.category);
     formdata.append("subcategory", data.subcategory);
-    formdata.append("brand", data.brand);
+    formdata.append("brand", data.artist); // mapping artist to brand for consistency
     formdata.append("stock", data.stock ?? 1);
+    formdata.append("hide", data.hide ? "true" : "false");
 
     if (data.description) formdata.append("description", data.description);
 
     if (videoImages.length > 0) {
-      videoImages.map((image) => {
-        formdata.append("images", image);
+      videoImages.forEach((image) => {
+        formdata.append("image", image);
       });
     }
 
     if (mediaFiles.length > 0) {
-      mediaFiles.map((file) => {
-        formdata.append("images", file);
+      mediaFiles.forEach((file) => {
+        formdata.append("media", file);
       });
     }
 
@@ -70,6 +71,8 @@ const VideoForm = ({ video, isEditing = false }) => {
       reset();
 
       toast.success("Video created successfully.", { autoClose: 1500 });
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Failed to save video.");
     } finally {
       setLoading(false);
       setLocalImageUrls([]);
@@ -151,6 +154,17 @@ const VideoForm = ({ video, isEditing = false }) => {
           <p className="text-red-500 text-sm m-2">
             {errors.subcategory?.message}
           </p>
+        </div>
+        <div className="sm:col-span-2 flex items-center gap-2 mb-2">
+           <input
+             id="hide"
+             type="checkbox"
+             {...register("hide")}
+             className="w-4 h-4 text-purple-600 bg-gray-50 rounded border-gray-300 focus:ring-purple-500 dark:bg-[#160327] dark:border-gray-600"
+           />
+           <label htmlFor="hide" className="text-sm font-medium text-black dark:text-white cursor-pointer">
+             Hide Video (Only play on hover, default behavior)
+           </label>
         </div>
         <div>
           <label

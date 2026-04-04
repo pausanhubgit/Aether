@@ -24,8 +24,8 @@ const DeleteArtButton = ({ id }) => {
 
   return (
     <>
-      <button onClick={() => setShowModal(true)} className="text-red-600">
-        <FaTrash />
+      <button onClick={() => setShowModal(true)} className="text-red-600 hover:text-red-800 transition-colors flex items-center gap-1">
+        <FaTrash /> <span className="text-xs font-semibold">Delete</span>
       </button>
       <Modal
         showModal={showModal}

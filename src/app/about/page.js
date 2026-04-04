@@ -1,11 +1,17 @@
+"use client";
 import React from "react";
+import { useSelector } from "react-redux";
+import Link from "next/link";
 import { FiPenTool as FaPalette, FiMusic as FaMusic, FiVideo as FaVideo, FiUsers as FaUsers, FiHeart as FaHeart, FiShare2 as FaShare } from 'react-icons/fi';
 
-export const metadata = {
-  title: "About",
-};
+// Metadata must be in a separate layout or removed if this is a client component
+// export const metadata = {
+//   title: "About",
+// };
 
 const About = () => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-[#0d0118] dark:to-[#160327]">
       <div className="mx-auto max-w-6xl space-y-12 py-12 px-4">
@@ -160,15 +166,17 @@ const About = () => {
         </section>
 
         {/* Call to Action */}
-        <section className="text-center bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-8 text-white">
-          <h2 className="text-3xl font-semibold mb-4">Ready to Start Creating?</h2>
-          <p className="text-xl mb-6 opacity-90">
-            Join thousands of creators sharing their passion on Aether Hub
-          </p>
-          <button className="bg-white dark:bg-[#160327] text-purple-600 dark:text-purple-300 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 dark:hover:bg-[#2d0a4e] transition-colors duration-300">
-            Get Started Today
-          </button>
-        </section>
+        {!isAuthenticated && (
+          <section className="text-center bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-8 text-white">
+            <h2 className="text-3xl font-semibold mb-4">Ready to Start Creating?</h2>
+            <p className="text-xl mb-6 opacity-90">
+              Join thousands of creators sharing their passion on Aether Hub
+            </p>
+            <Link href="/login" className="inline-block bg-white dark:bg-[#160327] text-purple-600 dark:text-purple-300 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 dark:hover:bg-[#2d0a4e] transition-colors duration-300">
+              Get Started Today
+            </Link>
+          </section>
+        )}
       </div>
     </div>
   );

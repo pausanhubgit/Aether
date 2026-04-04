@@ -44,6 +44,22 @@ export default function UserProfile() {
 
   const { user, creations } = profile;
 
+  // Derive dynamic achievements based on portfolio stats
+  const totalArts = Math.abs(user.totalArts ?? creations.arts?.length ?? 0);
+  const totalMusics = Math.abs(user.totalMusics ?? creations.musics?.length ?? 0);
+  const totalVideos = Math.abs(user.totalVideos ?? creations.videos?.length ?? 0);
+  const totalEvents = Math.abs(user.totalEvents ?? creations.events?.length ?? 0);
+
+  const derivedBadges = [];
+  if (totalArts > 0) derivedBadges.push("Visual Artist");
+  if (totalMusics > 0) derivedBadges.push("Musician");
+  if (totalVideos > 0) derivedBadges.push("Videographer");
+  if (totalEvents > 0) derivedBadges.push("Tourney Master");
+
+  // Merge with any backend provided badges
+  let displayBadges = [...new Set([...(user.badges || []), ...derivedBadges])];
+
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#160327] pb-20">
       {/* Header / Banner */}
@@ -98,11 +114,11 @@ export default function UserProfile() {
               </div>
 
               {/* Badges */}
-              {user.badges?.length > 0 && (
+              {displayBadges.length > 0 && (
                 <div className="border-t border-gray-100 dark:border-slate-700 pt-4">
                   <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Achievements</h4>
                   <div className="flex flex-wrap gap-2">
-                    {user.badges.map((badge, index) => (
+                    {displayBadges.map((badge, index) => (
                       <span key={index} className="flex items-center gap-1.5 px-3 py-1 bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded-full text-[10px] font-bold border border-yellow-200 dark:border-yellow-700/50">
                         <FaAward /> {badge}
                       </span>
@@ -115,18 +131,22 @@ export default function UserProfile() {
             {/* Quick Stats */}
             <div className="bg-white dark:bg-[#160327] p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
               <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 text-center lg:text-left">Portfolio Stats</h4>
-              <div className="grid grid-cols-3 lg:grid-cols-1 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
                 <div className="flex flex-col lg:flex-row lg:justify-between items-center bg-gray-50 dark:bg-[#160327]/50 p-3 rounded-xl">
                     <span className="text-gray-500 dark:text-gray-400 text-[10px] font-bold uppercase">Arts</span>
-                    <span className="text-lg font-semibold text-purple-600">{user.totalArts || (creations.arts?.length || 0)}</span>
+                    <span className="text-lg font-semibold text-purple-600">{totalArts}</span>
                  </div>
                  <div className="flex flex-col lg:flex-row lg:justify-between items-center bg-gray-50 dark:bg-[#160327]/50 p-3 rounded-xl">
                     <span className="text-gray-500 dark:text-gray-400 text-[10px] font-bold uppercase">Music</span>
-                    <span className="text-lg font-semibold text-blue-600">{user.totalMusics || (creations.musics?.length || 0)}</span>
+                    <span className="text-lg font-semibold text-blue-600">{totalMusics}</span>
                  </div>
                  <div className="flex flex-col lg:flex-row lg:justify-between items-center bg-gray-50 dark:bg-[#160327]/50 p-3 rounded-xl">
                     <span className="text-gray-500 dark:text-gray-400 text-[10px] font-bold uppercase">Videos</span>
-                    <span className="text-lg font-semibold text-green-600">{user.totalVideos || (creations.videos?.length || 0)}</span>
+                    <span className="text-lg font-semibold text-green-600">{totalVideos}</span>
+                 </div>
+                 <div className="flex flex-col lg:flex-row lg:justify-between items-center bg-gray-50 dark:bg-[#160327]/50 p-3 rounded-xl">
+                    <span className="text-gray-500 dark:text-gray-400 text-[10px] font-bold uppercase">Events</span>
+                    <span className="text-lg font-semibold text-amber-600">{totalEvents}</span>
                  </div>
               </div>
             </div>
@@ -157,10 +177,10 @@ export default function UserProfile() {
             </div>
 
             {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
               {creations[activeTab]?.length > 0 ? (
                 creations[activeTab].map((item) => (
-                  <MediaCard key={item._id} item={item} type={activeTab === 'arts' ? 'art' : activeTab === 'musics' ? 'music' : 'video'} />
+                  <MediaCard key={item._id} item={item} type={activeTab === 'arts' ? 'art' : activeTab === 'musics' ? 'music' : 'video'} view="grid" />
                 ))
               ) : (
                 <div className="col-span-full py-20 text-center">

@@ -41,7 +41,7 @@ const ArtsContent = () => {
         </h1>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full lg:w-auto">
           <div className="flex-grow lg:w-80">
-            <MediaSearch placeholder="Search arts..." />
+            <MediaSearch placeholder="Search arts by title..." />
           </div>
           <div className="flex items-center gap-3">
             <FilterButton categories={categories} />

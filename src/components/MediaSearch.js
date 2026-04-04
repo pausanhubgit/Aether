@@ -15,6 +15,23 @@ const MediaSearch = ({ placeholder = "Search..." }) => {
     setSearchTerm(searchParams.get("name") || "");
   }, [searchParams]);
 
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      // Don't push if the term matches the URL param to avoid loops
+      if (searchTerm === (searchParams.get("name") || "")) return;
+      
+      const params = new URLSearchParams(searchParams.toString());
+      if (searchTerm) {
+        params.set("name", searchTerm);
+      } else {
+        params.delete("name");
+      }
+      router.push(`${pathname}?${params.toString()}`);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, pathname, router, searchParams]);
+
   function handleSearch(e) {
     if (e.key !== "Enter" && e.type !== "click") return;
 
@@ -24,7 +41,6 @@ const MediaSearch = ({ placeholder = "Search..." }) => {
     } else {
       params.delete("name");
     }
-    // Maintain genre/category if present, but usually search is global for the page
     router.push(`${pathname}?${params.toString()}`);
   }
 
@@ -37,9 +53,9 @@ const MediaSearch = ({ placeholder = "Search..." }) => {
 
   return (
     <div className="relative w-full max-w-md group">
-      <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none transition-colors group-focus-within:text-purple-500">
-        <FaMagnifyingGlass className="w-4 h-4 text-gray-400 group-focus-within:text-purple-500 transition-colors" />
-      </div>
+      <button onClick={handleSearch} className="absolute inset-y-0 start-0 flex items-center ps-4 transition-colors group-focus-within:text-purple-500">
+        <FaMagnifyingGlass className="w-4 h-4 text-gray-400 group-focus-within:text-purple-500 transition-colors hover:text-purple-600" />
+      </button>
       <input
         type="text"
         className="block w-full rounded-2xl border border-gray-200 bg-white/50 backdrop-blur-sm py-2.5 ps-11 pe-10 text-sm text-black focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 dark:border-gray-600 dark:bg-[#160327] dark:text-white transition-all shadow-sm"

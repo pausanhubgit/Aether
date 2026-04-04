@@ -2,23 +2,38 @@
 
 import { addToCart } from "@/redux/cart/cartSlice";
 import { FaCartPlus, FaShare, FaCheck } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import cartApi from "@/api/cart";
 
 const AddToCart = ({ art, Art, product, label }) => {
   const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const artInfo = art || Art || product;
   const [added, setAdded] = useState(false);
 
-  function addArtToCart() {
+  async function addArtToCart() {
     if (!artInfo) {
       toast.error("Art data is missing.");
       return;
     }
     const artToAdd = { ...artInfo };
     delete artToAdd.description;
+
+    // Optimistic local update
     dispatch(addToCart(artToAdd));
+
+    // Sync with backend if logged in
+    if (isAuthenticated) {
+      const artId = artInfo._id || artInfo.id;
+      try {
+        await cartApi.addToCart(artId);
+      } catch (err) {
+        // Backend sync failed — local state still works for the session
+        console.warn("Cart sync failed:", err?.response?.data || err.message);
+      }
+    }
 
     toast.success(`${artInfo.title || artInfo.name || "Art"} added to cart!`, {
       autoClose: 750,

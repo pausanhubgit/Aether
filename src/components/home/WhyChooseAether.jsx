@@ -17,11 +17,19 @@ const WhyChooseAether = async () => {
      ]);
      
      topVideos = (vResponse?.data || [])
-        .sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))
+        .sort((a, b) => {
+           const aLikes = Math.max(0, a.reactions || a.likes?.length || 0);
+           const bLikes = Math.max(0, b.reactions || b.likes?.length || 0);
+           return bLikes - aLikes;
+        })
         .slice(0, 3);
         
      topMusic = (mResponse?.data || [])
-        .sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))
+        .sort((a, b) => {
+           const aLikes = Math.max(0, a.reactions || a.likes?.length || 0);
+           const bLikes = Math.max(0, b.reactions || b.likes?.length || 0);
+           return bLikes - aLikes;
+        })
         .slice(0, 3);
   } catch (error) {
      console.error("Failed to fetch top featured content:", error.message);

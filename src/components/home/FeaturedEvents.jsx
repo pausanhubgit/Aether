@@ -40,9 +40,9 @@ const FeaturedEvents = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {events.map((event) => (
-            <div key={event._id} className="bg-white dark:bg-[#160327] rounded-2xl shadow-xl overflow-hidden transform hover:-translate-y-2 transition-all duration-300 border border-gray-100 dark:border-purple-900/40">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {events.map((event, index) => (
+            <div key={event._id || index} className="bg-white dark:bg-[#160327] rounded-2xl shadow-xl overflow-hidden transform hover:-translate-y-2 transition-all duration-300 border border-gray-100 dark:border-purple-900/40 flex flex-col h-full">
               <div className={`h-14 ${
                 event.eventType === 'Art' ? 'bg-gradient-to-r from-purple-500 to-indigo-500' :
                 event.eventType === 'Music' ? 'bg-gradient-to-r from-blue-500 to-cyan-500' :

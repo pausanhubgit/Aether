@@ -16,9 +16,9 @@ async function forgotPassword(data) {
   return await api.post(`/api/auths/forgot-password`, data);
 }
 
-async function resetPassword(token, userId, data) {
+async function resetPassword(data) {
   return await api.post(
-    `/api/auths/reset-password?token=${token}&userId=${userId}`,
+    `/api/auths/reset-password`,
     data
   );
 }

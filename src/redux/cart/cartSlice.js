@@ -26,7 +26,12 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const newItem = action.payload;
-      const existingItem = state.items?.find((item) => (item._id || item.artId?._id) === (newItem._id || newItem.artId?._id));
+      const itemId = newItem._id || newItem.id || newItem.artId?._id || newItem.artId?.id;
+      
+      const existingItem = state.items?.find((item) => {
+        const currentId = item._id || item.id || item.artId?._id || item.artId?.id;
+        return currentId === itemId;
+      });
 
       if (existingItem) {
         existingItem.quantity += 1;
@@ -35,13 +40,14 @@ const cartSlice = createSlice({
       }
 
       state.total = state.items?.reduce((sum, item) => {
-        const price = item.price || item.artId?.price || 0;
-        return sum + (price * (item.quantity || 1));
+        const price = item.price || item.artId?.price || item.artId?.price || 0;
+        return sum + (Number(price) * (item.quantity || 1));
       }, 0);
     },
     increaseQuantity: (state, action) => {
       const item = action.payload;
-      const foundItem = state.items.find((i) => (i._id || i.artId?._id) === (item._id || item.artId?._id));
+      const itemId = item._id || item.id || item.artId?._id || item.artId?.id;
+      const foundItem = state.items.find((i) => (i._id || i.id || i.artId?._id || i.artId?.id) === itemId);
       if (foundItem) {
         foundItem.quantity += 1;
         state.total += (foundItem.price || foundItem.artId?.price || 0);
@@ -49,7 +55,8 @@ const cartSlice = createSlice({
     },
     decreaseQuantity: (state, action) => {
       const item = action.payload;
-      const foundItem = state.items.find((i) => (i._id || i.artId?._id) === (item._id || item.artId?._id));
+      const itemId = item._id || item.id || item.artId?._id || item.artId?.id;
+      const foundItem = state.items.find((i) => (i._id || i.id || i.artId?._id || i.artId?.id) === itemId);
       if (foundItem && foundItem.quantity > 1) {
         foundItem.quantity -= 1;
         state.total -= (foundItem.price || foundItem.artId?.price || 0);
@@ -57,7 +64,8 @@ const cartSlice = createSlice({
     },
     removeFromCart: (state, action) => {
       const item = action.payload;
-      state.items = state.items.filter((i) => (i._id || i.artId?._id) !== (item._id || item.artId?._id));
+      const itemId = item._id || item.id || item.artId?._id || item.artId?.id;
+      state.items = state.items.filter((i) => (i._id || i.id || i.artId?._id || i.artId?.id) !== itemId);
       state.total = state.items.reduce((sum, i) => sum + ((i.price || i.artId?.price || 0) * i.quantity), 0);
     },
     clearCart: () => initialState,
@@ -69,10 +77,12 @@ const cartSlice = createSlice({
       })
       .addCase(fetchCart.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
-        state.total = action.payload.reduce((sum, item) => {
-          const price = item.artId?.price || 0;
-          return sum + (price * item.quantity);
+        // Backend is the source of truth — all cart additions are synced there
+        const backendItems = action.payload || [];
+        state.items = backendItems;
+        state.total = backendItems.reduce((sum, item) => {
+          const price = item.price || item.artId?.price || 0;
+          return sum + (Number(price) * (item.quantity || 1));
         }, 0);
       })
       .addCase(fetchCart.rejected, (state, action) => {

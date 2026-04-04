@@ -8,11 +8,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { GoogleLogin } from "@react-oauth/google";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { loading, error } = useSelector(state => state.auth);
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
@@ -90,15 +92,24 @@ const Login = () => {
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Password</label>
-          <input
-            type="password"
-            placeholder="••••••••"
-            {...register("password", {
-              required: "Password is required",
-              minLength: { value: 6, message: "Password must be at least 6 characters" }
-            })}
-            className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              {...register("password", {
+                required: "Password is required",
+                minLength: { value: 6, message: "Password must be at least 6 characters" }
+              })}
+              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+            >
+              {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+            </button>
+          </div>
           {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
         </div>
 
@@ -115,17 +126,20 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="flex justify-center flex-col items-center gap-4">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={handleGoogleError}
-            theme="outline"
-            size="large"
-            text="signin_with"
-            shape="circle"
-            width="340"
-          />
+        <div className="flex justify-center w-full mt-4">
+          <div className="w-full max-w-[400px] flex justify-center overflow-hidden">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="outline"
+              size="large"
+              text="signin_with"
+              shape="pill"
+              width="100%"
+            />
+          </div>
         </div>
+
 
         <div className="text-right">
           <Link href="/forgot-password" title="Forgot Password?" className="text-sm text-purple-600 hover:text-purple-700 font-medium">

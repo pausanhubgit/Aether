@@ -49,18 +49,10 @@ const FeaturedArts = async () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {arts?.map((art, index) => (
-            <ArtCard key={index} art={art} />
+            <ArtCard key={art._id || index} art={art} />
           ))}
         </div>
 
-        <div className="text-center mt-12 md:hidden">
-          <Link
-            href={ART_ROUTE}
-            className="inline-flex items-center gap-2 text-white bg-primary px-10 py-4 rounded-3xl font-bold shadow-xl shadow-primary/20 hover:scale-105 transition-transform"
-          >
-            Load Collections
-          </Link>
-        </div>
       </div>
     </section>
   );

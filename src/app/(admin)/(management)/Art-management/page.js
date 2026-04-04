@@ -1,5 +1,6 @@
 import ArtsTable from "./_components/Table";
 import Link from "next/link";
+import { DASHBOARD_ROUTE } from "@/constants/routes";
 import { FaArrowLeft, FaPlus } from "react-icons/fa";
 
 const ArtManagement = () => {
@@ -12,10 +13,10 @@ const ArtManagement = () => {
             <p className="text-gray-500 dark:text-gray-400 mt-1">Manage and exhibit your artistic portfolio.</p>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/Art-management/add" className="flex items-center gap-2 px-6 py-2.5 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition shadow-lg shadow-purple-200 dark:shadow-none">
+            <Link href="/Art-management/add" className="flex items-center gap-2 px-6 py-2.5 bg-purple-600 !text-white rounded-xl font-bold hover:bg-purple-700 transition shadow-lg shadow-purple-200 dark:shadow-none">
                <FaPlus className="text-xs" /> Add Art
             </Link>
-            <Link href="/dasboard" className="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-[#160327] border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition shadow-sm">
+            <Link href={DASHBOARD_ROUTE} className="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-[#160327] border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition shadow-sm">
               <FaArrowLeft className="text-xs" /> Hub
             </Link>
           </div>

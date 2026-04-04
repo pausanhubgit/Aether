@@ -77,8 +77,8 @@ const Hero = () => {
             <div key={slide.id} className="w-full flex-shrink-0">
               <div className="flex flex-col md:flex-row items-center md:justify-between px-2 md:px-12 w-full">
                 {/* Content */}
-                <div className="md:w-1/2 mb-10 md:mb-0 text-center md:text-left">
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-gray-900 dark:text-white transition-colors duration-300">
+                <div className="md:w-1/2 mb-10 md:mb-0 text-center md:text-left px-4 md:px-0">
+                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 text-gray-900 dark:text-white transition-colors duration-300">
                     {slide.title}
                   </h1>
                   <p className="text-xl mb-8 text-gray-700 dark:text-gray-200 transition-colors duration-300">
@@ -106,6 +106,7 @@ const Hero = () => {
                     className="max-w-full rounded-xl shadow-xl lg:w-3/4 object-cover aspect-[4/3] bg-white/10"
                     alt={slide.title}
                     priority={slide.id === 1}
+                    style={{ height: "auto" }}
                   />
                 </div>
               </div>

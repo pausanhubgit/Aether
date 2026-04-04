@@ -75,7 +75,7 @@ const MusicTable = () => {
   async function getAllMusic(query) {
     setLoading(true);
     try {
-      const isAdmin = user?.roles?.includes(ADMIN_ROLE);
+      const isAdmin = user?.roles?.some(r => r.toUpperCase() === ADMIN_ROLE.toUpperCase());
       const apiQuery = isAdmin ? query : { ...query, createdBy: user._id };
       
       const response = await musicAPI.getMusic(apiQuery);
@@ -158,7 +158,7 @@ const MusicTable = () => {
                   </div>
                 </th>
               ))}
-              <th scope="col" className="px-6 py-4 text-center">
+              <th scope="col" className="px-6 py-4 text-center sticky right-0 bg-gray-50/50 dark:bg-[#160327]/50 shadow-[-5px_0_10px_rgba(0,0,0,0.02)]">
                 <FaCog className="mx-auto" />
               </th>
             </tr>
@@ -213,15 +213,15 @@ const MusicTable = () => {
                 <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase">
                   {music.createdAt ? format(new Date(music.createdAt), "dd MMM yyyy") : "---"}
                 </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3 justify-center text-lg">
+                <td className="px-6 py-4 sticky right-0 bg-white dark:bg-[#160327] shadow-[-5px_0_10px_rgba(0,0,0,0.02)] group-hover:bg-primary/[0.02] dark:group-hover:bg-[#1c0433] transition-colors">
+                  <div className="flex items-center gap-3 justify-center">
                     <Link
-                      href={`${MUSIC_MANAGEMENT_ROUTE}/edit/${music._id || music.id}`}
-                      className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all"
+                      href={`${MUSIC_MANAGEMENT_ROUTE}/edit/${music._id}`}
+                      className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
                     >
-                      <FaPencil className="w-4 h-4" />
+                      <FaPencil /> <span className="text-xs font-semibold text-blue-500">Edit</span>
                     </Link>
-                    <DeleteMusicButton id={music._id || music.id} />
+                    <DeleteMusicButton id={music._id} />
                   </div>
                 </td>
               </tr>

@@ -3,11 +3,14 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { FiMapPin as FaMapMarkerAlt, FiPhone as FaPhone, FiMail as FaEnvelope, FiClock as FaClock, FiSend as FaPaperPlane } from 'react-icons/fi';
+import { toast } from 'react-toastify';
+import contactApi from '@/api/contact';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     subject: '',
     message: ''
   });
@@ -26,13 +29,17 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate form submission
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await contactApi.submitContact(formData);
       setSubmitted(true);
-      setFormData({ name: '', email: '', subject: '', message: '' });
+      toast.success("Message sent successfully! We will get back to you shortly.");
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
       setTimeout(() => setSubmitted(false), 5000);
-    }, 2000);
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Failed to send message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -68,7 +75,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 dark:text-purple-100">Address</h3>
-                  <p className="text-gray-600 dark:text-purple-300/70">Kathmandu, Nepal</p>
+                  <p className="text-gray-600 dark:text-purple-300/70">Dharan, Nepal</p>
                 </div>
               </div>
 
@@ -78,7 +85,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 dark:text-purple-100">Phone</h3>
-                  <p className="text-gray-600 dark:text-purple-300/70">+977 123 456 7890</p>
+                  <p className="text-gray-600 dark:text-purple-300/70">980000001</p>
                 </div>
               </div>
 
@@ -147,6 +154,21 @@ const Contact = () => {
                       placeholder="your@email.com"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-purple-200 mb-2">
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-purple-900/40 dark:bg-[#0d0118] dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Your phone number"
+                  />
                 </div>
 
                 <div>

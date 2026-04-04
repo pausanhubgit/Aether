@@ -80,23 +80,27 @@ const CartPage = () => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
-            {items.map((item) => {
-              const art = item.artId || item;
+            {items.map((item, index) => {
+              // Support both backend shape {artId: {...}} and local flat shape {_id, title, ...}
+              const art = (item.artId && typeof item.artId === 'object') ? item.artId : item;
+              const artId = art._id || art.id || item._id;
               const imageUrl = art.imageUrls?.[0] || art.image || null;
+              const price = art.price || item.price || 0;
               return (
-                <div key={art._id} className="bg-white dark:bg-[#160327] border border-gray-100 dark:border-purple-900/30 rounded-2xl p-4 flex gap-4 items-center shadow-sm hover:shadow-md transition">
+                <div key={artId ? `${artId}-${index}` : index} className="bg-white dark:bg-[#160327] border border-gray-100 dark:border-purple-900/30 rounded-2xl p-4 flex gap-4 items-center shadow-sm hover:shadow-md transition">
                   <div className="h-24 w-24 relative flex-shrink-0 rounded-xl overflow-hidden shadow-inner bg-gray-50 dark:bg-purple-950/20">
                     <Image
                       src={imageUrl ? formatImageUrl(imageUrl) : "/assets/images/placeholder.jpg"}
-                      alt={art.title || "Artwork image"}
+                      alt={art.title || art.name || "Artwork"}
                       fill
                       className="object-cover"
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-bold text-black dark:text-purple-100 truncate">{art.title}</h3>
-                    <p className="text-sm text-gray-500 dark:text-purple-400/60 mb-2">{art.category}</p>
-                    <p className="text-purple-600 dark:text-purple-400 font-semibold text-lg">Rs. {art.price?.toLocaleString()}</p>
+                    <h3 className="text-lg font-bold text-black dark:text-purple-100 truncate">{art.title || art.name || 'Artwork'}</h3>
+                    <p className="text-sm text-gray-500 dark:text-purple-400/60 mb-2">{art.category || ''}</p>
+                    <p className="text-purple-600 dark:text-purple-400 font-semibold text-lg">Rs. {Number(price).toLocaleString()}</p>
+                    <p className="text-xs text-gray-400 mt-1">Qty: {item.quantity || 1}</p>
                   </div>
                   <div className="flex flex-col items-center gap-2">
                     <button

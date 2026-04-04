@@ -75,7 +75,7 @@ const VideoTable = () => {
   async function getAllVideo(query) {
     setLoading(true);
     try {
-      const isAdmin = user?.roles?.includes(ADMIN_ROLE);
+      const isAdmin = user?.roles?.some(r => r.toUpperCase() === ADMIN_ROLE.toUpperCase());
       const apiQuery = isAdmin ? query : { ...query, createdBy: user._id };
       
       const response = await videoAPI.getVideo(apiQuery);
@@ -159,7 +159,7 @@ const VideoTable = () => {
                   </div>
                 </th>
               ))}
-              <th scope="col" className="px-6 py-4 text-center">
+              <th scope="col" className="px-6 py-4 text-center sticky right-0 bg-gray-50/50 dark:bg-[#160327]/50 shadow-[-5px_0_10px_rgba(0,0,0,0.02)]">
                 <FaCog className="mx-auto" />
               </th>
             </tr>
@@ -214,15 +214,15 @@ const VideoTable = () => {
                 <td className="px-6 py-4 text-gray-500 dark:text-gray-400 font-medium">
                   {video.createdAt ? format(new Date(video.createdAt), "MMM dd, yyyy") : "---"}
                 </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3 justify-center">
+                <td className="px-6 py-4 sticky right-0 bg-white dark:bg-[#160327] shadow-[-5px_0_10px_rgba(0,0,0,0.02)] group-hover:bg-primary/[0.02] dark:group-hover:bg-[#1c0433] transition-colors">
+                  <div className="flex items-center gap-3 justify-center text-lg">
                     <Link
-                      href={`${VIDEO_MANAGEMENT_ROUTE}/edit/${video._id || video.id}`}
-                      className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
+                      href={`${VIDEO_MANAGEMENT_ROUTE}/edit/${video._id}`}
+                      className="flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all"
                     >
-                      <FaPencil />
+                      <FaPencil className="w-4 h-4" /> <span className="text-xs font-semibold">Edit</span>
                     </Link>
-                    <DeleteVideoButton id={video._id || video.id} />
+                    <DeleteVideoButton id={video._id} />
                   </div>
                 </td>
               </tr>

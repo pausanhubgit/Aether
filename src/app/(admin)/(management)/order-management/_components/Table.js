@@ -101,7 +101,7 @@ const OrdersTable = () => {
                   <div className="flex items-center gap-2">{column.label}</div>
                 </th>
               ))}
-              <th scope="col" className="px-4 py-3 flex justify-center">
+              <th scope="col" className="px-4 py-3 flex justify-center sticky right-0 bg-gray-50 dark:bg-[#160327] shadow-[-5px_0_10px_rgba(0,0,0,0.02)] z-10 w-16">
                 <FaCog />
               </th>
             </tr>
@@ -115,20 +115,23 @@ const OrdersTable = () => {
                 <td className="px-4 py-2">
                   <div className="flex items-center">{index + 1}.</div>
                 </td>
-                <td className="px-4 py-2 font-medium">{order.orderNumber}</td>
+                <td className="px-4 py-2 font-medium text-[10px] break-all max-w-[120px] uppercase">{order._id || order.id || "N/A"}</td>
                 <td className="px-4 py-2">
-                  <div className="flex items-center">{order.user.name}</div>
+                  <div className="flex items-center text-xs break-all max-w-[150px]">{order?.userid?.username || order?.user?.username || order?.userid?.name || "Unknown"}</div>
                 </td>
                 <td className="px-4 py-2">
-                  <ul>
-                    {order.orderItems?.map((item, index) => (
-                      <li key={index} className="flex items-center">
-                        <RxDotFilled />
-                        <span className="font-medium text-md px-1">
-                          {item.name}
+                  <ul className="max-w-[200px] max-h-24 overflow-y-auto custom-scrollbar">
+                    {order.orderItems?.map((item, index) => {
+                      const art = (item.artId && typeof item.artId === 'object') ? item.artId : item;
+                      return (
+                      <li key={index} className="flex items-start text-xs mb-1">
+                        <RxDotFilled className="mt-0.5 shrink-0" />
+                        <span className="font-medium px-1 line-clamp-2">
+                          {art.title || art.name || "Art Piece"}
+                          <span className="text-[10px] text-gray-400 block">Qty: {item.quantity || 1}</span>
                         </span>
                       </li>
-                    ))}
+                    )})}
                   </ul>
                 </td>
                 <td className="px-4 py-2 font-medium whitespace-nowrap">
@@ -157,7 +160,7 @@ const OrdersTable = () => {
                 <td className="px-4 py-2 font-medium whitespace-nowrap">
                   {order.createdAt ? format(new Date(order.createdAt), "dd MMM, yyyy") : "N/A"}
                 </td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 sticky right-0 bg-white dark:bg-[#160327] shadow-[-5px_0_10px_rgba(0,0,0,0.02)] group-hover:bg-gray-50 dark:group-hover:bg-[#1c0433] transition-colors">
                   <Action id={order._id} orderStatus={order.status} />
                 </td>
               </tr>

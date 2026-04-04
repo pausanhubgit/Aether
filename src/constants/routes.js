@@ -1,6 +1,6 @@
 export const ABOUT_ROUTE = "/about";
 export const CONTACT_ROUTE = "/contact";
-export const DASHBOARD_ROUTE = "/dasboard";
+export const DASHBOARD_ROUTE = "/dashboard";
 export const FORGOT_PASSWORD_ROUTE = "/forgot-password";
 export const HOME_ROUTE = "/";
 export const LOGIN_ROUTE = "/login";

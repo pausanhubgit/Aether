@@ -68,7 +68,7 @@ export default function MediaFeed({ type, genre, searchName, minPrice, maxPrice,
   return (
     <div className={`w-full min-w-0 ${
       productView === GRID_VIEW
-        ? `grid grid-cols-1 sm:grid-cols-2 ${type === 'art' ? 'lg:grid-cols-3 xl:grid-cols-4' : 'lg:grid-cols-3 xl:grid-cols-4'} gap-4 sm:gap-5`
+        ? `grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5`
         : 'flex flex-col gap-5'
     }`}>
       {sortedItems.map((item) => (

@@ -3,15 +3,25 @@
 import { updateUserProfile } from "@/redux/auth/authActions";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { resetSuccess } from "@/redux/auth/authSlice";
 import ProfileImage from "./_components/ProfileImage";
 import api from "@/api/users";
 import eventsApi from "@/api/events";
+import { DASHBOARD_ROUTE } from "@/constants/routes";
 import CoverImage from "./_components/CoverImage";
-import { formatImageUrl } from "../../../helpers/url";
+import { 
+  formatImageUrl 
+} from "../../../helpers/url";
+import {
+  ART_MANAGEMENT_ROUTE,
+  MUSIC_MANAGEMENT_ROUTE, 
+  VIDEO_MANAGEMENT_ROUTE,
+  EVENT_MANAGEMENT_ROUTE
+} from "@/constants/routes";
 import Link from "next/link";
 import {
   FaUser,
@@ -25,20 +35,142 @@ import {
   FaUserShield,
   FaHeart,
   FaCalendarAlt,
+  FaArrowLeft,
   FaExternalLinkAlt,
-  FaTrophy
+  FaTrophy,
+  FaEllipsisV,
+  FaEdit,
+  FaTrash,
+  FaCheckCircle,
+  FaMedal
 } from "react-icons/fa";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-  LabelList
-} from "recharts";
+import apiInstance from "@/api/api";
 import { format } from "date-fns";
+
+const VideoThumb = ({ vid, formatImageUrl, setActiveDropdown, activeDropdown, handleDeleteItem, handleEditItem }) => {
+  const videoRef = useRef(null);
+  const [isHovering, setIsHovering] = useState(false);
+  const vidImage = vid.imageUrls?.[0] || vid.image || vid.thumbnail;
+  const vidVideo = vid.videoUrls?.[0] || (typeof vid.media === 'string' && vid.media.endsWith('.mp4') ? vid.media : null);
+
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+    if (videoRef.current) {
+      videoRef.current.play().catch(err => console.log("Playback failed", err));
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  return (
+    <div 
+      key={vid._id} 
+      className="group relative aspect-video rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 dark:border-slate-700"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {vidVideo && (isHovering || vid.hide === false || vid.hide === 'false') ? (
+        <video 
+          ref={videoRef}
+          src={formatImageUrl(vidVideo)}
+          className="w-full h-full object-cover"
+          muted
+          playsInline
+          loop
+          autoPlay={vid.hide === false || vid.hide === 'false'}
+        />
+      ) : vidImage ? (
+        <img 
+          src={formatImageUrl(vidImage)} 
+          alt={vid.title} 
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-slate-800 group-hover:scale-105 transition-transform duration-500">
+          <FaVideo className="text-gray-400 text-4xl" />
+        </div>
+      )}
+      
+      <button 
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDropdown(activeDropdown === `video-${vid._id}` ? null : `video-${vid._id}`); }}
+        className="absolute top-4 right-4 p-2 bg-black/40 backdrop-blur text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-20 hover:bg-black/60"
+      >
+        <FaEllipsisV className="text-xs" />
+      </button>
+      {activeDropdown === `video-${vid._id}` && (
+        <div className="absolute top-12 right-4 w-32 bg-white dark:bg-[#160327] rounded-xl shadow-2xl border border-gray-100 dark:border-slate-700 py-1 z-30 overflow-hidden">
+          <button onClick={(e) => handleEditItem('video', vid._id, e)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/30 text-left"><FaEdit/> Edit</button>
+          <button onClick={(e) => handleDeleteItem('video', vid._id, e)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-left"><FaTrash/> Delete</button>
+        </div>
+      )}
+
+      <Link href={`/video/detail/${vid._id}`}>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-6 flex flex-col justify-end z-10 cursor-pointer">
+          <p className="text-white font-bold text-lg">{vid.title}</p>
+          <p className="text-green-400 text-xs font-semibold uppercase tracking-widest flex items-center gap-2"><FaVideo /> Watch Now</p>
+        </div>
+      </Link>
+    </div>
+  );
+};
+
+const MusicTrack = ({ music, formatImageUrl, setActiveDropdown, activeDropdown, handleDeleteItem, handleEditItem }) => {
+  const [isHovering, setIsHovering] = useState(false);
+  const musicImage = music.imageUrls?.[0] || music.image || music.thumbnail;
+
+  return (
+    <div 
+      key={music._id} 
+      className="relative flex items-center gap-4 p-4 bg-white dark:bg-[#160327] rounded-2xl border border-gray-100 dark:border-slate-700 hover:shadow-lg transition group"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      <Link href={`/music/detail/${music._id}`} className="flex-1 flex items-center gap-4 cursor-pointer">
+        <div className="h-14 w-14 rounded-xl overflow-hidden bg-blue-100 flex-shrink-0 relative">
+          {musicImage ? (
+            <img src={formatImageUrl(musicImage)} className={`w-full h-full object-cover ${isHovering ? 'scale-110' : ''} transition-transform duration-500`} />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <FaMusic className="text-blue-500 text-xl" />
+            </div>
+          )}
+          {isHovering && (
+            <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+              <div className="flex gap-0.5 items-end h-4">
+                <div className="w-1 bg-white animate-[music-bar_0.6s_ease-in-out_infinite]" style={{height: '60%'}}></div>
+                <div className="w-1 bg-white animate-[music-bar_0.8s_ease-in-out_infinite]" style={{height: '100%'}}></div>
+                <div className="w-1 bg-white animate-[music-bar_0.7s_ease-in-out_infinite]" style={{height: '80%'}}></div>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className={`font-bold ${isHovering ? 'text-primary' : 'text-black dark:text-white'} transition-colors truncate`}>{music.title}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{music.genre || 'Various'}</p>
+        </div>
+      </Link>
+      
+      <button 
+        onClick={() => setActiveDropdown(activeDropdown === `music-${music._id}` ? null : `music-${music._id}`)}
+        className={`p-2 transition-colors z-20 ${isHovering ? 'text-primary' : 'text-gray-400 hover:text-purple-600'}`}
+      >
+        <FaEllipsisV />
+      </button>
+      {activeDropdown === `music-${music._id}` && (
+        <div className="absolute top-12 right-4 w-32 bg-white dark:bg-[#160327] rounded-xl shadow-2xl border border-gray-100 dark:border-slate-700 py-1 z-30 overflow-hidden">
+          <button onClick={(e) => handleEditItem('music', music._id, e)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/30 text-left"><FaEdit/> Edit</button>
+          <button onClick={(e) => handleDeleteItem('music', music._id, e)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-left"><FaTrash/> Delete</button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ProfilePage = () => {
   const { error, loading, user, success } = useSelector((state) => state.auth);
@@ -48,7 +180,50 @@ const ProfilePage = () => {
   const [creations, setCreations] = useState({ arts: [], musics: [], videos: [], events: [] });
   const [registrations, setRegistrations] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleDeleteItem = async (type, id, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!window.confirm(`Are you sure you want to delete this ${type}? This action cannot be undone.`)) return;
+    try {
+      if (type === 'art') {
+        await apiInstance.delete(`/api/arts/${id}`);
+        setCreations(prev => ({ ...prev, arts: prev.arts.filter(item => item._id !== id) }));
+      } else if (type === 'music') {
+         await apiInstance.delete(`/api/music/${id}`);
+         setCreations(prev => ({ ...prev, musics: prev.musics.filter(item => item._id !== id) }));
+      } else if (type === 'video') {
+         await apiInstance.delete(`/api/video/${id}`);
+         setCreations(prev => ({ ...prev, videos: prev.videos.filter(item => item._id !== id) }));
+      } else if (type === 'event') {
+         await apiInstance.delete(`/api/events/${id}`);
+         setCreations(prev => ({ ...prev, events: prev.events.filter(item => item._id !== id) }));
+      }
+      toast.success(`${type} deleted successfully.`);
+    } catch (err) {
+      toast.error(`Failed to delete ${type}.`);
+    }
+  };
+
+  const handleEditItem = (type, id, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const routes = {
+      art: ART_MANAGEMENT_ROUTE,
+      music: MUSIC_MANAGEMENT_ROUTE,
+      video: VIDEO_MANAGEMENT_ROUTE,
+      event: EVENT_MANAGEMENT_ROUTE
+    };
+    const baseRoute = routes[type] || `/${type}-management`;
+    // Use router.push instead of window.location.href for better SPA experience
+    router.push(`${baseRoute}/edit/${id}`);
+    setActiveDropdown(null);
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -83,13 +258,6 @@ const ProfilePage = () => {
       city: user?.city || user?.address?.city,
     },
   });
-
-  const chartData = [
-    { name: 'Arts', value: stats?.totalArts || 0 },
-    { name: 'Music', value: stats?.totalMusics || 0 },
-    { name: 'Videos', value: stats?.totalVideos || 0 },
-    { name: 'Events', value: stats?.totalEvents || 0 },
-  ];
 
   function submitForm(data) {
     dispatch(
@@ -176,7 +344,7 @@ const ProfilePage = () => {
                       <FaCog className="text-blue-600 group-hover:scale-110 transition-transform" />
                       <span className="font-semibold text-sm">Profile Edit</span>
                     </button>
-                    <Link href="/dasboard" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-green-50 dark:hover:bg-green-900/20 text-gray-700 dark:text-gray-200 transition group">
+                    <Link href={DASHBOARD_ROUTE} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-green-50 dark:hover:bg-green-900/20 text-gray-700 dark:text-gray-200 transition group">
                       <FaChartLine className="text-green-600 group-hover:scale-110 transition-transform" />
                       <span className="font-semibold text-sm">Dashboard</span>
                     </Link>
@@ -196,7 +364,14 @@ const ProfilePage = () => {
                 )}
               </div>
               <div className="flex-1 text-center md:text-left mb-2">
-                <h1 className="text-4xl font-semibold text-black dark:text-white mb-2">{user?.username || user?.name}</h1>
+                <h1 className="text-4xl font-semibold text-black dark:text-white mb-2 flex items-center justify-center md:justify-start gap-3">
+                  {user?.username || user?.name}
+                  {user?.roles?.some(role => ["ADMIN", "MERCHANT", "CREATOR", "VENDOR"].includes(role.toUpperCase())) && (
+                    <span className="p-1 bg-blue-500 rounded-full text-white shadow-lg shadow-blue-200" title="Verified Creator">
+                       <FaCheckCircle className="text-[10px]" />
+                    </span>
+                  )}
+                </h1>
                 <div className="flex flex-wrap justify-center md:justify-start gap-4 text-gray-500 dark:text-gray-400 font-medium">
                   <span className="flex items-center gap-1.5"><FaMapMarkerAlt className="text-purple-500" /> {user?.address?.city || user?.city || "Unknown Location"}</span>
                   <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-lg text-xs font-bold uppercase tracking-wider">
@@ -229,73 +404,95 @@ const ProfilePage = () => {
                 </section>
 
                 <section>
-                   <div className="flex flex-col lg:flex-row gap-8">
+                   <div className="flex flex-col gap-8">
                       {/* Detailed Stats */}
                       <div className="flex-1 space-y-4">
                         <h3 className="flex items-center gap-2 text-xl font-bold text-gray-800 dark:text-white mb-4">
                           <FaChartLine className="text-blue-600" /> Performance Metrics
                         </h3>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                           <div className="p-5 bg-purple-50 dark:bg-purple-900/20 rounded-2xl border border-purple-100 dark:border-purple-800 shadow-sm">
                             <p className="text-[10px] font-bold text-purple-500 uppercase mb-1 tracking-widest">Arts</p>
-                            <p className="text-2xl font-semibold text-purple-700 dark:text-purple-300">{stats?.totalArts || 0}</p>
+                            <p className="text-3xl font-semibold text-purple-700 dark:text-purple-300">{Math.max(0, stats?.totalArts || 0)}</p>
                           </div>
                           <div className="p-5 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800 shadow-sm">
                             <p className="text-[10px] font-bold text-blue-500 uppercase mb-1 tracking-widest">Music</p>
-                            <p className="text-2xl font-semibold text-blue-700 dark:text-blue-300">{stats?.totalMusics || 0}</p>
+                            <p className="text-3xl font-semibold text-blue-700 dark:text-blue-300">{Math.max(0, stats?.totalMusics || 0)}</p>
                           </div>
                           <div className="p-5 bg-green-50 dark:bg-green-900/20 rounded-2xl border border-green-100 dark:border-green-800 shadow-sm">
                             <p className="text-[10px] font-bold text-green-500 uppercase mb-1 tracking-widest">Videos</p>
-                            <p className="text-2xl font-semibold text-green-700 dark:text-green-300">{stats?.totalVideos || 0}</p>
+                            <p className="text-3xl font-semibold text-green-700 dark:text-green-300">{Math.max(0, stats?.totalVideos || 0)}</p>
                           </div>
                           <div className="p-5 bg-orange-50 dark:bg-orange-900/20 rounded-2xl border border-orange-100 dark:border-orange-800 shadow-sm">
                             <p className="text-[10px] font-bold text-orange-500 uppercase mb-1 tracking-widest">Events</p>
-                            <p className="text-2xl font-semibold text-orange-700 dark:text-orange-300">{stats?.totalEvents || 0}</p>
+                            <p className="text-3xl font-semibold text-orange-700 dark:text-orange-300">{Math.max(0, stats?.totalEvents || 0)}</p>
                           </div>
-                          <div className="p-5 bg-pink-50 dark:bg-pink-900/20 rounded-2xl border border-pink-100 dark:border-pink-800 shadow-sm col-span-2 flex justify-between items-center">
+                          <div className="p-5 bg-pink-50 dark:bg-pink-900/20 rounded-2xl border border-pink-100 dark:border-pink-800 shadow-sm md:col-span-4 lg:col-span-1 flex lg:flex-col justify-between items-center lg:items-start lg:justify-center">
                             <div>
-                               <p className="text-[10px] font-bold text-pink-500 uppercase mb-1 tracking-widest">Total Reactions</p>
-                               <p className="text-2xl font-semibold text-pink-700 dark:text-pink-300">{stats?.totalReactions || 0}</p>
+                               <p className="text-[10px] font-bold text-pink-500 uppercase mb-1 tracking-widest">Reactions</p>
+                               <p className="text-3xl font-semibold text-pink-700 dark:text-pink-300">{Math.max(0, stats?.totalReactions || 0)}</p>
                             </div>
-                            <FaHeart className="text-pink-400 text-3xl opacity-50" />
+                            <FaHeart className="text-pink-400 text-3xl opacity-50 lg:mt-2" />
                           </div>
                         </div>
                       </div>
 
-                      {/* Personal Analysis Graph */}
-                      <div className="flex-1 bg-white dark:bg-[#160327] p-8 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm">
-                        <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-6">Content Analysis</h3>
-                        <div className="h-[250px] w-full">
-                          {isMounted ? (
-                            <ResponsiveContainer width="99%" height={250} minWidth={0}>
-                              <AreaChart data={chartData}>
-                                <defs>
-                                  <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
-                                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
-                                  </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 10, fill: '#94a3b8'}} dy={10} />
-                                <YAxis hide />
-                                <Tooltip 
-                                  contentStyle={{borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}} 
-                                />
-                                <Area 
-                                  type="monotone" 
-                                  dataKey="value" 
-                                  stroke="#8b5cf6" 
-                                  fillOpacity={1} 
-                                  fill="url(#colorVal)" 
-                                  strokeWidth={4}
-                                  dot={{ r: 5, fill: '#8b5cf6', strokeWidth: 2, stroke: '#fff' }}
-                                  activeDot={{ r: 8, strokeWidth: 2, stroke: '#fff' }}
-                                >
-                                  <LabelList dataKey="value" position="top" offset={15} style={{ fill: '#8b5cf6', fontSize: '13px', fontWeight: 'bold' }} />
-                                </Area>
-                              </AreaChart>
-                            </ResponsiveContainer>
-                          ) : null}
+                      {/* Achievements / Trophies Section */}
+                      <div className="flex-1 space-y-4">
+                        <h3 className="flex items-center gap-2 text-xl font-bold text-gray-800 dark:text-white mb-4">
+                          <FaMedal className="text-amber-500" /> Professional Awards & Badges
+                        </h3>
+                        <div className="flex flex-wrap gap-4">
+                          {stats?.totalArts > 0 && (
+                            <div className="flex items-center gap-3 px-4 py-2 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl shadow-sm">
+                               <FaPalette className="text-purple-500 text-lg" />
+                               <div>
+                                  <p className="text-[9px] font-bold uppercase text-purple-400 leading-none mb-0.5 tracking-tighter">Art Connoisseur</p>
+                                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">{Math.max(0, stats.totalArts)} Artworks</p>
+                               </div>
+                            </div>
+                          )}
+                          {stats?.totalMusics > 0 && (
+                            <div className="flex items-center gap-3 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl shadow-sm">
+                               <FaMusic className="text-blue-500 text-lg" />
+                               <div>
+                                  <p className="text-[9px] font-bold uppercase text-blue-400 leading-none mb-0.5 tracking-tighter">Melody Maker</p>
+                                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">{Math.max(0, stats.totalMusics)} Tracks</p>
+                               </div>
+                            </div>
+                          )}
+                          {stats?.totalVideos > 0 && (
+                            <div className="flex items-center gap-3 px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl shadow-sm">
+                               <FaVideo className="text-green-500 text-lg" />
+                               <div>
+                                  <p className="text-[9px] font-bold uppercase text-green-400 leading-none mb-0.5 tracking-tighter">Director</p>
+                                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">{Math.max(0, stats.totalVideos)} Videos</p>
+                               </div>
+                            </div>
+                          )}
+                          {stats?.totalEvents > 0 && (
+                            <div className="flex items-center gap-3 px-4 py-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800 rounded-xl shadow-sm">
+                               <FaCalendarAlt className="text-orange-500 text-lg" />
+                               <div>
+                                  <p className="text-[9px] font-bold uppercase text-orange-400 leading-none mb-0.5 tracking-tighter">Host Elite</p>
+                                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">{Math.max(0, stats.totalEvents)} Events</p>
+                               </div>
+                            </div>
+                          )}
+                          {stats?.totalReactions > 0 && (
+                            <div className="flex items-center gap-3 px-4 py-2 bg-pink-50 dark:bg-pink-900/20 border border-pink-100 dark:border-pink-800 rounded-xl shadow-sm">
+                               <FaHeart className="text-pink-500 text-lg" />
+                               <div>
+                                  <p className="text-[9px] font-bold uppercase text-pink-400 leading-none mb-0.5 tracking-tighter">Community Fav</p>
+                                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">{Math.max(0, stats.totalReactions)} Likes</p>
+                               </div>
+                            </div>
+                          )}
+                          {!stats?.totalArts && !stats?.totalMusics && !stats?.totalVideos && !stats?.totalEvents && !stats?.totalReactions && (
+                             <div className="p-8 w-full text-center bg-gray-50 dark:bg-[#160327]/40 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700">
+                                <p className="text-gray-400 font-medium italic">Keep creating and engaging to earn your first badge!</p>
+                             </div>
+                          )}
                         </div>
                       </div>
                    </div>
@@ -315,15 +512,44 @@ const ProfilePage = () => {
                       <div>
                         <h4 className="flex items-center gap-2 text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Featured Arts</h4>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                          {creations.arts.map((art) => (
-                            <Link key={art._id} href={`/arts/detail/${art._id}`} className="group relative aspect-square rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 dark:border-slate-700">
-                               <img src={formatImageUrl(art.imageUrls?.[0] || art.image)} alt={art.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-                                  <p className="text-white font-bold text-sm truncate">{art.title}</p>
-                                  <p className="text-purple-300 text-[10px] font-semibold uppercase">View Details →</p>
-                               </div>
-                            </Link>
-                          ))}
+                          {creations.arts.map((art) => {
+                            const artImage = art.imageUrls?.[0] || art.image || art.thumbnail;
+                            return (
+                              <div key={art._id} className="group relative aspect-square rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 dark:border-slate-700">
+                                {artImage ? (
+                                  <img 
+                                    src={formatImageUrl(artImage)} 
+                                    alt={art.title} 
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-slate-800 group-hover:scale-110 transition-transform duration-500">
+                                    <FaPalette className="text-gray-400 text-4xl" />
+                                  </div>
+                                )}
+                                
+                                <button 
+                                  onClick={(e) => { e.preventDefault(); setActiveDropdown(activeDropdown === `art-${art._id}` ? null : `art-${art._id}`); }}
+                                  className="absolute top-2 right-2 p-2 bg-black/40 backdrop-blur text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-20 hover:bg-black/60"
+                                >
+                                  <FaEllipsisV className="text-xs" />
+                                </button>
+                                {activeDropdown === `art-${art._id}` && (
+                                  <div className="absolute top-10 right-2 w-32 bg-white dark:bg-[#160327] rounded-xl shadow-2xl border border-gray-100 dark:border-slate-700 py-1 z-30 overflow-hidden">
+                                    <button onClick={(e) => handleEditItem('art', art._id, e)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/30 text-left"><FaEdit/> Edit</button>
+                                    <button onClick={(e) => handleDeleteItem('art', art._id, e)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-left"><FaTrash/> Delete</button>
+                                  </div>
+                                )}
+
+                                <Link href={`/arts/detail/${art._id}`}>
+                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4 z-10 cursor-pointer">
+                                    <p className="text-white font-bold text-sm truncate">{art.title}</p>
+                                    <p className="text-purple-300 text-[10px] font-semibold uppercase">View Details →</p>
+                                  </div>
+                                </Link>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     )}
@@ -334,16 +560,15 @@ const ProfilePage = () => {
                         <h4 className="flex items-center gap-2 text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 ml-1">Music Tracks</h4>
                         <div className="space-y-3">
                           {creations.musics.map((music) => (
-                            <Link key={music._id} href={`/music/detail/${music._id}`} className="flex items-center gap-4 p-4 bg-white dark:bg-[#160327] rounded-2xl border border-gray-100 dark:border-slate-700 hover:shadow-lg transition group">
-                              <div className="h-14 w-14 rounded-xl overflow-hidden bg-blue-100 flex-shrink-0">
-                                <img src={formatImageUrl(music.thumbnail || music.image)} className="w-full h-full object-cover" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="font-bold text-black dark:text-white truncate">{music.title}</p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">{music.genre || 'Various'}</p>
-                              </div>
-                              <FaExternalLinkAlt className="text-gray-300 group-hover:text-purple-600 transition-colors mr-2" />
-                            </Link>
+                            <MusicTrack 
+                              key={music._id}
+                              music={music}
+                              formatImageUrl={formatImageUrl}
+                              setActiveDropdown={setActiveDropdown}
+                              activeDropdown={activeDropdown}
+                              handleDeleteItem={handleDeleteItem}
+                              handleEditItem={handleEditItem}
+                            />
                           ))}
                         </div>
                       </div>
@@ -355,13 +580,15 @@ const ProfilePage = () => {
                         <h4 className="flex items-center gap-2 text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Video library</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {creations.videos.map((vid) => (
-                            <Link key={vid._id} href={`/video/detail/${vid._id}`} className="group relative aspect-video rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 dark:border-slate-700">
-                               <img src={formatImageUrl(vid.thumbnail || vid.image)} alt={vid.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-6 flex flex-col justify-end">
-                                  <p className="text-white font-bold text-lg">{vid.title}</p>
-                                  <p className="text-green-400 text-xs font-semibold uppercase tracking-widest flex items-center gap-2"><FaVideo /> Watch Now</p>
-                               </div>
-                            </Link>
+                            <VideoThumb 
+                              key={vid._id}
+                              vid={vid}
+                              formatImageUrl={formatImageUrl}
+                              setActiveDropdown={setActiveDropdown}
+                              activeDropdown={activeDropdown}
+                              handleDeleteItem={handleDeleteItem}
+                              handleEditItem={handleEditItem}
+                            />
                           ))}
                         </div>
                       </div>
@@ -372,18 +599,34 @@ const ProfilePage = () => {
                       <div>
                         <h4 className="flex items-center gap-2 text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Hosted Events</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                           {creations.events.map((evt) => (
-                             <div key={evt._id} className="p-6 bg-gradient-to-br from-purple-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-[2rem] border border-purple-100 dark:border-slate-700 shadow-sm relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 bg-purple-600 text-white rounded-bl-[2rem] text-[10px] font-semibold uppercase tracking-tighter">Hosted</div>
-                                <h5 className="text-xl font-semibold text-black dark:text-white mb-2 pr-12 leading-tight">{evt.title}</h5>
-                                <div className="flex items-center gap-4 text-xs font-bold text-gray-500 mb-4">
-                                   <span className="flex items-center gap-1"><FaCalendarAlt className="text-purple-500" /> {format(new Date(evt.startDate), 'MMM dd')}</span>
-                                   <span className="flex items-center gap-1"><FaTrophy className="text-amber-500" /> {evt.prizePool}</span>
-                                </div>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">{evt.description}</p>
-                                <button className="text-xs font-semibold text-purple-600 uppercase tracking-widest hover:text-purple-800 transition-colors">Manage Event →</button>
-                             </div>
-                           ))}
+                          {creations.events.map((evt) => (
+                            <div key={evt._id} className="p-6 bg-gradient-to-br from-purple-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-[2rem] border border-purple-100 dark:border-slate-700 shadow-sm relative overflow-hidden group">
+                              <div className="absolute top-0 right-0 p-4 bg-purple-600 text-white rounded-bl-[2rem] text-[10px] font-semibold uppercase tracking-tighter">Hosted</div>
+                              
+                              <div className="absolute bottom-6 right-6 z-20">
+                                <button 
+                                  onClick={() => setActiveDropdown(activeDropdown === `event-${evt._id}` ? null : `event-${evt._id}`)}
+                                  className="p-3 bg-white dark:bg-[#160327] border border-gray-100 dark:border-slate-600 shadow-sm text-gray-700 dark:text-gray-200 rounded-full hover:bg-gray-50 transition"
+                                >
+                                  <FaEllipsisV className="text-sm" />
+                                </button>
+                                {activeDropdown === `event-${evt._id}` && (
+                                  <div className="absolute bottom-12 right-0 w-32 bg-white dark:bg-[#160327] rounded-xl shadow-2xl border border-gray-100 dark:border-slate-700 py-1 z-30 overflow-hidden mb-2">
+                                    <button onClick={(e) => handleEditItem('event', evt._id, e)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/30 text-left"><FaEdit/> Edit</button>
+                                    <button onClick={(e) => handleDeleteItem('event', evt._id, e)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-left"><FaTrash/> Delete</button>
+                                  </div>
+                                )}
+                              </div>
+
+                              <h5 className="text-xl font-semibold text-black dark:text-white mb-2 pr-12 leading-tight">{evt.title}</h5>
+                              <div className="flex items-center gap-4 text-xs font-bold text-gray-500 mb-4">
+                                <span className="flex items-center gap-1"><FaCalendarAlt className="text-purple-500" /> {format(new Date(evt.startDate), 'MMM dd')}</span>
+                                <span className="flex items-center gap-1"><FaTrophy className="text-amber-500" /> {evt.prizePool}</span>
+                              </div>
+                              <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">{evt.description}</p>
+                              <Link href={`/events/${evt._id}`} className="text-xs font-semibold text-purple-600 uppercase tracking-widest hover:text-purple-800 transition-colors">Manage Event →</Link>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}
@@ -391,11 +634,11 @@ const ProfilePage = () => {
                     {/* Empty State */}
                     {(!creations.arts?.length && !creations.musics?.length && !creations.videos?.length && !creations.events?.length) && (
                       <div className="text-center py-20 bg-gray-50 dark:bg-[#160327]/20 rounded-[3rem] border-2 border-dashed border-gray-200 dark:border-slate-700">
-                         <div className="w-20 h-20 bg-white dark:bg-[#160327] shadow-xl rounded-full flex items-center justify-center mx-auto mb-6">
-                            <FaPalette className="text-gray-200 text-3xl" />
-                         </div>
-                         <h4 className="text-xl font-bold text-gray-800 dark:text-gray-200">Your Portfolio is Empty</h4>
-                         <p className="text-gray-500 mt-2">Start creating and hosting to build your audience!</p>
+                        <div className="w-20 h-20 bg-white dark:bg-[#160327] shadow-xl rounded-full flex items-center justify-center mx-auto mb-6">
+                          <FaPalette className="text-gray-200 text-3xl" />
+                        </div>
+                        <h4 className="text-xl font-bold text-gray-800 dark:text-gray-200">Your Portfolio is Empty</h4>
+                        <p className="text-gray-500 mt-2">Start creating and hosting to build your audience!</p>
                       </div>
                     )}
                   </div>
@@ -416,9 +659,13 @@ const ProfilePage = () => {
                   {registrations?.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {registrations.map((reg) => (
-                        <div key={reg._id} className="group relative bg-white dark:bg-[#160327] p-6 rounded-[2.5rem] border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
+                        <Link 
+                          key={reg._id} 
+                          href={`/events/${reg.eventId?._id}`}
+                          className="group relative bg-white dark:bg-[#160327] p-6 rounded-[2.5rem] border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 block cursor-pointer"
+                        >
                           <div className="flex items-start gap-4">
-                            <div className="h-14 w-14 rounded-2xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
+                            <div className="h-14 w-14 rounded-2xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                               <FaCalendarAlt className="text-purple-600 text-2xl" />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -428,11 +675,12 @@ const ProfilePage = () => {
                                   </span>
                                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{reg.eventId?.eventType}</span>
                                </div>
-                               <h4 className="text-lg font-semibold text-black dark:text-white truncate">{reg.eventId?.title}</h4>
+                               <h4 className="text-lg font-semibold text-black dark:text-white truncate group-hover:text-purple-600 transition-colors">{reg.eventId?.title}</h4>
                                <p className="text-sm text-gray-500 font-medium mt-1">Starts: {reg.eventId?.startDate ? format(new Date(reg.eventId.startDate), 'MMM dd, yyyy') : 'TBD'}</p>
+                               <p className="text-xs text-purple-600 font-bold uppercase tracking-widest mt-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">View Details <FaArrowLeft className="rotate-180" /></p>
                             </div>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   ) : (

@@ -8,8 +8,12 @@ const Populararts = async () => {
   try {
     // Fetch top 4 most reacted arts
     const response = await artsAPI.getArt({ limit: 8 });
-    products = response.data
-      .sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))
+    products = (response.data || [])
+      .sort((a, b) => {
+        const aLikes = Math.max(0, a.reactions || a.likes?.length || 0);
+        const bLikes = Math.max(0, b.reactions || b.likes?.length || 0);
+        return bLikes - aLikes;
+      })
       .slice(0, 4);
   } catch (error) {
     console.error("Failed to fetch popular arts:", error.message);
@@ -32,7 +36,7 @@ const Populararts = async () => {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {products?.map((arts, index) => (
-            <ArtCard key={index} art={arts} />
+            <ArtCard key={arts._id || index} art={arts} />
           ))}
         </div>
       </div>

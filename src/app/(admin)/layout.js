@@ -2,7 +2,7 @@
 
 import { LOGIN_ROUTE } from "@/constants/routes";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 import Spinner from "@/components/Spinner";
 import Sidebar from "./_components/Slidebar";
@@ -10,6 +10,7 @@ import Sidebar from "./_components/Slidebar";
 const AdminLayout = ({ children }) => {
   const { user } = useSelector((state) => state.auth);
   const router = useRouter();
+  const pathname = usePathname();
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
@@ -30,10 +31,12 @@ const AdminLayout = ({ children }) => {
       </div>
     );
 
+  const isNoSidebarPage = pathname === "/profile" || pathname.includes("/profile/") || pathname === "/dashboard";
+
   return (
-    <div className="relative lg:pl-64">
-      <Sidebar />
-      <section className="bg-gray-50 dark:bg-[#0d0118] min-h-screen py-4 sm:py-8">
+    <div className={`relative ${isNoSidebarPage ? '' : 'lg:pl-64'}`}>
+      {!isNoSidebarPage && <Sidebar />}
+      <section className={`bg-gray-50 dark:bg-[#0d0118] min-h-screen py-4 sm:py-8`}>
         {children}
       </section>
     </div>

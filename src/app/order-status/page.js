@@ -1,12 +1,13 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import orderApi from "@/api/order";
 import { FaCheckCircle, FaTruck, FaBox, FaClock } from "react-icons/fa";
 
 const OrderStatus = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const [orders, setOrders] = useState([]);
@@ -23,8 +24,23 @@ const OrderStatus = () => {
   useEffect(() => {
     if (isAuthenticated) {
       fetchOrders();
+
+      // Handle Payment Success Parameters
+      const pidx = searchParams.get("pidx");
+      const status = searchParams.get("status");
+      const purchaseOrderId = searchParams.get("purchase_order_id");
+
+      if (status === "Completed" && pidx && purchaseOrderId) {
+        orderApi.confirmPayment(purchaseOrderId, { status: "success", pidx })
+          .then(() => {
+            fetchOrders();
+            // Clear URL to avoid reprocessing
+            window.history.replaceState({}, document.title, window.location.pathname);
+          })
+          .catch((err) => console.error("Payment confirmation failed:", err));
+      }
     }
-  }, [isAuthenticated, fetchOrders]);
+  }, [isAuthenticated, fetchOrders, searchParams]);
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
@@ -145,11 +161,11 @@ const OrderStatus = () => {
                           <FaCheckCircle className="text-xs" />
                         </div>
                       </div>
-                      <div className="flex justify-between text-xs text-gray-600 mt-2">
-                        <span>Pending</span>
-                        <span>Confirmed</span>
-                        <span>Shipped</span>
-                        <span>Delivered</span>
+                      <div className="flex justify-between mt-3 px-1">
+                        <span className={`text-[10px] font-bold uppercase tracking-tighter ${order.status === 'pending' ? 'text-yellow-600' : 'text-gray-400'}`}>Pending</span>
+                        <span className={`text-[10px] font-bold uppercase tracking-tighter ${order.status === 'confirmed' ? 'text-blue-600' : 'text-gray-400'}`}>Confirmed</span>
+                        <span className={`text-[10px] font-bold uppercase tracking-tighter ${order.status === 'shipped' ? 'text-purple-600' : 'text-gray-400'}`}>Shipped</span>
+                        <span className={`text-[10px] font-bold uppercase tracking-tighter ${order.status === 'delivered' ? 'text-green-600' : 'text-gray-400'}`}>Delivered</span>
                       </div>
                     </div>
                   </div>

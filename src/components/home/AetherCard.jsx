@@ -9,7 +9,7 @@ const AetherCard = ({ item, type, butterflyImg }) => {
   const isVideo = type === 'video';
   const link = isVideo ? `/video/detail/${item._id}` : `/music/detail/${item._id}`;
   const mainImg = item.imageUrls?.[0] || item.image || item.thumbnail;
-  const mainVideo = isVideo ? item.videoUrls?.[0] : null;
+  const mainVideo = item.videoUrls?.[0] || item.mediaFileUrls?.[0] || (typeof item.media === 'string' && item.media.endsWith('.mp4') ? item.media : null);
   const videoRef = useRef(null);
 
   const handleMouseEnter = () => {
@@ -71,7 +71,7 @@ const AetherCard = ({ item, type, butterflyImg }) => {
          </p>
          <div className="flex items-center justify-between text-[10px] font-bold uppercase text-slate-400 dark:text-purple-400">
             <span className="flex items-center gap-1.5"><FaCircleInfo className="text-primary" /> Enhanced Quality</span>
-            <span className="text-primary px-3 py-1 bg-primary/10 rounded-full">{item.likes?.length || 0} Likes</span>
+            <span className="text-primary px-3 py-1 bg-primary/10 rounded-full">{Math.max(0, item.reactions || item.likes?.length || 0)} Likes</span>
          </div>
       </div>
     </Link>

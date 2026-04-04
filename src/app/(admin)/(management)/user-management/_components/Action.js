@@ -67,16 +67,16 @@ const Action = ({ id, userRoles = [] }) => {
     <div className="flex items-center gap-4 justify-center">
       <button
         onClick={() => setShowModal(true)}
-        className="text-blue-600 cursor-pointer hover:text-blue-800 transition-colors"
+        className="text-blue-600 cursor-pointer hover:text-blue-800 transition-colors flex items-center gap-1"
       >
-        <FaPencil />
+        <FaPencil /> <span className="text-xs font-semibold">Edit</span>
       </button>
 
       <button
         onClick={removeUser}
-        className="text-red-600 cursor-pointer hover:text-red-800 transition-colors"
+        className="text-red-600 cursor-pointer hover:text-red-800 transition-colors flex items-center gap-1"
       >
-        <FaTrash />
+        <FaTrash /> <span className="text-xs font-semibold">Delete</span>
       </button>
 
       <Modal

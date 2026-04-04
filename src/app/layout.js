@@ -1,4 +1,5 @@
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AppProvider from "@/redux/provider";
 import config from "@/config";
 import Footer from "@/components/footer";
@@ -23,9 +24,22 @@ function RootLayout({ children }) {
         <AppProvider>
           <MainLayout>
             <Header />
-            <main>{children}</main>
+            <main className="pt-16">
+               {children}
+               <ToastContainer 
+                  position="bottom-right"
+                  autoClose={3000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                  theme="light"
+                />
+            </main>
             <Footer />
-            <ToastContainer />
           </MainLayout>
         </AppProvider>
       </body>

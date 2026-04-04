@@ -12,6 +12,10 @@ async function deleteEvent(id) {
   return await api.delete(`/api/events/${id}`);
 }
 
+async function updateEvent(id, data) {
+  return await api.put(`/api/events/${id}`, data);
+}
+
 async function getEventsCount() {
   return await api.get(`/api/events/count`);
 }
@@ -33,6 +37,7 @@ export default {
   getEvents,
   getEventById,
   deleteEvent,
+  updateEvent,
   getEventsCount,
   registerForEvent,
   getMyRegistrations,

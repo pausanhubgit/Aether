@@ -59,6 +59,7 @@ async function getLikesAnalytics(merchantId) {
 const artsAPI = {
   createArts,
   deleteArts,
+  deleteArt: deleteArts,
   getArt,
   getArtsCount,
   getArtsById,

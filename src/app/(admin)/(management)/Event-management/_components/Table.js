@@ -101,7 +101,7 @@ const EventTable = () => {
         <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
           <Link
             href={`/Event-management/add`}
-            className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary hover:bg-primary/90"
+            className="flex items-center justify-center px-4 py-2 text-sm font-medium !text-white rounded-lg bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
           >
             <FaPlus className="h-3.5 w-3.5 mr-2" />
             Create Event
@@ -190,6 +190,13 @@ const EventTable = () => {
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex items-center gap-4 justify-center">
+                    <Link
+                      href={`/Event-management/edit/${event._id}`}
+                      className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all flex items-center gap-1.5"
+                    >
+                      <FaPencil className="text-xs" /> 
+                      <span className="text-xs font-semibold">Edit</span>
+                    </Link>
                     <DeleteEventButton id={event._id} />
                   </div>
                 </td>

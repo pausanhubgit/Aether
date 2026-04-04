@@ -17,6 +17,8 @@ import {
 import eventsApi from '@/api/events';
 import { toast } from 'react-toastify';
 import Button from '@/components/Button';
+import { formatImageUrl } from '@/helpers/url';
+import { FaLayerGroup } from 'react-icons/fa';
 
 const EventsPage = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -26,6 +28,8 @@ const EventsPage = () => {
   const [showHostModal, setShowHostModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [eventImage, setEventImage] = useState(null);
+  const [localImageUrl, setLocalImageUrl] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -65,7 +69,15 @@ const EventsPage = () => {
     }
 
     try {
-      await eventsApi.createEvent(formData);
+      const payload = new FormData();
+      Object.keys(formData).forEach((key) => {
+        payload.append(key, formData[key]);
+      });
+      if (eventImage) {
+        payload.append("image", eventImage);
+      }
+
+      await eventsApi.createEvent(payload);
       toast.success("Event launched successfully!");
       setShowHostModal(false);
       setFormData({
@@ -76,6 +88,8 @@ const EventsPage = () => {
         startDate: '',
         endDate: ''
       });
+      setEventImage(null);
+      setLocalImageUrl(null);
       fetchEvents();
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to launch event.");
@@ -184,8 +198,21 @@ const EventsPage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredEvents.map((evt) => (
-              <div key={evt._id} className="group bg-white dark:bg-[#160327] rounded-[2.5rem] p-8 border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 relative flex flex-col">
-                <div className="flex justify-between items-start mb-6">
+              <div key={evt._id} className="group bg-white dark:bg-[#160327] rounded-[2.5rem] border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 relative flex flex-col overflow-hidden">
+                {/* Event Cover Image Overlay */}
+                {evt.image ? (
+                  <div className="absolute inset-0 w-full h-full z-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none">
+                    <img 
+                      src={formatImageUrl(evt.image)} 
+                      alt={evt.title}
+                      className="w-full h-full object-cover" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#160327] to-transparent"></div>
+                  </div>
+                ) : null}
+
+                <div className="p-8 pb-0 relative z-10">
+                  <div className="flex justify-between items-start mb-6">
                   <span className="px-4 py-1.5 bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 text-[10px] font-semibold rounded-full uppercase tracking-widest shadow-sm">
                     {evt.eventType}
                   </span>
@@ -199,8 +226,9 @@ const EventsPage = () => {
                 <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-3 mb-8 leading-relaxed font-medium">
                   {evt.description}
                 </p>
+                </div>
 
-                <div className="mt-auto space-y-6">
+                <div className="mt-auto space-y-6 relative z-10 px-8 pb-8">
                   <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#160327]/50 rounded-2xl">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-amber-100/50 rounded-lg">
@@ -211,6 +239,12 @@ const EventsPage = () => {
                         <p className="text-sm font-bold text-gray-800 dark:text-white">{evt.prizePool || 'Glory & Fame'}</p>
                       </div>
                     </div>
+                    {evt.registrations?.length > 0 && (
+                      <div className="text-right">
+                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Warriors</p>
+                         <p className="text-sm font-bold text-purple-600 dark:text-purple-400">{evt.registrations.length}</p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center justify-between pt-2">
@@ -224,7 +258,15 @@ const EventsPage = () => {
                           </div>
                         )}
                       </div>
-                      <span className="text-xs font-bold text-gray-400">Hosted by <span className="text-gray-700 dark:text-gray-200">{evt.creatorUserId?.name || 'Anonymous'}</span></span>
+                      <span className="text-xs font-bold text-gray-400">
+                        Hosted by{" "}
+                        <Link 
+                          href={evt.creatorUserId?._id ? `/profile/${evt.creatorUserId._id}` : "#"} 
+                          className="text-gray-700 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                        >
+                          {evt.creatorUserId?.name || 'Anonymous'}
+                        </Link>
+                      </span>
                     </div>
                     <div className="flex gap-2">
                        <button 
@@ -233,9 +275,12 @@ const EventsPage = () => {
                        >
                         Register
                       </button>
-                      <button className="px-5 py-2.5 bg-gray-900 dark:bg-[#160327] text-white rounded-xl text-xs font-semibold shadow-lg hover:bg-purple-600 dark:hover:bg-purple-600 transition-all">
-                        Details →
-                      </button>
+                      <Link 
+                        href={`/events/${evt._id}`}
+                        className="px-6 py-2.5 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-[#310c55] dark:to-[#160327] text-white rounded-xl text-xs font-bold shadow-xl shadow-gray-900/20 dark:shadow-purple-900/30 hover:scale-105 hover:-translate-y-0.5 transition-all inline-flex items-center gap-1.5"
+                      >
+                        Details &rarr;
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -336,6 +381,53 @@ const EventsPage = () => {
                     placeholder="Define the rules, submission requirements, and the spirit of your competition..."
                     className="w-full p-4 bg-gray-50 dark:bg-[#160327] border border-gray-100 dark:border-slate-600 rounded-2xl focus:ring-4 focus:ring-purple-500/10 outline-none transition-all dark:text-white resize-none"
                   ></textarea>
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Showdown Cover Image</label>
+                  <div className="flex items-center justify-center w-full">
+                    <label
+                      htmlFor="image-upload-host"
+                      className="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-200 dark:border-slate-600 border-dashed rounded-[2rem] cursor-pointer bg-gray-50 dark:bg-[#160327]/50 hover:bg-gray-100 dark:hover:border-purple-500/50 transition-all overflow-hidden relative group"
+                    >
+                      {localImageUrl ? (
+                        <div className="absolute inset-0 w-full h-full">
+                          <img 
+                            src={localImageUrl} 
+                            alt="Preview" 
+                            className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" 
+                          />
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all">
+                            <FaLayerGroup className="text-3xl text-white mb-2" />
+                            <p className="text-white font-bold text-sm uppercase tracking-widest">Change Cover</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          <div className="w-14 h-14 bg-purple-100 dark:bg-purple-900/20 rounded-2xl flex items-center justify-center mb-4 border border-purple-200 dark:border-purple-800/40">
+                            <FaLayerGroup className="text-2xl text-purple-600" />
+                          </div>
+                          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                            <span className="font-black text-purple-600">Click to upload</span> or drag and drop
+                          </p>
+                          <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Premium Cover Image (PNG, JPG)</p>
+                        </div>
+                      )}
+                      <input
+                        id="image-upload-host"
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            const file = e.target.files[0];
+                            setEventImage(file);
+                            setLocalImageUrl(URL.createObjectURL(file));
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
                 </div>
               </div>
 
