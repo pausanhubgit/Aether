@@ -66,7 +66,7 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className={`relative py-16 md:py-24 overflow-hidden min-h-[500px] transition-colors duration-700 ${slides[currentSlide].bgClass}`}
+      className={`relative py-10 md:py-24 overflow-hidden min-h-[500px] transition-colors duration-700 ${slides[currentSlide].bgClass}`}
     >
       <div className="container mx-auto px-4 relative z-10 w-full overflow-hidden">
         <div 
@@ -75,35 +75,35 @@ const Hero = () => {
         >
           {slides.map((slide) => (
             <div key={slide.id} className="w-full flex-shrink-0">
-              <div className="flex flex-col md:flex-row items-center md:justify-between px-2 md:px-12 w-full">
+              <div className="flex flex-col-reverse md:flex-row items-center md:justify-between px-4 md:px-12 w-full gap-8 md:gap-0">
                 {/* Content */}
-                <div className="md:w-1/2 mb-10 md:mb-0 text-center md:text-left px-4 md:px-0">
-                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 text-gray-900 dark:text-white transition-colors duration-300">
+                <div className="w-full md:w-1/2 text-center md:text-left z-10">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 text-gray-900 dark:text-white transition-colors duration-300">
                     {slide.title}
                   </h1>
-                  <p className="text-xl mb-8 text-gray-700 dark:text-gray-200 transition-colors duration-300">
+                  <p className="text-lg sm:text-xl mb-6 md:mb-8 text-gray-700 dark:text-gray-200 transition-colors duration-300">
                     {slide.subtitle} <span className="font-semibold">{slide.discount}</span>
                   </p>
-                  <div className="flex flex-col md:flex-row justify-center md:justify-start gap-y-3 gap-x-5">
+                  <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-3 sm:gap-4 md:gap-5">
                     <Link
                       href={slide.link}
-                      className={`font-medium px-6 py-3 rounded-lg text-center transition shadow-md ${slide.btn1Class}`}
+                      className={`font-medium px-5 md:px-6 py-2.5 md:py-3 rounded-lg text-center transition shadow-md w-full sm:w-auto ${slide.btn1Class}`}
                     >
                       {slide.btn1}
                     </Link>
                     <Link
                       href={slide.link}
-                      className={`font-medium px-6 py-3 rounded-lg text-center transition shadow-md ${slide.btn2Class}`}
+                      className={`font-medium px-5 md:px-6 py-2.5 md:py-3 rounded-lg text-center transition shadow-md w-full sm:w-auto ${slide.btn2Class}`}
                     >
                       {slide.btn2}
                     </Link>
                   </div>
                 </div>
                 {/* Image */}
-                <div className="md:w-1/2 flex justify-center md:justify-end">
+                <div className="w-full md:w-1/2 flex justify-center md:justify-end px-2 sm:px-4 md:px-0 relative">
                   <Image
                     src={slide.image}
-                    className="max-w-full rounded-xl shadow-xl lg:w-3/4 object-cover aspect-[4/3] bg-white/10"
+                    className="w-full sm:w-4/5 lg:w-3/4 rounded-2xl shadow-xl object-cover aspect-video md:aspect-[4/3] bg-white/10"
                     alt={slide.title}
                     priority={slide.id === 1}
                     style={{ height: "auto" }}
@@ -118,14 +118,14 @@ const Hero = () => {
       {/* Slider Controls */}
       <button 
         onClick={prevSlide}
-        className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 bg-black/10 hover:bg-black/20 text-black dark:bg-white/20 dark:hover:bg-white/40 dark:text-white w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-colors z-20 pointer-events-auto shadow-sm"
+        className="absolute left-1 sm:left-4 md:left-6 top-[30%] md:top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white text-black dark:bg-black/50 dark:hover:bg-black/80 dark:text-white w-8 h-8 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-colors z-20 pointer-events-auto shadow-md backdrop-blur-sm"
         aria-label="Previous Slide"
       >
         &#10094;
       </button>
       <button 
         onClick={nextSlide}
-        className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 bg-black/10 hover:bg-black/20 text-black dark:bg-white/20 dark:hover:bg-white/40 dark:text-white w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-colors z-20 pointer-events-auto shadow-sm"
+        className="absolute right-1 sm:right-4 md:right-6 top-[30%] md:top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white text-black dark:bg-black/50 dark:hover:bg-black/80 dark:text-white w-8 h-8 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-colors z-20 pointer-events-auto shadow-md backdrop-blur-sm"
         aria-label="Next Slide"
       >
         &#10095;
