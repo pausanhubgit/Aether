@@ -1,4 +1,6 @@
 "use client";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { IoMdClose } from "react-icons/io";
 
 const Modal = ({
@@ -9,38 +11,51 @@ const Modal = ({
   info,
   confirmAction,
 }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   function closeModal() {
     setShowModal(false);
   }
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div className={showModal ? "" : "hidden"}>
-      <div className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full min-h-screen">
-        <div className="bg-black fixed top-0 left-0 right-0 bottom-0 opacity-20"></div>
-        <div className="relative bg-white w-max min-w-md rounded-lg shadow-sm dark:bg-[#160327]">
+      <div className="fixed inset-0 z-[9999] flex justify-center items-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none bg-black/60 backdrop-blur-sm">
+        <div className="relative w-max min-w-[500px] mx-auto bg-white dark:bg-[#160327] rounded-3xl shadow-2xl border border-gray-100 dark:border-slate-800 animate-in zoom-in-95 duration-200">
           <button
-            className="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-black rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+            className="absolute top-4 right-4 p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors z-10"
             onClick={closeModal}
           >
             <IoMdClose className="w-5 h-5" />
           </button>
-          <div className="p-4 md:p-5 text-center">
-            {icon}
-            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+          
+          <div className="p-8 md:p-10 text-center">
+            <div className="mb-6">{icon}</div>
+            <h3 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
               {label}
             </h3>
-            {info}
-            {confirmAction}
-            <button
-              className="py-2.5 px-5 ms-3 text-sm font-medium text-black focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-[#160327] dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-              onClick={closeModal}
-            >
-              No, cancel
-            </button>
+            
+            <div className="mb-8">{info}</div>
+            
+            <div className="flex items-center justify-center gap-4">
+                {confirmAction}
+                <button
+                className="px-8 py-2.5 text-sm font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-slate-800/50 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-xl transition shadow-sm border border-gray-100 dark:border-slate-700"
+                onClick={closeModal}
+                >
+                No, cancel
+                </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

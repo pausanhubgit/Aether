@@ -116,10 +116,10 @@ const VideoTable = () => {
         <div className="flex items-center space-x-3">
           <Link
             href={`${VIDEO_MANAGEMENT_ROUTE}/add`}
-            className="flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:scale-105 transition-transform shadow-lg shadow-primary/25"
+            className="flex items-center justify-center px-5 py-2.5 text-sm font-semibold !text-white rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:scale-105 transition-transform shadow-lg shadow-primary/25"
           >
-            <FaPlus className="h-3.5 w-3.5 mr-2" />
-            Add Video
+            <FaPlus className="h-3.5 w-3.5 mr-2 !text-white" />
+            <span className="!text-white">Add Video</span>
           </Link>
           <button
             type="button"
@@ -202,13 +202,13 @@ const VideoTable = () => {
                 </td>
                 <td className="px-6 py-4">
                   <span className="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[11px] font-bold rounded-lg uppercase">
-                    {video.genre || "General"}
+                    {video.subcategory || video.genre || "General"}
                   </span>
                 </td>
                 <td className="px-6 py-4 font-bold">
                   <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                    {video.likes || 0}
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 font-bold px-10"></div>
+                    {video.reactions || video.likes || 0}
                   </div>
                 </td>
                 <td className="px-6 py-4 text-gray-500 dark:text-gray-400 font-medium">

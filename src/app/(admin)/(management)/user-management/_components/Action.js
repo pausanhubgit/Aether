@@ -30,16 +30,26 @@ const Action = ({ id, userRoles = [] }) => {
   }
 
   function update() {
-    // Normalize to uppercase for backend consistency (standard for role-based auth)
+    // Normalize to uppercase for backend consistency
     const normalizedRoles = roles.map(r => r.toUpperCase());
+    const primaryRole = normalizedRoles[0] || "USER";
 
-    usersApi.updateUserRoles(id, { roles: normalizedRoles })
+    // Backend might be case-sensitive (admin vs ADMIN) or expect 'role' vs 'roles'.
+    // We send both with lowercase values to maximize compatibility.
+    const lowercaseRoles = normalizedRoles.map(r => r.toLowerCase());
+    
+    usersApi.updateUserRoles(id, { 
+      roles: lowercaseRoles,
+      role: lowercaseRoles[0] 
+    })
       .then(() => {
-        toast.success(`User update success.`, { autoClose: 1500 });
-        setTimeout(() => window.location.reload(), 1000); // Reload to reflect changes globally
+        toast.success(`User roles updated to: ${lowercaseRoles.join(', ')}`, { autoClose: 1500 });
+        setTimeout(() => window.location.reload(), 1000); 
       })
       .catch((error) => {
-        toast.error(error.response?.data || "User update failed.", { autoClose: 1500 });
+        console.error("User Role Sync Error:", error.response?.data || error.message);
+        const errMsg = error.response?.data?.message || error.response?.data || "User update failed.";
+        toast.error(errMsg, { autoClose: 3500 });
       })
       .finally(() => {
         setShowModal(false);

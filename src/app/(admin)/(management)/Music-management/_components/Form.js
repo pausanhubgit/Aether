@@ -4,11 +4,13 @@ import musicAPI from "@/api/music";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import Image from "next/image";
 import { FaPlus, FaMusic } from "react-icons/fa";
 
 const MusicForm = ({ music, isEditing = false }) => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [musicImages, setMusicImages] = useState([]);
   const [localImageUrls, setLocalImageUrls] = useState([]);
@@ -61,7 +63,8 @@ const MusicForm = ({ music, isEditing = false }) => {
         await musicAPI.updateMusic(music._id, input);
 
         toast.success("Music updated successfully.", { autoClose: 1500 });
-
+        router.push("/Music-management");
+        router.refresh();
         return;
       }
 
@@ -70,6 +73,8 @@ const MusicForm = ({ music, isEditing = false }) => {
       reset();
 
       toast.success("Music created successfully.", { autoClose: 1500 });
+      router.push("/Music-management");
+      router.refresh();
     } catch (error) {
       toast.error(error?.response?.data?.error || "Failed to save music.");
     } finally {
@@ -239,20 +244,54 @@ const MusicForm = ({ music, isEditing = false }) => {
           </label>
         </div>
 
-        {localImageUrls.length > 0 && (
-          <div className="flex items-center gap-3">
-            {localImageUrls.map((url, index) => (
+        <div className="flex items-center gap-4 mt-2">
+          {isEditing && music?.image && (
+            <div className={`relative group transition-all duration-300 ${localImageUrls.length > 0 ? 'opacity-40 scale-90' : 'opacity-100'}`}>
               <Image
-                key={index}
-                height={50}
-                width={50}
-                alt=""
-                src={url}
-                className="h-16 w-16 object-cover p-1 rounded-md bg-slate-300 dark:bg-slate-600"
+                height={80}
+                width={80}
+                alt="Current Cover"
+                src={music.image}
+                className="h-20 w-20 object-cover p-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm"
               />
-            ))}
-          </div>
-        )}
+              <div className="absolute -top-2 -right-2 bg-slate-500 text-[9px] text-white px-2 py-0.5 rounded-full uppercase font-bold shadow-sm">
+                Current
+              </div>
+              {localImageUrls.length > 0 && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-xl">
+                   <p className="text-[10px] text-white font-black bg-blue-600 px-2 py-0.5 rounded-md shadow-lg rotate-12">REPLACING</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {localImageUrls.length > 0 && (
+            <div className="flex items-center gap-3 animate-fade-in">
+              <div className="h-6 w-1 bg-blue-500 rounded-full hidden sm:block" />
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-3">
+                  {localImageUrls.map((url, index) => (
+                    <div key={index} className="relative group animate-scale-in">
+                      <Image
+                        height={80}
+                        width={80}
+                        alt=""
+                        src={url}
+                        className="h-20 w-20 object-cover p-1 rounded-xl bg-white dark:bg-slate-800 border-2 border-blue-500 shadow-md transform group-hover:scale-105 transition-transform"
+                      />
+                      <div className="absolute -top-2 -right-2 bg-blue-600 text-[9px] text-white px-2 py-0.5 rounded-full uppercase font-bold shadow-sm animate-bounce">
+                        New
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-blue-600 dark:text-blue-400 font-bold italic tracking-tight">
+                  {localImageUrls.length} new cover(s) ready
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
 
         <div className="sm:col-span-2">
           <label className="block mb-2 text-sm font-medium text-black dark:text-white">
@@ -289,22 +328,28 @@ const MusicForm = ({ music, isEditing = false }) => {
           </label>
         </div>
 
-        {mediaFileUrls.length > 0 && (
+        {(mediaFileUrls.length > 0 || (isEditing && music?.media)) && (
           <div className="sm:col-span-2 flex flex-col gap-2">
             {mediaFileUrls.map((url, index) => (
-              <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-[#160327] rounded-lg">
-                 <FaMusic className="text-primary" />
-                 <span className="text-sm text-gray-600 dark:text-gray-300">File {index + 1} added</span>
+              <div key={index} className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-200 dark:border-blue-900/30 animate-fade-in">
+                 <FaPlus className="text-blue-600" />
+                 <span className="text-xs text-blue-700 dark:text-blue-300 font-bold tracking-wide uppercase italic">Replacement File {index + 1} Selected</span>
               </div>
             ))}
+            {isEditing && music?.media && mediaFileUrls.length === 0 && (
+                <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <FaMusic className="text-slate-500" />
+                    <span className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-widest break-all">Active Source: {music.media.split('/').pop()}</span>
+                </div>
+            )}
           </div>
         )}
       </div>
 
       <Button
-        label={isEditing ? "Update & Save Music" : "Save & Upload Music"}
+        label={isEditing ? "Update & Save Music Track" : "Save & Upload Music"}
         loading={loading}
-        className="mt-4 px-12 text-center sm:mt-6 bg-blue-600 !text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20"
+        className="mt-6 px-16 py-4 text-center sm:mt-10 bg-gradient-to-r from-blue-600 to-cyan-600 !text-white hover:from-blue-700 hover:to-cyan-700 shadow-xl shadow-blue-600/25 rounded-2xl font-bold uppercase tracking-widest text-xs transition-all active:scale-95"
       />
     </form>
   );

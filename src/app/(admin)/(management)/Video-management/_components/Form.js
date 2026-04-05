@@ -4,11 +4,13 @@ import videoAPI from "@/api/video";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import Image from "next/image";
 import { FaPlus, FaVideo } from "react-icons/fa";
 
 const VideoForm = ({ video, isEditing = false }) => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [videoImages, setVideoImages] = useState([]);
   const [localImageUrls, setLocalImageUrls] = useState([]);
@@ -62,7 +64,8 @@ const VideoForm = ({ video, isEditing = false }) => {
         await videoAPI.updateVideo(video._id, input);
 
         toast.success("Video updated successfully.", { autoClose: 1500 });
-
+        router.push("/Video-management");
+        router.refresh();
         return;
       }
 
@@ -71,6 +74,8 @@ const VideoForm = ({ video, isEditing = false }) => {
       reset();
 
       toast.success("Video created successfully.", { autoClose: 1500 });
+      router.push("/Video-management");
+      router.refresh();
     } catch (error) {
       toast.error(error?.response?.data?.error || "Failed to save video.");
     } finally {
@@ -251,20 +256,54 @@ const VideoForm = ({ video, isEditing = false }) => {
           </label>
         </div>
 
-        {localImageUrls.length > 0 && (
-          <div className="flex items-center gap-3">
-            {localImageUrls.map((url, index) => (
+        <div className="flex items-center gap-4 mt-2">
+          {isEditing && video?.image && (
+            <div className={`relative group transition-all duration-300 ${localImageUrls.length > 0 ? 'opacity-40 scale-90' : 'opacity-100'}`}>
               <Image
-                key={index}
-                height={50}
-                width={50}
-                alt=""
-                src={url}
-                className="h-16 w-16 object-cover p-1 rounded-md bg-slate-300 dark:bg-slate-600"
+                height={80}
+                width={80}
+                alt="Current Primary"
+                src={video.image}
+                className="h-20 w-20 object-cover p-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm"
               />
-            ))}
-          </div>
-        )}
+              <div className="absolute -top-2 -right-2 bg-slate-500 text-[9px] text-white px-2 py-0.5 rounded-full uppercase font-bold shadow-sm">
+                Current
+              </div>
+              {localImageUrls.length > 0 && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-xl">
+                   <p className="text-[10px] text-white font-black bg-green-600 px-2 py-0.5 rounded-md shadow-lg rotate-12">REPLACING</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {localImageUrls.length > 0 && (
+            <div className="flex items-center gap-3 animate-fade-in">
+              <div className="h-6 w-1 bg-green-500 rounded-full hidden sm:block" />
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-3">
+                  {localImageUrls.map((url, index) => (
+                    <div key={index} className="relative group animate-scale-in">
+                      <Image
+                        height={80}
+                        width={80}
+                        alt=""
+                        src={url}
+                        className="h-20 w-20 object-cover p-1 rounded-xl bg-white dark:bg-slate-800 border-2 border-green-500 shadow-md transform group-hover:scale-105 transition-transform"
+                      />
+                      <div className="absolute -top-2 -right-2 bg-green-600 text-[9px] text-white px-2 py-0.5 rounded-full uppercase font-bold shadow-sm animate-bounce">
+                        New
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-green-600 dark:text-green-400 font-bold italic tracking-tight">
+                  New thumbnail ready for upload
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
 
         <div className="sm:col-span-2">
           <label className="block mb-2 text-sm font-medium text-black dark:text-white">
@@ -301,22 +340,28 @@ const VideoForm = ({ video, isEditing = false }) => {
           </label>
         </div>
 
-        {mediaFileUrls.length > 0 && (
+        {(mediaFileUrls.length > 0 || (isEditing && video?.media)) && (
           <div className="sm:col-span-2 flex flex-col gap-2">
             {mediaFileUrls.map((url, index) => (
-              <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-[#160327] rounded-lg">
-                 <FaVideo className="text-primary" />
-                 <span className="text-sm text-gray-600 dark:text-gray-300">Video {index + 1} added</span>
+              <div key={index} className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-200 dark:border-green-900/30 animate-fade-in">
+                 <FaPlus className="text-green-600" />
+                 <span className="text-xs text-green-700 dark:text-green-300 font-bold tracking-wide uppercase italic">New Source Video Selected</span>
               </div>
             ))}
+            {isEditing && video?.media && mediaFileUrls.length === 0 && (
+                <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <FaVideo className="text-slate-500" />
+                    <span className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-widest break-all">Active Stream: {video.media.split('/').pop()}</span>
+                </div>
+            )}
           </div>
         )}
       </div>
 
       <Button
-        label={isEditing ? "Update & Save Video" : "Save & Upload Video"}
+        label={isEditing ? "Update & Save Video Studio" : "Confirm & Upload Video"}
         loading={loading}
-        className="mt-4 px-12 text-center sm:mt-6 bg-green-600 !text-white hover:bg-green-700 shadow-lg shadow-green-600/20"
+        className="mt-6 px-16 py-4 text-center sm:mt-10 bg-gradient-to-r from-green-600 to-emerald-600 !text-white hover:from-green-700 hover:to-emerald-700 shadow-xl shadow-green-600/25 rounded-2xl font-bold uppercase tracking-widest text-xs transition-all active:scale-95"
       />
     </form>
   );

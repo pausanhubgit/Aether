@@ -117,10 +117,10 @@ const ArtsTable = () => {
         <div className="flex items-center space-x-3">
           <Link
             href={`${ART_MANAGEMENT_ROUTE}/add`}
-            className="flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:scale-105 transition-transform shadow-lg shadow-primary/25"
+            className="flex items-center justify-center px-5 py-2.5 text-sm font-semibold !text-white rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:scale-105 transition-transform shadow-lg shadow-primary/25"
           >
-            <FaPlus className="h-3.5 w-3.5 mr-2" />
-            Add Art
+            <FaPlus className="h-3.5 w-3.5 mr-2 !text-white" />
+            <span className="!text-white">Add Art</span>
           </Link>
           <button
             type="button"
@@ -197,7 +197,7 @@ const ArtsTable = () => {
                       />
                     </div>
                     <div>
-                      <span className="block">{art.name || "Untitled Art"}</span>
+                      <span className="block">{art.title || "Untitled Art"}</span>
                       <span className="text-[11px] text-gray-400 font-normal">{art.brand || "Original Series"}</span>
                     </div>
                   </div>

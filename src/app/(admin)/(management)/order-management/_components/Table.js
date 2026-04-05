@@ -58,8 +58,6 @@ const OrdersTable = () => {
         ? await orderApi.getOrders()
         : await orderApi.getOrdersByMerchant();
 
-      console.log(response);
-
       setOrders(response.data);
     } catch (error) {
       toast.error(error.response.data, { autoClose: 1500 });
@@ -161,7 +159,7 @@ const OrdersTable = () => {
                   {order.createdAt ? format(new Date(order.createdAt), "dd MMM, yyyy") : "N/A"}
                 </td>
                 <td className="px-4 py-2 sticky right-0 bg-white dark:bg-[#160327] shadow-[-5px_0_10px_rgba(0,0,0,0.02)] group-hover:bg-gray-50 dark:group-hover:bg-[#1c0433] transition-colors">
-                  <Action id={order._id} orderStatus={order.status} />
+                  <Action order={order} onUpdate={getAllOrders} />
                 </td>
               </tr>
             ))}

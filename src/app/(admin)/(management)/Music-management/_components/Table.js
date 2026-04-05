@@ -115,10 +115,10 @@ const MusicTable = () => {
         <div className="flex items-center space-x-3">
           <Link
             href={`${MUSIC_MANAGEMENT_ROUTE}/add`}
-            className="flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white rounded-xl bg-gradient-to-r from-blue-600 to-blue-400 hover:scale-105 transition-transform shadow-lg shadow-blue-500/25"
+            className="flex items-center justify-center px-5 py-2.5 text-sm font-semibold !text-white rounded-xl bg-gradient-to-r from-blue-600 to-blue-400 hover:scale-105 transition-transform shadow-lg shadow-blue-500/25"
           >
-            <FaPlus className="h-3.5 w-3.5 mr-2" />
-            Upload Music
+            <FaPlus className="h-3.5 w-3.5 mr-2 !text-white" />
+            <span className="!text-white">Upload Music</span>
           </Link>
           <button
             type="button"
@@ -201,13 +201,13 @@ const MusicTable = () => {
                 </td>
                 <td className="px-6 py-4">
                   <span className="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-semibold rounded-lg uppercase">
-                    {music.genre || "N/A"}
+                    {music.subcategory || music.genre || "N/A"}
                   </span>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300">
-                    <div className="w-1.5 h-1.5 rounded-full bg-red-400"></div>
-                    <span className="font-bold">{music.likes || 0}</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-400 font-bold px-10 "></div>
+                    <span className="font-bold">{music.reactions || music.likes || 0}</span>
                   </div>
                 </td>
                 <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase">

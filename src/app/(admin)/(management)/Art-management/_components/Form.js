@@ -4,12 +4,14 @@ import artsAPI from "@/api/arts";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import Button from "@/components/Button";
 import Image from "next/image";
 
 const ArtForm = ({ art, isEditing = false }) => {
   const { user } = useSelector((state) => state.auth);
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [artImages, setArtImages] = useState([]);
   const [localImageUrls, setLocalImageUrls] = useState([]);
@@ -30,8 +32,8 @@ const ArtForm = ({ art, isEditing = false }) => {
     formdata.append("price", data.price);
     formdata.append("category", data.category);
     
-    // Non-standard fields (artist, brand, stock) removed to align with standard artwork schema
     if (data.description) formdata.append("description", data.description);
+    if (data.stock !== undefined) formdata.append("stock", Number(data.stock));
     
     // Explicitly add merchantId if available from session
     if (user?._id || user?.id) {
@@ -60,17 +62,17 @@ const ArtForm = ({ art, isEditing = false }) => {
     try {
       if (isEditing) {
         await artsAPI.updateArt(art._id, input);
-
         toast.success("Art updated successfully.", { autoClose: 1500 });
-
+        router.push("/Art-management");
+        router.refresh();
         return;
       }
 
       await artsAPI.createArts(input);
-
       reset();
-
       toast.success("Art created successfully.", { autoClose: 1500 });
+      router.push("/Art-management");
+      router.refresh();
     } catch (error) {
       // Robust error reporting to catch backend validation or auth issues
       if (error.response?.status === 403) {
@@ -139,6 +141,26 @@ const ArtForm = ({ art, isEditing = false }) => {
             })}
           />
           <p className="text-red-500 text-sm m-2">{errors.category?.message}</p>
+        </div>
+        <div>
+          <label
+            htmlFor="stock"
+            className="block mb-2 text-sm font-medium text-black dark:text-white"
+          >
+            Available Stock
+          </label>
+          <input
+            type="number"
+            id="stock"
+            className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg block w-full p-2.5 dark:bg-[#160327] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+            placeholder="Quantity (e.g. 10)"
+            {...register("stock", {
+              required: "Stock quantity is required.",
+              valueAsNumber: true,
+              min: { value: 0, message: "Stock cannot be negative." }
+            })}
+          />
+          <p className="text-red-500 text-sm m-2">{errors.stock?.message}</p>
         </div>
         <div className="sm:col-span-2">
           <label
@@ -210,26 +232,60 @@ const ArtForm = ({ art, isEditing = false }) => {
           </label>
         </div>
 
-        {localImageUrls.length > 0 && (
-          <div className="flex items-center gap-3">
-            {localImageUrls.map((url, index) => (
+        <div className="flex items-center gap-4 mt-2">
+          {isEditing && art?.image && (
+            <div className={`relative group transition-all duration-300 ${localImageUrls.length > 0 ? 'opacity-40 scale-90' : 'opacity-100'}`}>
               <Image
-                key={index}
-                height={64}
-                width={64}
-                alt=""
-                src={url}
-                className="object-cover p-1 rounded-md bg-slate-300 dark:bg-slate-600"
+                height={80}
+                width={80}
+                alt="Current Art"
+                src={art.image}
+                className="h-20 w-20 object-cover p-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm"
               />
-            ))}
-          </div>
-        )}
+              <div className="absolute -top-2 -right-2 bg-slate-500 text-[9px] text-white px-2 py-0.5 rounded-full uppercase font-bold shadow-sm">
+                Current
+              </div>
+              {localImageUrls.length > 0 && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-xl">
+                   <p className="text-[10px] text-white font-black bg-purple-600 px-2 py-0.5 rounded-md shadow-lg rotate-12">REPLACING</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {localImageUrls.length > 0 && (
+            <div className="flex items-center gap-3 animate-fade-in">
+              <div className="h-6 w-1 bg-purple-500 rounded-full hidden sm:block" />
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-3">
+                  {localImageUrls.map((url, index) => (
+                    <div key={index} className="relative group animate-scale-in">
+                      <Image
+                        height={80}
+                        width={80}
+                        alt=""
+                        src={url}
+                        className="h-20 w-20 object-cover p-1 rounded-xl bg-white dark:bg-slate-800 border-2 border-purple-500 shadow-md transform group-hover:scale-105 transition-transform"
+                      />
+                      <div className="absolute -top-2 -right-2 bg-purple-600 text-[9px] text-white px-2 py-0.5 rounded-full uppercase font-bold shadow-sm animate-bounce">
+                        New
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-purple-600 dark:text-purple-400 font-bold italic tracking-tight">
+                  {localImageUrls.length} new selection(s) ready for upload
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <Button
-        label={isEditing ? "Update & Save Art" : "Save & Upload Art"}
+        label={isEditing ? "Update & Save Art Piece" : "Confirm & Upload Art"}
         loading={loading}
-        className="mt-4 px-12 text-center sm:mt-6 bg-purple-600 !text-white hover:bg-purple-700 shadow-lg shadow-purple-600/20"
+        className="mt-6 px-16 py-4 text-center sm:mt-10 bg-gradient-to-r from-purple-600 to-indigo-600 !text-white hover:from-purple-700 hover:to-indigo-700 shadow-xl shadow-purple-600/25 rounded-2xl font-bold uppercase tracking-widest text-xs transition-all active:scale-95"
       />
     </form>
   );

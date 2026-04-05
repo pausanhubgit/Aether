@@ -148,29 +148,51 @@ const EventForm = ({ eventData, isEditing = false }) => {
           <div className="flex items-center justify-center w-full">
             <label
               htmlFor="image-upload"
-              className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-[2rem] cursor-pointer bg-gray-50 dark:bg-[#0d0118] hover:bg-gray-100 dark:border-purple-900/40 dark:hover:border-purple-500/50 transition-all overflow-hidden relative group"
+              className="flex flex-col items-center justify-center w-full h-72 border-2 border-gray-300 border-dashed rounded-[2.5rem] cursor-pointer bg-gray-50 dark:bg-[#0d0118] hover:bg-gray-100 dark:border-purple-900/40 dark:hover:border-purple-500/50 transition-all overflow-hidden relative group"
             >
               {localImageUrl || (isEditing && eventData?.image) ? (
-                <div className="absolute inset-0 w-full h-full">
-                   <img 
-                    src={localImageUrl || eventData?.image} 
-                    alt="Preview" 
-                    className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" 
-                  />
-                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all">
-                      <FaLayerGroup className="text-3xl text-white mb-2" />
-                      <p className="text-white font-bold text-sm uppercase tracking-widest">Change Cover</p>
+                <div className="absolute inset-0 w-full h-full p-2">
+                   <div className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-inner">
+                    <img 
+                      src={localImageUrl || eventData?.image} 
+                      alt="Preview" 
+                      className={`w-full h-full object-cover transition-all duration-500 ${localImageUrl ? 'scale-105 brightness-110' : 'opacity-70 group-hover:opacity-50'}`} 
+                    />
+                    
+                    {/* Replacing Overlay */}
+                    {localImageUrl && isEditing && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-purple-600/20 backdrop-blur-[2px]">
+                         <div className="bg-purple-600 text-white px-4 py-1 rounded-full font-black text-[10px] uppercase tracking-tighter shadow-xl rotate-3 animate-pulse">
+                           Replacing Original Cover
+                         </div>
+                      </div>
+                    )}
+
+                    {!localImageUrl && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/10 group-hover:bg-black/30 transition-all">
+                        <div className="p-3 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-lg mb-2">
+                            <FaLayerGroup className="text-2xl text-white" />
+                        </div>
+                        <p className="text-white font-black text-xs uppercase tracking-widest shadow-sm">Change Event Image</p>
+                      </div>
+                    )}
+
+                    {localImageUrl && (
+                       <div className="absolute top-4 right-4 bg-purple-600 text-[10px] text-white px-3 py-1 rounded-full uppercase font-black shadow-lg animate-bounce">
+                          New Selection
+                       </div>
+                    )}
                    </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/20 rounded-2xl flex items-center justify-center mb-4 border border-purple-200 dark:border-purple-800/40">
-                    <FaLayerGroup className="text-2xl text-purple-600" />
+                  <div className="w-20 h-20 bg-purple-100 dark:bg-purple-900/20 rounded-[1.5rem] flex items-center justify-center mb-4 border border-purple-200 dark:border-purple-800/40 shadow-sm">
+                    <FaLayerGroup className="text-3xl text-purple-600" />
                   </div>
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                     <span className="font-black text-purple-600">Click to upload</span> or drag and drop
                   </p>
-                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Premium Cover Image (PNG, JPG)</p>
+                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Premium Showdown Banner (PNG, JPG)</p>
                 </div>
               )}
               <input
@@ -192,9 +214,9 @@ const EventForm = ({ eventData, isEditing = false }) => {
       </div>
 
       <Button
-        label={isEditing ? "Update Showdown" : "Launch Showdown"}
+        label={isEditing ? "Update & Save Showdown" : "Launch Premium Showdown"}
         loading={loading}
-        className="mt-8 w-full py-4 bg-purple-600 !text-white font-bold rounded-2xl shadow-xl shadow-purple-600/20 hover:scale-[1.02] transform transition-all"
+        className="mt-10 w-full py-5 bg-gradient-to-r from-purple-600 to-indigo-600 !text-white font-black uppercase tracking-[0.2em] text-xs rounded-[2rem] shadow-2xl shadow-purple-600/30 hover:scale-[1.02] active:scale-95 transform transition-all"
       />
     </form>
   );

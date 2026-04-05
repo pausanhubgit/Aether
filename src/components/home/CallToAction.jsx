@@ -5,7 +5,7 @@ const CallToAction = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="mb-10 text-center">
           <h2 className="text-4xl font-semibold mb-4 text-white uppercase tracking-wider">
-            Join Our <span className="text-secondary">Newsletter</span>
+            Join Our <span className="text-secondary dark:text-white">Newsletter</span>
           </h2>
           <p className="text-white/80 max-w-xl mx-auto text-lg font-medium">
             Stay updated with the latest arrivals, exclusive collections, and community events directly in your inbox.
