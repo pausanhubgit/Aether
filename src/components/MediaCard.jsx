@@ -428,9 +428,9 @@ export default function MediaCard({ item, type, view }) {
     );
   }
 
-  // ─────────────────────────────────────────────────────────
-  // ART GRID VIEW — Full cover hover card
-  // ─────────────────────────────────────────────────────────
+
+  // ART GRID VIEW — Full c─────over hover card
+
   return (
     <div className="group relative aspect-[3/4] md:aspect-[4/5] overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-slate-900 shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/30 h-full min-h-[260px] sm:min-h-[320px]">
       {/* Background Media */}
