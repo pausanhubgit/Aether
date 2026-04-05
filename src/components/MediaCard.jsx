@@ -396,20 +396,20 @@ export default function MediaCard({ item, type, view }) {
               {item.description || "Experience exceptional quality content curated from our top tier creators."}
             </p>
           </div>
-          <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-purple-900/20">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-slate-100 dark:border-purple-900/20 gap-3">
             {item.createdBy && (
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] text-slate-400 uppercase font-bold">Artist</span>
-                <Link href={`/profile/${item.createdBy._id}`} className="text-sm font-bold text-primary hover:underline truncate max-w-[150px]">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-[10px] text-slate-400 uppercase font-bold shrink-0">Artist</span>
+                <Link href={`/profile/${item.createdBy._id}`} className="text-sm font-bold text-primary hover:underline truncate max-w-[140px]">
                   {item.createdBy.name || item.createdBy.username}
                 </Link>
               </div>
             )}
-            <div className="flex items-center gap-6">
-              <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-primary transition">
+            <div className="flex items-center gap-3 shrink-0">
+              <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition whitespace-nowrap">
                 <FaComment className="opacity-70" /> {item.comments?.length || 0} Comments
               </button>
-              <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="bg-primary !text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95 whitespace-nowrap">
+              <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="bg-primary !text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95 whitespace-nowrap">
                 View {viewLabel}
               </Link>
             </div>
