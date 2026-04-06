@@ -91,7 +91,7 @@ export default function MediaCard({ item, type, view }) {
   };
 
   const mediaUrl = item.audioUrls?.[0] || item.videoUrls?.[0] || item.imageUrls?.[0] || item.url || item.image;
-  const isVideo = type === "video" || (type === "music" && (mediaUrl?.toLowerCase().endsWith(".mp4") || mediaUrl?.toLowerCase().endsWith(".webm") || mediaUrl?.toLowerCase().endsWith(".ogg") || mediaUrl?.toLowerCase().endsWith(".mov")));
+  const isVideo = type === "video" || (type === "music" && (mediaUrl && (mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov|mkv)$/i) || mediaUrl.includes('/video/'))));
   const isOwner = user && item.createdBy && (user._id === (item.createdBy._id || item.createdBy) || user.id === (item.createdBy._id || item.createdBy));
 
   const handleDelete = async (e) => {
@@ -119,12 +119,11 @@ export default function MediaCard({ item, type, view }) {
     return (
       <div className="group relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:-translate-y-1 bg-gradient-to-br from-[#12002a] via-[#1e0540] to-[#0a001a] border border-purple-800/30 flex flex-col">
         {/* Animated background rings or Video */}
-        <div className="relative h-48 flex items-center justify-center overflow-hidden bg-black">
-          {(item.videoUrls?.length > 0 || (mediaUrl && mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i))) ? (
+        <div className="relative h-56 flex items-center justify-center overflow-hidden bg-black">
+          {(item.videoUrls?.length > 0 || item.videoUrl || (mediaUrl && (mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i) || mediaUrl.includes('/video/')))) ? (
             <video
               controls
-              poster={item.imageUrls?.[0] || item.thumbnail || item.image || "/assets/images/placeholder.jpg"}
-              src={item.videoUrls?.[0] || mediaUrl}
+              src={item.videoUrls?.[0] || item.videoUrl || mediaUrl}
               className="w-full h-full object-cover"
             />
           ) : (
@@ -180,7 +179,7 @@ export default function MediaCard({ item, type, view }) {
           </div>
 
           {/* Audio player */}
-          {!(item.videoUrls?.length > 0 || (mediaUrl && mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i))) && (
+          {!(item.videoUrls?.length > 0 || item.videoUrl || (mediaUrl && (mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i) || mediaUrl.includes('/video/')))) && (
             <audio
               controls
               src={item.audioUrls?.[0] || mediaUrl}
@@ -233,34 +232,17 @@ export default function MediaCard({ item, type, view }) {
     return (
       <div className="group relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 hover:-translate-y-1 bg-[#00080f] border border-blue-900/30 flex flex-col">
         {/* Thumbnail / Video preview area */}
-        <div className="relative aspect-video overflow-hidden bg-black">
-          {thumbnail ? (
-            <Image
-              src={thumbnail}
-              alt={item.title || "Video thumbnail"}
-              fill
-              sizes="(max-width: 768px) 100vw, 400px"
-              className="object-cover group-hover:scale-105 transition-transform duration-700"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-900 to-blue-950">
-              <FaFilm className="text-blue-400 text-5xl opacity-50" />
-            </div>
-          )}
-
-          {/* Dark overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-          {/* Play button overlay */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-500/80 transition-all duration-300 shadow-2xl">
-              <FaPlay className="text-white text-lg ml-1" />
-            </div>
-          </div>
+        <div className="relative aspect-video sm:min-h-[220px] overflow-hidden bg-black flex items-center justify-center group">
+          <video
+            controls
+            src={mediaUrl}
+            className="w-full h-full object-cover z-0 relative"
+            preload="metadata"
+          />
 
           {/* Duration / genre badge */}
-          <div className="absolute top-3 left-3 z-10">
-            <span className="bg-black/60 backdrop-blur-sm border border-white/10 text-blue-200 px-2.5 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest">
+          <div className="absolute top-3 left-3 z-10 pointer-events-none">
+            <span className="bg-black/60 backdrop-blur-sm border border-white/10 text-blue-200 px-2.5 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest pointer-events-auto">
               {item.genre || item.category || "Video"}
             </span>
           </div>
