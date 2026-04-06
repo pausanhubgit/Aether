@@ -30,8 +30,16 @@ export default function MediaCard({ item, type, view }) {
   const { user } = useSelector((state) => state.auth);
   const [likes, setLikes] = useState(Math.max(0, item.reactions || item.likes?.length || 0));
   const [liked, setLiked] = useState(false);
+  const [commentsCount, setCommentsCount] = useState(item.comments?.length || 0);
   const [showComments, setShowComments] = useState(false);
   const isListView = view === LIST_VIEW;
+
+  React.useEffect(() => {
+    if (user && item.likes && Array.isArray(item.likes)) {
+       const uId = user._id || user.id;
+       setLiked(item.likes.some(id => (id._id || id) === uId));
+    }
+  }, [user, item.likes]);
 
   const getApi = () => {
     if (type === "music") return musicApi;
@@ -110,37 +118,48 @@ export default function MediaCard({ item, type, view }) {
   if (!isListView && type === "music") {
     return (
       <div className="group relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:-translate-y-1 bg-gradient-to-br from-[#12002a] via-[#1e0540] to-[#0a001a] border border-purple-800/30 flex flex-col">
-        {/* Animated background rings */}
-        <div className="relative h-48 flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 to-indigo-900/80" />
-          {/* Decorative rings */}
-          <div className="absolute w-40 h-40 rounded-full border border-purple-500/20 animate-ping" style={{ animationDuration: '3s' }} />
-          <div className="absolute w-28 h-28 rounded-full border border-purple-400/30 animate-ping" style={{ animationDuration: '2s' }} />
-          <div className="absolute w-16 h-16 rounded-full border border-purple-300/40 animate-ping" style={{ animationDuration: '1.5s' }} />
+        {/* Animated background rings or Video */}
+        <div className="relative h-48 flex items-center justify-center overflow-hidden bg-black">
+          {(item.videoUrls?.length > 0 || (mediaUrl && mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i))) ? (
+            <video
+              controls
+              poster={item.imageUrls?.[0] || item.thumbnail || item.image || "/assets/images/placeholder.jpg"}
+              src={item.videoUrls?.[0] || mediaUrl}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <>
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 to-indigo-900/80" />
+              {/* Decorative rings */}
+              <div className="absolute w-40 h-40 rounded-full border border-purple-500/20 animate-ping" style={{ animationDuration: '3s' }} />
+              <div className="absolute w-28 h-28 rounded-full border border-purple-400/30 animate-ping" style={{ animationDuration: '2s' }} />
+              <div className="absolute w-16 h-16 rounded-full border border-purple-300/40 animate-ping" style={{ animationDuration: '1.5s' }} />
 
-          {/* Vinyl record visual */}
-          <div className="relative z-10 flex items-center justify-center">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-700 to-indigo-900 border-4 border-purple-500/50 flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-700">
-              <div className="w-8 h-8 rounded-full bg-[#12002a] border-2 border-purple-400/60 flex items-center justify-center">
-                <FaMusic className="text-purple-300 text-sm" />
+              {/* Vinyl record visual */}
+              <div className="relative z-10 flex items-center justify-center">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-700 to-indigo-900 border-4 border-purple-500/50 flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-700">
+                  <div className="w-8 h-8 rounded-full bg-[#12002a] border-2 border-purple-400/60 flex items-center justify-center">
+                    <FaMusic className="text-purple-300 text-sm" />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
 
           {/* Owner actions */}
           {isOwner && (
             <div className="absolute top-3 right-3 z-20 flex gap-2">
-              <Link href={`/dashboard/${type}/edit/${item._id}`} className="p-2 bg-black/40 backdrop-blur-sm rounded-full text-blue-400 hover:text-blue-300 hover:bg-black/60 transition-all" title="Edit">
+              <Link href={`/dashboard/${type}/edit/${item._id}`} className="p-2 bg-black/40 backdrop-blur-sm rounded-full text-blue-400 hover:text-blue-300 hover:bg-black/60 transition-all pointer-events-auto" title="Edit">
                 <FaEdit size={13} />
               </Link>
-              <button onClick={handleDelete} className="p-2 bg-black/40 backdrop-blur-sm rounded-full text-red-400 hover:text-red-300 hover:bg-black/60 transition-all" title="Delete">
+              <button onClick={handleDelete} className="p-2 bg-black/40 backdrop-blur-sm rounded-full text-red-400 hover:text-red-300 hover:bg-black/60 transition-all pointer-events-auto" title="Delete">
                 <FaTrash size={13} />
               </button>
             </div>
           )}
 
           {/* Genre badge */}
-          <div className="absolute top-3 left-3 z-20">
+          <div className="absolute top-3 left-3 z-20 pointer-events-auto">
             <span className="bg-white/10 backdrop-blur-md border border-white/20 text-purple-200 px-2.5 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest">
               {item.genre || item.category || "Music"}
             </span>
@@ -161,12 +180,14 @@ export default function MediaCard({ item, type, view }) {
           </div>
 
           {/* Audio player */}
-          <audio
-            controls
-            src={item.audioUrls?.[0] || mediaUrl}
-            className="w-full h-9 rounded-lg"
-            style={{ filter: 'invert(1) hue-rotate(240deg) brightness(0.9)' }}
-          />
+          {!(item.videoUrls?.length > 0 || (mediaUrl && mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i))) && (
+            <audio
+              controls
+              src={item.audioUrls?.[0] || mediaUrl}
+              className="w-full h-9 rounded-lg"
+              style={{ filter: 'invert(1) hue-rotate(240deg) brightness(0.9)' }}
+            />
+          )}
 
           {/* Actions */}
           <div className="flex items-center justify-between pt-1 border-t border-purple-800/40">
@@ -175,9 +196,9 @@ export default function MediaCard({ item, type, view }) {
                 {liked ? <FaHeart size={14} /> : <FaRegHeart size={14} />}
                 <span>{likes}</span>
               </button>
-              <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1.5 text-xs font-bold text-purple-400 hover:text-white transition-colors">
+              <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1.5 text-xs font-bold text-purple-400 hover:text-white transition-colors" title="Comment">
                 <FaComment size={13} />
-                <span>{item.comments?.length || 0}</span>
+                <span>{commentsCount}</span>
               </button>
             </div>
             <div className="flex items-center gap-2">
@@ -378,7 +399,7 @@ export default function MediaCard({ item, type, view }) {
                 </button>
                 <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1.5 text-slate-400 hover:text-primary transition" title="Comment">
                   <FaComment size={18} />
-                  <span className="text-xs font-bold font-mono">{item.comments?.length || 0}</span>
+                  <span className="text-xs font-bold font-mono">{commentsCount}</span>
                 </button>
                 <button onClick={handleShare} className="text-slate-400 hover:text-primary transition" title="Share">
                   <FaShare size={18} />
@@ -437,20 +458,38 @@ export default function MediaCard({ item, type, view }) {
       {/* Background Media */}
       <div className="absolute inset-0 z-0">
         <MediaContent className="w-full h-full" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0118] via-[#0d0118]/20 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0118]/80 via-[#0d0118]/10 to-transparent transition-opacity duration-500 group-hover:opacity-90 pointer-events-none" />
       </div>
 
-      {/* Overlay Content */}
-      <div className="absolute inset-0 z-10 flex flex-col justify-between p-3 sm:p-6">
-        {/* Top Badge — always visible */}
-        <div className="flex justify-between items-start">
-          <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest">
+      {/* Overlay Content (pointer-events-none so touches pass to video, re-enabled on inner parts) */}
+      <div className="absolute inset-0 z-10 flex flex-col justify-between p-3 sm:p-6 pointer-events-none">
+        {/* Top Badge & Action Icons */}
+        <div className="flex justify-between items-start pointer-events-auto">
+          <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest shadow-lg">
             {item.subcategory || item.genre || item.category || type}
           </span>
+          <div className="flex flex-col gap-2">
+            <button onClick={handleLike} className={`p-2 rounded-full backdrop-blur-md border transition-all flex items-center justify-center gap-1 ${liked ? 'bg-red-500 text-white border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]' : 'bg-black/40 border-white/10 text-white hover:bg-black/60 hover:text-red-400'}`} title="Like">
+              {liked ? <FaHeart size={13} /> : <FaRegHeart size={13} />}
+              {likes > 0 && <span className="text-[10px] font-bold">{likes}</span>}
+            </button>
+            <button onClick={() => setShowComments(!showComments)} className="p-2 rounded-full backdrop-blur-md border border-white/10 bg-black/40 text-white hover:bg-black/60 hover:text-primary transition-all flex items-center justify-center gap-1" title="Comment">
+              <FaComment size={13} />
+              {commentsCount > 0 && <span className="text-[10px] font-bold">{commentsCount}</span>}
+            </button>
+            <button onClick={handleShare} className="p-2 rounded-full backdrop-blur-md border border-white/10 bg-black/40 text-white hover:bg-black/60 transition-all" title="Share">
+              <FaShare size={13} />
+            </button>
+            {type === 'art' && (
+              <button onClick={handleAddToCart} className="p-2 rounded-full backdrop-blur-md border border-white/10 bg-black/40 text-white hover:bg-black/60 transition-all" title="Add to Cart">
+                <MdOutlineAddShoppingCart size={14} />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Bottom Info — always visible */}
-        <div>
+        <div className="pointer-events-auto">
           <div className="mb-2">
             <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="block text-lg sm:text-xl font-bold text-white mb-0.5 hover:text-primary transition-colors line-clamp-2">
               {item.title || item.name}
@@ -461,36 +500,18 @@ export default function MediaCard({ item, type, view }) {
               </Link>
             )}
           </div>
-          <div className="flex flex-wrap items-center justify-between pt-2 border-t border-white/10 gap-2">
+          <div className="flex items-center justify-between pt-3 border-t border-white/10">
             <div className="flex items-center gap-2">
               {type === 'art' ? (
-                <div className="text-sm font-bold text-white">Rs. {item.price?.toLocaleString()}</div>
+                <div className="text-lg font-bold text-white tracking-tight">Rs. {item.price?.toLocaleString()}</div>
               ) : (
                 <div className="text-xs font-bold text-white/50 uppercase tracking-widest">{type}</div>
               )}
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <button onClick={handleLike} className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-white/20 transition-all ${liked ? 'bg-red-500/20 text-red-500 border-red-500/50' : 'bg-white/10 text-white hover:bg-red-500 hover:border-red-500'}`} title="Like">
-                {liked ? <FaHeart size={13} /> : <FaRegHeart size={13} />}
-                <span className="text-xs font-bold leading-none">{likes}</span>
-              </button>
-              <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-white/20 bg-white/10 text-white hover:bg-primary hover:border-primary transition-all" title="Comment">
-                <FaComment size={13} />
-                <span className="text-xs font-bold leading-none">{item.comments?.length || 0}</span>
-              </button>
-              <button onClick={handleShare} className="p-2 rounded-full backdrop-blur-md border border-white/20 bg-white/10 text-white hover:bg-primary hover:border-primary transition-all" title="Share">
-                <FaShare size={13} />
-              </button>
-              {type === 'art' && (
-                <button onClick={handleAddToCart} className="p-2 rounded-full backdrop-blur-md border border-white/20 bg-white/10 text-white hover:bg-primary hover:border-primary transition-all" title="Add to Cart">
-                  <MdOutlineAddShoppingCart size={14} />
-                </button>
-              )}
-              <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="bg-primary !text-white px-3 py-1.5 rounded-full hover:bg-primary/90 transition-all shadow-xl active:scale-90 flex items-center gap-1.5 font-bold text-xs whitespace-nowrap">
-                <span className="!text-white">View</span>
-                <FaShare className="rotate-45" size={11} />
-              </Link>
-            </div>
+            <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="bg-primary !text-white px-4 py-1.5 rounded-2xl hover:bg-primary/90 transition-all shadow-xl active:scale-95 flex items-center gap-1.5 font-bold text-sm whitespace-nowrap">
+              <span className="!text-white">View</span>
+              <FaShare className="rotate-45" size={12} />
+            </Link>
           </div>
         </div>
       </div>
@@ -502,7 +523,7 @@ export default function MediaCard({ item, type, view }) {
             <h4 className="font-bold text-sm text-white">Comments</h4>
             <button onClick={() => setShowComments(false)} className="text-white/60 hover:text-red-400 text-xs font-bold transition-colors">✕ Close</button>
           </div>
-          <CommentsSection itemId={item._id} itemType={type} initialComments={item.comments} onCommentPosted={() => setShowComments(false)} />
+          <CommentsSection itemId={item._id} itemType={type} initialComments={item.comments} onCommentPosted={(newArr) => { if (newArr) setCommentsCount(newArr.length); }} />
         </div>
       )}
     </div>

@@ -43,7 +43,7 @@ function CommentsSection({ itemId, itemType, initialComments = [], autoFocus = f
       setComments(response.data.comments || []);
       setNewComment('');
       toast.success("Comment posted!");
-      if (onCommentPosted) onCommentPosted();
+      if (onCommentPosted) onCommentPosted(response.data.comments || []);
     } catch (error) {
       console.error('Failed to add comment:', error);
       toast.error("Failed to post comment.");
@@ -59,6 +59,7 @@ function CommentsSection({ itemId, itemType, initialComments = [], autoFocus = f
       const response = await api.deleteComment(itemId, commentId);
       setComments(response.data.comments || []);
       toast.success("Comment deleted.");
+      if (onCommentPosted) onCommentPosted(response.data.comments || []);
     } catch (error) {
       console.error('Failed to delete comment:', error);
       toast.error("Failed to delete comment.");
