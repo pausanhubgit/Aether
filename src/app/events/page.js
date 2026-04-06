@@ -268,18 +268,18 @@ const EventsPage = () => {
                         </Link>
                       </span>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
                        <button 
                         onClick={() => { setSelectedEvent(evt); setShowRegisterModal(true); }}
-                        className="px-5 py-2.5 bg-purple-600 text-white rounded-xl text-xs font-semibold shadow-lg hover:bg-purple-700 transition-all"
+                        className="h-9 px-4 bg-purple-600 text-white rounded-lg text-xs font-semibold shadow-md hover:bg-purple-700 transition-all flex items-center justify-center"
                        >
                         Register
                       </button>
                       <Link 
                         href={`/events/${evt._id}`}
-                        className="px-6 py-2.5 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-[#310c55] dark:to-[#160327] text-white rounded-xl text-xs font-bold shadow-xl shadow-gray-900/20 dark:shadow-purple-900/30 hover:scale-105 hover:-translate-y-0.5 transition-all inline-flex items-center gap-1.5"
+                        className="h-9 px-4 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-[#310c55] dark:to-[#160327] text-white rounded-lg text-xs font-bold shadow-md hover:scale-105 transition-all inline-flex items-center justify-center gap-1"
                       >
-                        Details &rarr;
+                        Details →
                       </Link>
                     </div>
                   </div>

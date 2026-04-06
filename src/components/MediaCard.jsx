@@ -371,10 +371,14 @@ export default function MediaCard({ item, type, view }) {
               <span className="bg-primary !text-white px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-wider shadow-sm">
                 {item.subcategory || item.genre || item.category || type}
               </span>
-              <div className="flex gap-4">
-                <button onClick={handleLike} className={`flex items-center gap-1.5 transition ${liked ? 'text-red-500' : 'text-slate-400 hover:text-red-500'}`}>
+              <div className="flex flex-wrap gap-4">
+                <button onClick={handleLike} className={`flex items-center gap-1.5 transition ${liked ? 'text-red-500' : 'text-slate-400 hover:text-red-500'}`} title="Like">
                   {liked ? <FaHeart size={18} /> : <FaRegHeart size={18} />}
                   <span className="text-xs font-bold font-mono">{likes}</span>
+                </button>
+                <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1.5 text-slate-400 hover:text-primary transition" title="Comment">
+                  <FaComment size={18} />
+                  <span className="text-xs font-bold font-mono">{item.comments?.length || 0}</span>
                 </button>
                 <button onClick={handleShare} className="text-slate-400 hover:text-primary transition" title="Share">
                   <FaShare size={18} />
@@ -396,20 +400,17 @@ export default function MediaCard({ item, type, view }) {
               {item.description || "Experience exceptional quality content curated from our top tier creators."}
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-slate-100 dark:border-purple-900/20 gap-3">
+          <div className="flex flex-wrap items-center justify-between pt-4 border-t border-slate-100 dark:border-purple-900/20 gap-3">
             {item.createdBy && (
               <div className="flex items-center gap-2 min-w-0">
                 <span className="text-[10px] text-slate-400 uppercase font-bold shrink-0">Artist</span>
-                <Link href={`/profile/${item.createdBy._id}`} className="text-sm font-bold text-primary hover:underline truncate max-w-[140px]">
+                <Link href={`/profile/${item.createdBy._id}`} className="text-sm font-bold text-primary hover:underline truncate max-w-[160px]">
                   {item.createdBy.name || item.createdBy.username}
                 </Link>
               </div>
             )}
-            <div className="flex items-center gap-3 shrink-0">
-              <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition whitespace-nowrap">
-                <FaComment className="opacity-70" /> {item.comments?.length || 0} Comments
-              </button>
-              <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="bg-primary !text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95 whitespace-nowrap">
+            <div className="flex items-center gap-3 shrink-0 ml-auto">
+              <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="bg-primary !text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95 whitespace-nowrap">
                 View {viewLabel}
               </Link>
             </div>
@@ -441,30 +442,17 @@ export default function MediaCard({ item, type, view }) {
 
       {/* Overlay Content */}
       <div className="absolute inset-0 z-10 flex flex-col justify-between p-3 sm:p-6">
-        {/* Top Actions */}
-        <div className="flex justify-between items-start translate-y-[-10px] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+        {/* Top Badge — always visible */}
+        <div className="flex justify-between items-start">
           <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest">
             {item.subcategory || item.genre || item.category || type}
           </span>
-          <div className="flex flex-col gap-2">
-            <button onClick={handleLike} className={`p-2.5 rounded-full backdrop-blur-md border border-white/20 transition-all ${liked ? 'bg-red-500 text-white border-red-500' : 'bg-white/10 text-white hover:bg-red-500 hover:border-red-500'}`}>
-              <FaHeart size={14} />
-            </button>
-            <button onClick={handleShare} className="p-2.5 rounded-full backdrop-blur-md border border-white/20 bg-white/10 text-white hover:bg-primary hover:border-primary transition-all">
-              <FaShare size={14} />
-            </button>
-            {type === 'art' && (
-              <button onClick={handleAddToCart} className="p-2.5 rounded-full backdrop-blur-md border border-white/20 bg-white/10 text-white hover:bg-primary hover:border-primary transition-all">
-                <MdOutlineAddShoppingCart size={14} />
-              </button>
-            )}
-          </div>
         </div>
 
-        {/* Bottom Info */}
-        <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-          <div className="mb-3">
-            <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="block text-lg sm:text-2xl font-bold text-white mb-1 hover:text-primary transition-colors line-clamp-2">
+        {/* Bottom Info — always visible */}
+        <div>
+          <div className="mb-2">
+            <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="block text-lg sm:text-xl font-bold text-white mb-0.5 hover:text-primary transition-colors line-clamp-2">
               {item.title || item.name}
             </Link>
             {item.createdBy && (
@@ -473,30 +461,50 @@ export default function MediaCard({ item, type, view }) {
               </Link>
             )}
           </div>
-          <div className="flex flex-wrap items-center justify-between pt-3 border-t border-white/10 gap-2">
-            <div>
+          <div className="flex flex-wrap items-center justify-between pt-2 border-t border-white/10 gap-2">
+            <div className="flex items-center gap-2">
               {type === 'art' ? (
-                <div className="text-base sm:text-lg font-bold text-white">Rs. {item.price?.toLocaleString()}</div>
+                <div className="text-sm font-bold text-white">Rs. {item.price?.toLocaleString()}</div>
               ) : (
-                <div className="text-xs font-bold text-white/50 uppercase tracking-widest">{type} content</div>
+                <div className="text-xs font-bold text-white/50 uppercase tracking-widest">{type}</div>
               )}
             </div>
-            <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="bg-primary !text-white px-4 py-2 rounded-full hover:bg-primary/90 transition-all shadow-xl active:scale-90 flex items-center gap-2 font-bold text-sm whitespace-nowrap">
-              <span className="!text-white">View</span>
-              <FaShare className="rotate-45" size={12} />
-            </Link>
+            <div className="flex flex-wrap items-center gap-2">
+              <button onClick={handleLike} className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-white/20 transition-all ${liked ? 'bg-red-500/20 text-red-500 border-red-500/50' : 'bg-white/10 text-white hover:bg-red-500 hover:border-red-500'}`} title="Like">
+                {liked ? <FaHeart size={13} /> : <FaRegHeart size={13} />}
+                <span className="text-xs font-bold leading-none">{likes}</span>
+              </button>
+              <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-white/20 bg-white/10 text-white hover:bg-primary hover:border-primary transition-all" title="Comment">
+                <FaComment size={13} />
+                <span className="text-xs font-bold leading-none">{item.comments?.length || 0}</span>
+              </button>
+              <button onClick={handleShare} className="p-2 rounded-full backdrop-blur-md border border-white/20 bg-white/10 text-white hover:bg-primary hover:border-primary transition-all" title="Share">
+                <FaShare size={13} />
+              </button>
+              {type === 'art' && (
+                <button onClick={handleAddToCart} className="p-2 rounded-full backdrop-blur-md border border-white/20 bg-white/10 text-white hover:bg-primary hover:border-primary transition-all" title="Add to Cart">
+                  <MdOutlineAddShoppingCart size={14} />
+                </button>
+              )}
+              <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="bg-primary !text-white px-3 py-1.5 rounded-full hover:bg-primary/90 transition-all shadow-xl active:scale-90 flex items-center gap-1.5 font-bold text-xs whitespace-nowrap">
+                <span className="!text-white">View</span>
+                <FaShare className="rotate-45" size={11} />
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Floating Action Link */}
-      <Link href={type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
-        <div className="w-16 h-16 rounded-full bg-primary/20 backdrop-blur-xl border border-primary/30 flex items-center justify-center animate-pulse hover:scale-110 transition-transform">
-          <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-2xl">
-            <FaShare className="rotate-45" />
+      {/* Comments Section */}
+      {showComments && (
+        <div className="absolute inset-0 z-30 bg-black/80 backdrop-blur-sm p-4 flex flex-col overflow-y-auto rounded-[2rem] sm:rounded-[2.5rem]">
+          <div className="flex justify-between items-center mb-3">
+            <h4 className="font-bold text-sm text-white">Comments</h4>
+            <button onClick={() => setShowComments(false)} className="text-white/60 hover:text-red-400 text-xs font-bold transition-colors">✕ Close</button>
           </div>
+          <CommentsSection itemId={item._id} itemType={type} initialComments={item.comments} onCommentPosted={() => setShowComments(false)} />
         </div>
-      </Link>
+      )}
     </div>
   );
 }
