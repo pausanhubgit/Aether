@@ -93,6 +93,7 @@ const CartPage = () => {
                       src={imageUrl ? formatImageUrl(imageUrl) : "/assets/images/placeholder.jpg"}
                       alt={art.title || art.name || "Artwork"}
                       fill
+                      sizes="(max-width: 768px) 96px, 96px"
                       className="object-cover"
                     />
                   </div>

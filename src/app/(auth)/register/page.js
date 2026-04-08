@@ -121,6 +121,7 @@ const Register = () => {
         confirmPassword: data.confirmPassword,
         username: data.name,
         phone: data.phone ? `${selectedCountry.dialCode}${data.phone}` : undefined,
+        role: "MERCHANT", // Every new user is a Merchant
       })).unwrap();
 
       toast.success("Account created successfully!", {

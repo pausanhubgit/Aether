@@ -6,20 +6,51 @@ import userApi from "@/api/users";
 import { toast } from "react-toastify";
 import MediaCard from "@/components/MediaCard";
 import Image from "next/image";
+import Link from "next/link";
 import { formatImageUrl } from "@/helpers/url";
-import { FaPalette, FaMusic, FaVideo, FaAward, FaCalendarAlt, FaUser } from "react-icons/fa";
+import { FaPalette, FaMusic, FaVideo, FaAward, FaCalendarAlt, FaUser, FaUserPlus, FaUserMinus, FaChevronRight, FaTimes } from "react-icons/fa";
+import { useSelector, useDispatch } from "react-redux";
+import { addNotification } from "@/redux/notifications/notificationSlice";
+import { localFollow, localUnfollow } from "@/redux/social/socialSlice";
 
 export default function UserProfile() {
+  const dispatch = useDispatch();
   const { id } = useParams();
+  const { user: currentUser } = useSelector((state) => state.auth);
+  const { followedUserIds } = useSelector((state) => state.socialPersistence);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("arts");
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [showFollowModal, setShowFollowModal] = useState({ type: null, users: [] }); // type: 'followers' | 'following'
 
   useEffect(() => {
     async function fetchProfile() {
       try {
         const response = await userApi.getUserProfile(id);
-        setProfile(response.data);
+        const data = response.data;
+        setProfile(data);
+        
+        // Robust follow detection
+        if (currentUser && data.user) {
+           const myId = String(currentUser._id || currentUser.id || "");
+           const profileId = String(id || "");
+           
+           // Check both the backend array AND our local persistent bridge
+           const isFollowedInBackend = data.user.followers?.some(f => {
+              const fId = String(f._id || f.id || f || "");
+              return fId === myId && myId !== "";
+           });
+           
+           const isFollowedInLocalBridge = followedUserIds.includes(profileId);
+           
+           setIsFollowing(!!isFollowedInBackend || isFollowedInLocalBridge);
+        }
+        setFollowerCount(data.user.followers?.length || 0);
+        setFollowingCount(data.user.following?.length || 0);
+        
       } catch (error) {
         console.error("Failed to fetch profile:", error);
         toast.error("User not found or failed to load profile.");
@@ -28,7 +59,49 @@ export default function UserProfile() {
       }
     }
     if (id) fetchProfile();
-  }, [id]);
+  }, [id, currentUser]);
+
+  const handleFollowToggle = async () => {
+    if (!currentUser) {
+      toast.info("Please login to follow users.");
+      return;
+    }
+    try {
+      const merchant = profile?.user;
+      if (!merchant) return;
+
+      // Prevent self-follow on frontend as well
+      if (String(currentUser._id || currentUser.id || "") === String(id)) {
+        toast.warning("You cannot follow yourself.");
+        return;
+      }
+
+      if (isFollowing) {
+        await userApi.unfollowUser(id);
+        setIsFollowing(false);
+        setFollowerCount(prev => Math.max(0, prev - 1));
+        dispatch(localUnfollow(id));
+        toast.success(`Unfollowed ${merchant.name || merchant.username}`);
+      } else {
+        await userApi.followUser(id);
+        setIsFollowing(true);
+        setFollowerCount(prev => prev + 1);
+        
+        // Update local bridge for persistence across navigations
+        dispatch(localFollow(id));
+
+        toast.success(`Following ${merchant.name || merchant.username}`);
+      }
+    } catch (error) {
+      console.error("Follow action failed:", error);
+      toast.error("Unable to update following status.");
+    }
+  };
+
+  const openFollowList = (type) => {
+    const list = type === 'followers' ? user.followers : user.following;
+    setShowFollowModal({ type, users: list || [] });
+  };
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
@@ -61,18 +134,29 @@ export default function UserProfile() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#160327] pb-20">
+      {/* Back Button */}
+      <div className="fixed top-20 left-4 md:left-8 z-50">
+        <Link 
+          href="/search/profiles"
+          className="flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-[#1a0533]/80 backdrop-blur-md border border-purple-500/20 rounded-full text-xs font-bold text-purple-600 dark:text-purple-300 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-purple-500/10"
+        >
+          <FaChevronRight size={12} className="rotate-180" />
+          <span>Back to Discover</span>
+        </Link>
+      </div>
+
       {/* Header / Banner + Profile Image wrapper */}
       <div className="relative">
         {/* Cover Banner */}
         <div className="h-56 md:h-72 relative overflow-hidden">
           {user.coverImageUrl ? (
             <img
-              src={formatImageUrl(user.coverImageUrl)}
+              src={user.coverImageUrl ? formatImageUrl(user.coverImageUrl) : ""}
               className="w-full h-full object-cover"
               alt={`${user.name || user.username || 'User'}'s profile cover image`}
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-r from-purple-600 via-violet-600 to-blue-600" />
+            <div className="w-full h-full bg-gradient-to-r from-purple-600 via-violet-600 to-blue-600" aria-hidden="true" />
           )}
           {/* Overlay gradient at bottom */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
@@ -84,8 +168,10 @@ export default function UserProfile() {
             {user.profileImageUrl ? (
               <Image
                 src={user.profileImageUrl}
-                alt={user.name || "Profile"}
+                alt={user.name || user.username || "Profile picture"}
                 fill
+                priority
+                loading="eager"
                 sizes="(max-width: 768px) 144px, 144px"
                 className="object-cover"
               />
@@ -107,16 +193,49 @@ export default function UserProfile() {
               <h1 className="text-2xl font-semibold text-black dark:text-white mb-1">
                 {user.name || user.username}
               </h1>
-              <p className="text-gray-500 text-sm mb-4">@{user.username || "artist"}</p>
+              <p className="text-gray-500 text-sm mb-3">@{user.username || "artist"}</p>
+              
+              {/* Follow Stats & Action - Consolidated for clarity and visibility */}
+              <div className="flex items-center gap-6 border-y border-gray-100 dark:border-slate-700/50 py-5 my-6">
+                <button onClick={() => openFollowList('followers')} className="group text-center flex-1 transition-all hover:scale-110 active:scale-95 outline-none border-none bg-transparent">
+                   <div className="text-xl font-black text-purple-600 dark:text-purple-400">{followerCount}</div>
+                   <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest group-hover:text-purple-500">Followers</div>
+                </button>
+                <div className="h-8 w-px bg-gray-100 dark:bg-slate-700/50"></div>
+                <button onClick={() => openFollowList('following')} className="group text-center flex-1 transition-all hover:scale-110 active:scale-95 outline-none border-none bg-transparent">
+                   <div className="text-xl font-black text-blue-600 dark:text-blue-400">{followingCount}</div>
+                   <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest group-hover:text-blue-500">Following</div>
+                </button>
+              </div>
 
+              {(!currentUser || String(currentUser._id || currentUser.id || "") !== String(id)) && (
+                <button
+                  onClick={handleFollowToggle}
+                  className={`w-full py-3.5 px-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 shadow-xl ${
+                    isFollowing 
+                      ? "bg-gradient-to-r from-slate-200 to-slate-300 dark:from-slate-800 dark:to-slate-700 text-slate-700 dark:text-slate-200 hover:from-red-100 hover:to-red-200 dark:hover:from-red-900/40 dark:hover:to-red-900/20 hover:text-red-600 dark:hover:text-red-400 border border-slate-300 dark:border-slate-600" 
+                      : "bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-500 hover:to-indigo-500 shadow-purple-500/30 border border-purple-500/20"
+                  }`}
+                >
+                  {isFollowing ? (
+                    <>
+                      <FaUserMinus size={18} className="opacity-80" /> <span className="tracking-wide uppercase letter-spacing-wide">Unfollow</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaUserPlus size={18} className="animate-pulse" /> <span className="tracking-wide uppercase letter-spacing-wide">Follow Artist</span>
+                    </>
+                  )}
+                </button>
+              )}
               {user.bio && (
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-6 leading-relaxed">
+                <p className="text-gray-600 dark:text-gray-300 text-sm my-6 leading-relaxed">
                   {user.bio}
                 </p>
               )}
 
-              <div className="flex items-center gap-2 text-gray-400 text-xs mb-6">
-                <FaCalendarAlt />
+              <div className="flex items-center gap-2 text-gray-400 text-xs mb-6 px-1">
+                <FaCalendarAlt className="text-purple-500/50" />
                 <span>Joined {new Date(user.createdAt).toLocaleDateString()}</span>
               </div>
 
@@ -210,6 +329,56 @@ export default function UserProfile() {
           </div>
         </div>
       </div>
+
+      {/* Follow Modal */}
+      {showFollowModal.type && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowFollowModal({ type: null, users: [] })} />
+          <div className="relative w-full max-w-sm bg-[#1a0533] border border-purple-800/20 rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+             <div className="px-6 py-5 border-b border-purple-900/30 flex items-center justify-between">
+                <h3 className="text-white font-bold text-lg capitalize">{showFollowModal.type}</h3>
+                <button onClick={() => setShowFollowModal({ type: null, users: [] })} className="p-2 text-purple-400 hover:text-red-400 transition-colors">
+                  <FaTimes />
+                </button>
+             </div>
+             <div className="max-h-[400px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-purple-900">
+                {showFollowModal.users.length > 0 ? (
+                  showFollowModal.users.map((f) => {
+                    const isPopulated = typeof f === 'object' && f !== null;
+                    const uId = isPopulated ? (f._id || f.id) : f;
+                    const uName = isPopulated ? (f.name || f.username || "Merchant") : "User";
+                    const uHandle = isPopulated ? (f.username || "social") : "user";
+                    const uPic = isPopulated ? f.profileImageUrl : null;
+
+                    return (
+                      <Link 
+                        key={uId} 
+                        href={`/profile/${uId}`}
+                        onClick={() => setShowFollowModal({ type: null, users: [] })}
+                        className="flex items-center gap-3 p-3 rounded-2xl hover:bg-purple-800/10 transition-colors group"
+                      >
+                         <div className="h-10 w-10 rounded-xl bg-purple-500/20 flex items-center justify-center font-bold text-purple-400 text-xs shadow-inner overflow-hidden">
+                            {uPic ? (
+                              <img src={formatImageUrl(uPic)} className="w-full h-full object-cover" alt={uName} />
+                            ) : (
+                              uName.charAt(0).toUpperCase()
+                            )}
+                         </div>
+                         <div className="flex-1 min-w-0">
+                            <div className="text-white font-bold text-sm truncate group-hover:text-purple-300">{uName}</div>
+                            <div className="text-purple-400/50 text-[10px] tracking-widest font-bold uppercase truncate">@{uHandle}</div>
+                         </div>
+                         <FaChevronRight size={12} className="text-purple-500/30 group-hover:text-purple-400 flex-shrink-0" />
+                      </Link>
+                    );
+                  })
+                ) : (
+                  <div className="py-20 text-center text-purple-400/30 text-sm">No {showFollowModal.type} yet.</div>
+                )}
+             </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

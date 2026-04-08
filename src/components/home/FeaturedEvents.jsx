@@ -30,7 +30,7 @@ const FeaturedEvents = () => {
 
   return (
     <section className="py-16 bg-white dark:bg-[#0d0118] relative z-10 w-full transition-colors duration-300">
-      <div className="container mx-auto px-4 max-w-7xl">
+      <div className="container-7xl">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-5xl font-bold font-primary text-black dark:text-purple-100 mb-4">
             Upcoming Competitions

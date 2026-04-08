@@ -19,18 +19,17 @@ const FeaturedArts = async () => {
 
   return (
     <section id="featured-arts" className="py-24 bg-white dark:bg-[#0d0118]">
-      <div className="container-responsive">
+      <div className="container-7xl">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-8">
           <div className="max-w-2xl">
              <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em] mb-4">
                 <FaPalette className="text-xs" /> <span>Curated Gallery</span>
              </div>
-             <h2 className="text-4xl md:text-5xl font-semibold text-slate-800 dark:text-purple-100 mb-6 leading-[1.1]">
-                Featured <span className="text-primary italic">Masterpieces</span>
+             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-800 dark:text-purple-100">
+                Featured Creations
              </h2>
-             <p className="text-slate-600 dark:text-purple-300/70 font-medium text-lg leading-relaxed">
-                Check out the latest and best quality arts available in the
-                market, selected by our curation experts.
+             <p className="text-gray-600 dark:text-purple-300/80 text-lg font-medium">
+                Handpicked top-rated works from our community
              </p>
           </div>
           

@@ -13,7 +13,7 @@ import stripeIcon from "@/assets/images/payment/stripe.png";
 const Footer = () => {
     return (
         <footer className="bg-white dark:bg-[#0d0118] text-black dark:text-slate-50 py-8 sm:py-12 border-t border-purple-100 dark:border-purple-900/40 transition-colors duration-300">
-            <div className="container mx-auto px-4">
+            <div className="container-7xl">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
                     <div className="lg:col-span-1">
                         <h3 className="font-bold text-black dark:text-slate-50 mb-4 text-xl">Aether Hub</h3>

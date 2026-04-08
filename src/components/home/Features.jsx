@@ -5,7 +5,7 @@ import { FaCheck, FaCreditCard, FaTruck } from "react-icons/fa6";
 const Features = () => {
   return (
     <section id="why-choose-us" className="py-16 bg-white dark:bg-[#0d0118] dark:text-purple-100">
-      <div className="container mx-auto px-4">
+      <div className="container-7xl">
         <div className="mb-10">
           <h2 className="text-3xl font-bold text-center mb-4">
             Why Choose Aether

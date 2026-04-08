@@ -7,12 +7,12 @@ import { FaCube, FaPaintBrush, FaMobile } from "react-icons/fa6";
 const Categories = () => {
   return (
     <section id="categories" className="py-16 bg-white dark:bg-[#0d0118] dark:text-purple-100">
-      <div className="container mx-auto px-4">
-        <div className="mb-10">
-          <h2 className="text-3xl font-bold text-center mb-4">
+      <div className="container-7xl">
+        <div className="mb-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Shop arts by Category
           </h2>
-          <p className="text-gray-600 dark:text-purple-300/80 text-center">
+          <p className="text-gray-600 dark:text-purple-300/80 text-lg font-medium">
             Browse arts by categories.
           </p>
         </div>
@@ -23,8 +23,8 @@ const Categories = () => {
                 <FaCube />
               </div>
               <div className="text-center">
-                <h3 className="font-semibold text-lg">Paintings</h3>
-                <p className="text-slate-600 dark:text-purple-300/70 text-sm">35 Arts</p>
+                <h3 className="font-semibold text-lg lg:text-xl xl:text-2xl">Paintings</h3>
+                <p className="text-slate-600 dark:text-purple-300/70 text-sm lg:text-base">35 Arts</p>
               </div>
             </div>
           </Link>
@@ -36,6 +36,8 @@ const Categories = () => {
                 <FaMobile />
               </div>
               <div className="text-center">
+                <h3 className="font-semibold text-lg lg:text-xl xl:text-2xl">Sketches</h3>
+                <p className="text-slate-600 dark:text-purple-300/70 text-sm lg:text-base">95 Arts</p>
                 <h3 className="font-semibold text-lg">Sketches</h3>
                 <p className="text-slate-600 dark:text-purple-300/70 text-sm">95 Arts</p>
               </div>
@@ -44,7 +46,7 @@ const Categories = () => {
 
           <Link href={`${ART_ROUTE}?category=Digital_Arts`}>
             <div className="bg-white dark:bg-[#160327] rounded-lg shadow-md hover:shadow-lg transition p-6 flex flex-col items-center gap-2 justify-between">
-              <div className="text-primary text-3xl bg-purple-50 dark:bg-purple-950/30 p-5 h-20 w-20 rounded-full flex items-center justify-center">
+              <div className="text-primary text-3xl lg:text-4xl bg-purple-50 dark:bg-purple-950/30 p-5 lg:p-7 h-20 w-20 lg:h-24 lg:w-24 rounded-full flex items-center justify-center transition-transform group-hover:scale-110">
                 <FaCube />
               </div>
               <div className="text-center">

@@ -52,7 +52,7 @@ const Contact = () => {
         fill
       />
       <div className="absolute top-0 left-0 w-full h-full bg-white/80 dark:bg-[#0d0118]/80 -z-10" />
-      <div className="container mx-auto px-4 sm:px-6">
+      <div className="container-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div className="flex flex-col justify-center">
             <div className="mb-8 w-full">

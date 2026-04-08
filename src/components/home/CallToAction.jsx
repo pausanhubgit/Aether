@@ -2,7 +2,7 @@ const CallToAction = () => {
   return (
     <section className="py-24 bg-primary dark:bg-purple-900/40 relative overflow-hidden">
       <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDQwTDQwIDAiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiAvPgo8L3N2Zz4=')]"></div>
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container-7xl relative z-10">
         <div className="mb-10 text-center">
           <h2 className="text-4xl font-semibold mb-4 text-white uppercase tracking-wider">
             Join Our <span className="text-secondary dark:text-white">Newsletter</span>

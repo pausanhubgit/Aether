@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { FaHeart, FaShare, FaMusic } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 import { getFeedItems, setFeedItems } from '@/lib/storage';
 
 const renderType = {
@@ -12,10 +13,18 @@ const renderType = {
   music: "Music",
 };
 
+const getDetailLink = (item) => {
+  if (item.type === 'video') return `/video/detail/${item._id || item.id}`;
+  if (item.type === 'music') return `/music/detail/${item._id || item.id}`;
+  if (item.type === 'art' || item.type === 'photo') return `/arts/${item._id || item.id}`;
+  return null;
+};
+
 export default function GlobalFeed({ limit = 25 }) {
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -78,7 +87,8 @@ export default function GlobalFeed({ limit = 25 }) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="container-7xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {feed.slice(0, limit).map((item) => {
         // Handle both 'url' and 'image' properties
         const mediaUrl = item.url || item.image;
@@ -86,7 +96,13 @@ export default function GlobalFeed({ limit = 25 }) {
         return (
         <div
           key={item.id}
-          className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300"
+          onClick={() => {
+            const link = getDetailLink(item);
+            if (link) router.push(link);
+          }}
+          className={`rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ${
+            getDetailLink(item) ? 'cursor-pointer hover:-translate-y-1' : ''
+          }`}
         >
           {/* Media Content */}
           {mediaUrl ? (
@@ -99,18 +115,27 @@ export default function GlobalFeed({ limit = 25 }) {
                 />
               ) : item.type === "music" ? (
                 <div className="w-full h-48 bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <FaMusic size={48} className="mx-auto mb-2" />
-                    <p className="text-sm">Audio Content</p>
-                  </div>
+                  {(item.videoUrl || (mediaUrl && (mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i) || mediaUrl.includes('/video/')))) ? (
+                    <video
+                      controls
+                      src={item.videoUrl || mediaUrl}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-center text-white">
+                      <FaMusic size={48} className="mx-auto mb-2" />
+                      <p className="text-sm">Audio Content</p>
+                    </div>
+                  )}
                 </div>
               ) : (item.type === "photo" || item.type === "art") ? (
                 <Image
                   src={mediaUrl || "/assets/images/placeholder.jpg"}
-                  alt={item.title || "Uploaded content"}
+                  alt={item.title || "Uploaded content preview"}
                   width={400}
                   height={192}
                   className="w-full h-48 object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   onError={(e) => {
                     e.currentTarget.src = "/assets/images/placeholder.jpg";
                   }}
@@ -140,7 +165,7 @@ export default function GlobalFeed({ limit = 25 }) {
             ) : null}
 
             {/* Like and Share buttons */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between" onClick={e => e.stopPropagation()}>
               <button
                 onClick={() => handleLike(item.id)}
                 className="flex items-center gap-2 text-[var(--muted)] hover:text-red-500 transition"
@@ -161,6 +186,7 @@ export default function GlobalFeed({ limit = 25 }) {
         );
       }
       )}
+      </div>
     </div>
   );
 }

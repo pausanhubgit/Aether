@@ -21,7 +21,7 @@ const Populararts = async () => {
 
   return (
     <section id="popular-arts" className="py-24 bg-white dark:bg-[#0d0118] overflow-hidden relative">
-      <div className="container-responsive">
+      <div className="container-7xl">
         <div className="flex flex-col mb-16 space-y-4">
              <div className="inline-flex items-center w-fit gap-2 px-3 py-1 bg-orange-100 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em]">
                 <FaFire /> <span>Trending Collection</span>
@@ -34,7 +34,7 @@ const Populararts = async () => {
              </p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 px-4 sm:px-0">
           {products?.map((arts, index) => (
             <ArtCard key={arts._id || index} art={arts} />
           ))}

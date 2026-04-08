@@ -15,16 +15,20 @@ import {
   FaRocket,
   FaShareAlt,
   FaInfoCircle,
-  FaCheckCircle
+  FaCheckCircle,
+  FaBullhorn
 } from 'react-icons/fa';
 import eventsApi from '@/api/events';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { formatImageUrl } from '@/helpers/url';
+import { useDispatch } from 'react-redux';
+import { addNotification } from '@/redux/notifications/notificationSlice';
 
 export default function EventDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const dispatch = useDispatch();
   const { id } = params;
   
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -130,6 +134,18 @@ export default function EventDetailPage() {
         ...regData
       });
       toast.success("Successfully registered for the event!");
+
+      // Automatic Community Notification
+      dispatch(addNotification({
+        id: `event-reg-${event._id}-${Date.now()}`,
+        type: "event",
+        title: "Community Update!",
+        message: `${user.name || user.username} just claimed a spot in the showdown: "${event.title}"!`,
+        fromProjectUser: true,
+        projectName: event.title,
+        link: `/events/${event._id}`
+      }));
+
       setShowRegisterModal(false);
       refreshEvent();
       setRegData({ name: user?.name || user?.username || '', email: user?.email || '', message: '' });

@@ -13,8 +13,8 @@ const slides = [
     id: 1, 
     image: heroImg, 
     title: "New Amazing Arts Collection",
-    subtitle: "Shop today and get",
-    discount: "20% discount",
+    subtitle: "Discover creative masterpieces and find",
+    discount: "your inspiration",
     btn1: "Shop Now",
     btn2: "View Categories",
     link: ART_ROUTE,
@@ -66,48 +66,66 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className={`relative py-10 md:py-24 overflow-hidden min-h-[500px] transition-colors duration-700 ${slides[currentSlide].bgClass}`}
+      className={`relative py-10 md:py-16 lg:py-20 overflow-hidden min-h-[450px] flex items-center transition-colors duration-700 ${slides[currentSlide].bgClass}`}
     >
-      <div className="container mx-auto px-4 relative z-10 w-full overflow-hidden">
+      <div className="container-7xl relative z-10 w-full overflow-hidden">
         <div 
-          className="flex transition-transform duration-700 ease-in-out"
-          style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          className="flex transition-transform duration-1000 ease-in-out"
+          style={{ 
+            width: `${slides.length * 100}%`, 
+            transform: `translateX(-${(currentSlide * 100) / slides.length}%)` 
+          }}
         >
           {slides.map((slide) => (
-            <div key={slide.id} className="w-full flex-shrink-0">
-              <div className="flex flex-col-reverse md:flex-row items-center md:justify-between px-4 md:px-12 w-full gap-8 md:gap-0">
+            <div 
+              key={slide.id} 
+              className="flex-shrink-0 px-4 md:px-12 lg:px-20"
+              style={{ width: `${100 / slides.length}%` }}
+            >
+              <div className="flex flex-col-reverse md:flex-row items-center md:justify-between w-full gap-12 lg:gap-24 max-w-[1400px] mx-auto">
                 {/* Content */}
-                <div className="w-full md:w-1/2 text-center md:text-left z-10">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 text-gray-900 dark:text-white transition-colors duration-300">
-                    {slide.title}
-                  </h1>
-                  <p className="text-lg sm:text-xl mb-6 md:mb-8 text-gray-700 dark:text-gray-200 transition-colors duration-300">
-                    {slide.subtitle} <span className="font-semibold">{slide.discount}</span>
-                  </p>
-                  <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-3 sm:gap-4 md:gap-5">
+                <div className="w-full md:w-1/2 text-center md:text-left z-10 space-y-6 md:space-y-8">
+                  <div className="space-y-4">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 text-gray-900 dark:text-white transition-colors duration-300 leading-[1.1] tracking-tight text-balance">
+                      {slide.title}
+                    </h1>
+                    <p className="text-lg sm:text-xl lg:text-2xl text-gray-700 dark:text-gray-200 transition-colors duration-300 max-w-xl mx-auto md:mx-0 leading-relaxed">
+                      {slide.subtitle} <span className="font-bold text-primary underline decoration-primary/30 underline-offset-4">{slide.discount}</span>
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4 pt-4">
                     <Link
                       href={slide.link}
-                      className={`font-medium px-5 md:px-6 py-2.5 md:py-3 rounded-lg text-center transition shadow-md w-full sm:w-auto ${slide.btn1Class}`}
+                      className={`group relative overflow-hidden font-black uppercase tracking-widest text-xs px-10 py-4 rounded-2xl text-center transition-all shadow-2xl hover:scale-105 active:scale-95 w-full sm:w-auto ${slide.btn1Class}`}
                     >
-                      {slide.btn1}
+                      <span className="relative z-10">{slide.btn1}</span>
+                      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                     </Link>
                     <Link
                       href={slide.link}
-                      className={`font-medium px-5 md:px-6 py-2.5 md:py-3 rounded-lg text-center transition shadow-md w-full sm:w-auto ${slide.btn2Class}`}
+                      className={`font-black uppercase tracking-widest text-xs px-10 py-4 rounded-2xl text-center transition-all shadow-lg border-2 hover:bg-black/5 dark:hover:bg-white/5 active:scale-95 w-full sm:w-auto ${slide.btn2Class}`}
                     >
                       {slide.btn2}
                     </Link>
                   </div>
                 </div>
+
                 {/* Image */}
-                <div className="w-full md:w-1/2 flex justify-center md:justify-end px-2 sm:px-4 md:px-0 relative">
-                  <Image
-                    src={slide.image}
-                    className="w-full sm:w-4/5 lg:w-3/4 rounded-2xl shadow-xl object-cover aspect-video md:aspect-[4/3] bg-white/10"
-                    alt={slide.title}
-                    priority={slide.id === 1}
-                    style={{ height: "auto" }}
-                  />
+                <div className="w-full md:w-1/2 flex justify-center md:justify-end relative group py-8 md:py-0">
+                  <div className="absolute -inset-10 bg-primary/30 rounded-full blur-[100px] opacity-20 group-hover:opacity-40 animate-glow transition-opacity pointer-events-none"></div>
+                  <div className="relative w-full aspect-square sm:aspect-video md:aspect-[4/3] max-w-[450px] flex items-center justify-center">
+                    <Image
+                      src={slide.image}
+                      className={`w-full h-full rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] object-cover ring-1 ring-black/5 dark:ring-white/10 transition-all duration-700 group-hover:scale-[1.03] group-hover:-rotate-1 
+                        ${slide.id === 2 ? 'mix-blend-multiply dark:invert dark:mix-blend-screen' : ''}`}
+                      alt={slide.title}
+                      priority
+                    />
+                    {/* Decorative Elements */}
+                    <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl animate-pulse"></div>
+                    <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-secondary/20 rounded-full blur-3xl animate-pulse delay-700"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -116,31 +134,33 @@ const Hero = () => {
       </div>
 
       {/* Slider Controls */}
-      <button 
-        onClick={prevSlide}
-        className="absolute left-1 sm:left-4 md:left-6 top-[30%] md:top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white text-black dark:bg-black/50 dark:hover:bg-black/80 dark:text-white w-8 h-8 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-colors z-20 pointer-events-auto shadow-md backdrop-blur-sm"
-        aria-label="Previous Slide"
-      >
-        &#10094;
-      </button>
-      <button 
-        onClick={nextSlide}
-        className="absolute right-1 sm:right-4 md:right-6 top-[30%] md:top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white text-black dark:bg-black/50 dark:hover:bg-black/80 dark:text-white w-8 h-8 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-colors z-20 pointer-events-auto shadow-md backdrop-blur-sm"
-        aria-label="Next Slide"
-      >
-        &#10095;
-      </button>
+      <div className="container-7xl absolute inset-0 pointer-events-none flex items-center justify-between z-20 hidden md:flex">
+        <button 
+          onClick={prevSlide}
+          className="pointer-events-auto p-4 bg-white/80 dark:bg-[#1a0533]/80 hover:bg-white dark:hover:bg-[#1a0533] text-gray-900 dark:text-white rounded-2xl transition-all shadow-2xl backdrop-blur-md group -translate-x-1/2"
+          aria-label="Previous Slide"
+        >
+          <span className="block group-hover:-translate-x-1 transition-transform">&#10094;</span>
+        </button>
+        <button 
+          onClick={nextSlide}
+          className="pointer-events-auto p-4 bg-white/80 dark:bg-[#1a0533]/80 hover:bg-white dark:hover:bg-[#1a0533] text-gray-900 dark:text-white rounded-2xl transition-all shadow-2xl backdrop-blur-md group translate-x-1/2"
+          aria-label="Next Slide"
+        >
+          <span className="block group-hover:translate-x-1 transition-transform">&#10095;</span>
+        </button>
+      </div>
 
       {/* Slider Dots */}
-      <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-3 z-20">
+      <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-4 z-20">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`h-2.5 rounded-full transition-all ${
+            className={`transition-all duration-500 rounded-full ${
               index === currentSlide 
-                ? "w-8 bg-black dark:bg-white" 
-                : "w-2.5 bg-black/30 dark:bg-white/30"
+                ? "w-12 h-2.5 bg-primary shadow-lg shadow-primary/20" 
+                : "w-2.5 h-2.5 bg-gray-300 dark:bg-gray-700 hover:bg-primary/50"
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />

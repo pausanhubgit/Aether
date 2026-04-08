@@ -37,7 +37,7 @@ const WhyChooseAether = async () => {
 
   return (
     <section className="py-24 bg-slate-50 dark:bg-[#0d0118] relative overflow-hidden">
-      <div className="container-responsive relative z-10">
+      <div className="container-7xl relative z-10">
         <div className="flex flex-col mb-16 space-y-4 text-center md:text-left">
             <div className="inline-flex items-center w-fit gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mx-auto md:mx-0">
                 <FaArrowTrendUp /> <span>Community Favorites</span>

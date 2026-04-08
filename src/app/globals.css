@@ -32,6 +32,8 @@ body {
   overflow-x: hidden;
   max-width: 100vw;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 main {
@@ -95,31 +97,29 @@ body {
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 @media (min-width: 640px) {
   .container-responsive {
     max-width: 640px;
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
   }
 }
 
 @media (min-width: 768px) {
   .container-responsive {
     max-width: 768px;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 }
 
 @media (min-width: 1024px) {
   .container-responsive {
     max-width: 1024px;
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
   }
 }
 
@@ -135,22 +135,59 @@ body {
   }
 }
 
+@media (min-width: 1920px) {
+  .container-responsive {
+    max-width: 1720px;
+  }
+}
+
 .text-balance {
   text-wrap: balance;
 }
 
+/* ─── Global Max-Width Wrapper ───────────────────────────────── */
+.content-wrapper, .container-7xl {
+  width: 100%;
+  max-width: 1280px; 
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .content-wrapper, .container-7xl {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .content-wrapper, .container-7xl {
+    max-width: 1440px;
+  }
+}
+
 /* ─── Section Padding ──────────────────────────────────────── */
 section {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
   width: 100%;
   overflow-x: hidden;
+  position: relative;
+}
+
+@media (max-width: 1024px) {
+  section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
 }
 
 @media (max-width: 768px) {
   section {
-    padding-top: 1.25rem;
-    padding-bottom: 1.25rem;
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
   }
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaHeart, FaShare, FaRegHeart, FaComment, FaEdit, FaTrash, FaPlay, FaMusic, FaFilm } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,6 +13,7 @@ import videoApi from "@/api/video";
 import artsAPI from "@/api/arts";
 import cartApi from "@/api/cart";
 import { addToCart } from "@/redux/cart/cartSlice";
+import { addNotification } from "@/redux/notifications/notificationSlice";
 import { MdOutlineAddShoppingCart } from 'react-icons/md';
 import { LIST_VIEW, GRID_VIEW } from "@/constants/artView";
 
@@ -25,21 +27,49 @@ const formatDate = (dateString) => {
   }
 };
 
+const makeInitials = (name) => {
+  if (!name) return "??";
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .substring(0, 2);
+};
+
 export default function MediaCard({ item, type, view }) {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { user } = useSelector((state) => state.auth);
-  const [likes, setLikes] = useState(Math.max(0, item.reactions || item.likes?.length || 0));
+  const initialLikesCount = Array.isArray(item.likes) ? item.likes.length : (item.reactions || 0);
+  const [likes, setLikes] = useState(Math.max(0, initialLikesCount));
   const [liked, setLiked] = useState(false);
-  const [commentsCount, setCommentsCount] = useState(item.comments?.length || 0);
+  const [commentsCount, setCommentsCount] = useState(Array.isArray(item.comments) ? item.comments.length : (item.commentsCount || 0));
   const [showComments, setShowComments] = useState(false);
   const isListView = view === LIST_VIEW;
 
+  const detailHref = type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`;
+
+  const handleCardClick = (e) => {
+    // Don't navigate if clicking on interactive elements
+    if (e.target.closest('button, a, audio, video, input')) return;
+    router.push(detailHref);
+  };
+
   React.useEffect(() => {
     if (user && item.likes && Array.isArray(item.likes)) {
-       const uId = user._id || user.id;
-       setLiked(item.likes.some(id => (id._id || id) === uId));
+      const uId = String(user._id || user.id);
+      const isLiked = item.likes.some(like => {
+        const likeId = typeof like === 'string' ? like : String(like._id || like.id || like);
+        return likeId === uId;
+      });
+      setLiked(isLiked);
+      setLikes(item.likes.length);
+    } else if (item.reactions !== undefined) {
+      setLikes(item.reactions);
     }
-  }, [user, item.likes]);
+  }, [user, item.likes, item.reactions]);
 
   const getApi = () => {
     if (type === "music") return musicApi;
@@ -53,10 +83,15 @@ export default function MediaCard({ item, type, view }) {
     const api = getApi();
     if (!api) return;
     try {
-      await (type === "music" ? api.likeMusic(item._id) : type === "video" ? api.likeVideo(item._id) : api.likeArt(item._id));
-      const isNowLiked = !liked;
+      const response = await (type === "music" ? api.likeMusic(item._id) : type === "video" ? api.likeVideo(item._id) : api.likeArt(item._id));
+      const { liked: backendLiked } = response.data;
+      
+      const isNowLiked = backendLiked !== undefined ? backendLiked : !liked;
+      const newLikesCount = isNowLiked ? likes + 1 : Math.max(0, likes - 1);
+
       setLiked(isNowLiked);
-      setLikes(prev => isNowLiked ? prev + 1 : prev - 1);
+      setLikes(newLikesCount);
+
       toast.success(isNowLiked ? "Liked!" : "Reaction removed!", { autoClose: 1500 });
     } catch (error) {
       console.error("Like failed:", error);
@@ -117,7 +152,10 @@ export default function MediaCard({ item, type, view }) {
   // ─────────────────────────────────────────────────────────
   if (!isListView && type === "music") {
     return (
-      <div className="group relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:-translate-y-1 bg-gradient-to-br from-[#12002a] via-[#1e0540] to-[#0a001a] border border-purple-800/30 flex flex-col">
+      <div
+        onClick={handleCardClick}
+        className="group relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:-translate-y-1 bg-gradient-to-br from-[#12002a] via-[#1e0540] to-[#0a001a] border border-purple-800/30 flex flex-col cursor-pointer"
+      >
         {/* Animated background rings or Video */}
         <div className="relative h-56 flex items-center justify-center overflow-hidden bg-black">
           {(item.videoUrls?.length > 0 || item.videoUrl || (mediaUrl && (mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i) || mediaUrl.includes('/video/')))) ? (
@@ -147,7 +185,7 @@ export default function MediaCard({ item, type, view }) {
 
           {/* Owner actions */}
           {isOwner && (
-            <div className="absolute top-3 right-3 z-20 flex gap-2">
+            <div className="absolute top-3 right-3 z-20 flex gap-2" onClick={e => e.stopPropagation()}>
               <Link href={`/dashboard/${type}/edit/${item._id}`} className="p-2 bg-black/40 backdrop-blur-sm rounded-full text-blue-400 hover:text-blue-300 hover:bg-black/60 transition-all pointer-events-auto" title="Edit">
                 <FaEdit size={13} />
               </Link>
@@ -189,7 +227,7 @@ export default function MediaCard({ item, type, view }) {
           )}
 
           {/* Actions */}
-          <div className="flex items-center justify-between pt-1 border-t border-purple-800/40">
+          <div className="flex items-center justify-between pt-1 border-t border-purple-800/40" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-3">
               <button onClick={handleLike} className={`flex items-center gap-1.5 text-xs font-bold transition-colors ${liked ? 'text-red-400' : 'text-purple-400 hover:text-red-400'}`}>
                 {liked ? <FaHeart size={14} /> : <FaRegHeart size={14} />}
@@ -217,7 +255,7 @@ export default function MediaCard({ item, type, view }) {
               <h4 className="font-bold text-sm text-white">Comments</h4>
               <button onClick={() => setShowComments(false)} className="text-purple-400 hover:text-red-400 text-xs font-bold transition-colors">Hide</button>
             </div>
-            <CommentsSection itemId={item._id} itemType={type} initialComments={item.comments} onCommentPosted={() => setShowComments(false)} />
+            <CommentsSection itemId={item._id} itemType={type} item={item} initialComments={item.comments} onCommentPosted={() => setShowComments(false)} />
           </div>
         )}
       </div>
@@ -230,7 +268,10 @@ export default function MediaCard({ item, type, view }) {
   if (!isListView && type === "video") {
     const thumbnail = item.thumbnail || item.imageUrls?.[0] || item.image;
     return (
-      <div className="group relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 hover:-translate-y-1 bg-[#00080f] border border-blue-900/30 flex flex-col">
+      <div
+        onClick={handleCardClick}
+        className="group relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 hover:-translate-y-1 bg-[#00080f] border border-blue-900/30 flex flex-col cursor-pointer"
+      >
         {/* Thumbnail / Video preview area */}
         <div className="relative aspect-video sm:min-h-[220px] overflow-hidden bg-black flex items-center justify-center group">
           <video
@@ -249,7 +290,7 @@ export default function MediaCard({ item, type, view }) {
 
           {/* Owner actions */}
           {isOwner && (
-            <div className="absolute top-3 right-3 z-10 flex gap-2">
+            <div className="absolute top-3 right-3 z-10 flex gap-2" onClick={e => e.stopPropagation()}>
               <Link href={`/dashboard/${type}/edit/${item._id}`} className="p-2 bg-black/50 backdrop-blur-sm rounded-full text-blue-400 hover:text-blue-200 transition-all" title="Edit">
                 <FaEdit size={13} />
               </Link>
@@ -277,7 +318,7 @@ export default function MediaCard({ item, type, view }) {
           )}
 
           {/* Actions */}
-          <div className="flex items-center justify-between pt-2 border-t border-blue-900/40 mt-auto">
+          <div className="flex items-center justify-between pt-2 border-t border-blue-900/40 mt-auto" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-3">
               <button onClick={handleLike} className={`flex items-center gap-1.5 text-xs font-bold transition-colors ${liked ? 'text-red-400' : 'text-slate-400 hover:text-red-400'}`}>
                 {liked ? <FaHeart size={14} /> : <FaRegHeart size={14} />}
@@ -305,7 +346,7 @@ export default function MediaCard({ item, type, view }) {
               <h4 className="font-bold text-sm text-white">Comments</h4>
               <button onClick={() => setShowComments(false)} className="text-slate-400 hover:text-red-400 text-xs font-bold transition-colors">Hide</button>
             </div>
-            <CommentsSection itemId={item._id} itemType={type} initialComments={item.comments} onCommentPosted={() => setShowComments(false)} />
+            <CommentsSection itemId={item._id} itemType={type} item={item} initialComments={item.comments} onCommentPosted={() => setShowComments(false)} />
           </div>
         )}
       </div>
@@ -347,7 +388,7 @@ export default function MediaCard({ item, type, view }) {
       ) : (
         <Image
           src={(mediaUrl && typeof mediaUrl === 'string' && mediaUrl.trim() !== "") ? mediaUrl : "/assets/images/placeholder.jpg"}
-          alt={item.title || item.name || "Media preview"}
+          alt={item.title || item.name || "Media gallery preview"}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover"
@@ -364,7 +405,7 @@ export default function MediaCard({ item, type, view }) {
   if (isListView) {
     const viewLabel = type === 'art' ? 'Art' : type === 'music' ? 'Music' : 'Video';
     return (
-      <div className="group bg-white dark:bg-[#0f021b] border border-slate-200 dark:border-purple-900/40 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden flex flex-col md:flex-row" style={{minHeight: '220px'}}>
+      <div className="group bg-white dark:bg-[#0f021b] border border-slate-200 dark:border-purple-900/40 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden flex flex-col md:flex-row" style={{ minHeight: '220px' }}>
         <div className="w-full md:w-[300px] lg:w-[340px] relative h-52 md:h-auto flex-shrink-0 overflow-hidden">
           <MediaContent className="w-full h-full" />
         </div>
@@ -425,7 +466,7 @@ export default function MediaCard({ item, type, view }) {
               <h4 className="font-bold text-lg">Comments</h4>
               <button onClick={() => setShowComments(false)} className="text-slate-400 hover:text-red-500 font-bold text-sm">Hide Comments</button>
             </div>
-            <CommentsSection itemId={item._id} itemType={type} initialComments={item.comments} onCommentPosted={() => setShowComments(false)} />
+            <CommentsSection itemId={item._id} itemType={type} item={item} initialComments={item.comments} onCommentPosted={() => setShowComments(false)} />
           </div>
         )}
       </div>
@@ -505,7 +546,7 @@ export default function MediaCard({ item, type, view }) {
             <h4 className="font-bold text-sm text-white">Comments</h4>
             <button onClick={() => setShowComments(false)} className="text-white/60 hover:text-red-400 text-xs font-bold transition-colors">✕ Close</button>
           </div>
-          <CommentsSection itemId={item._id} itemType={type} initialComments={item.comments} onCommentPosted={(newArr) => { if (newArr) setCommentsCount(newArr.length); }} />
+          <CommentsSection itemId={item._id} itemType={type} item={item} initialComments={item.comments} onCommentPosted={(newArr) => { if (newArr) setCommentsCount(newArr.length); }} />
         </div>
       )}
     </div>

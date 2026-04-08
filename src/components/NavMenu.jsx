@@ -32,9 +32,9 @@ const NavMenu = ({ onClose }) => {
 
   return (
     <div ref={menuRef} className="relative">
-      {/* Hamburger — visible below xl (< 1280px) */}
+      {/* Hamburger — visible below lg (< 1024px) */}
       <button
-        className="xl:hidden flex flex-col justify-center items-center w-9 h-9 space-y-1.5 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/40 transition-colors"
+        className="lg:hidden flex flex-col justify-center items-center w-9 h-9 space-y-1.5 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/40 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle navigation menu"
       >
@@ -55,8 +55,8 @@ const NavMenu = ({ onClose }) => {
         />
       </button>
 
-      {/* Desktop nav — visible at xl+ */}
-      <nav className="hidden xl:flex items-center gap-0.5">
+      {/* Desktop nav — visible at lg+ */}
+      <nav className="hidden lg:flex items-center gap-0.5">
         {navLinks.map((link) => {
           const isActive =
             pathname === link.route ||
@@ -77,10 +77,10 @@ const NavMenu = ({ onClose }) => {
         })}
       </nav>
 
-      {/* Mobile dropdown — visible below xl */}
+      {/* Mobile dropdown — visible below lg */}
       {isOpen && (
         <div
-          className="xl:hidden absolute top-full left-0 mt-2 w-52 rounded-xl shadow-xl border z-50 overflow-hidden"
+          className="lg:hidden absolute top-full left-0 mt-2 w-52 rounded-xl shadow-xl border z-50 overflow-hidden"
           style={{
             backgroundColor: "var(--surface)",
             borderColor: "var(--border)",

@@ -43,6 +43,7 @@ const ArtCard = ({ art }) => {
             src={art.imageUrls?.[0] || art.image}
             alt={art.title || art.name || "Artwork"}
             fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1536px) 33vw, 25vw"
             className="object-cover transition-transform duration-700 group-hover:scale-110"
           />
         ) : (
@@ -85,20 +86,21 @@ const ArtCard = ({ art }) => {
             {art.description || "Beautiful handcrafted artwork available for your collection."}
         </p>
 
-        <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 dark:border-purple-900/30 gap-4">
+        <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 dark:border-purple-900/30 gap-3">
           <div className="shrink-0">
-            <p className="text-[10px] text-slate-400 dark:text-purple-400/60 uppercase font-bold tracking-widest mb-0.5">Price</p>
-            <p className="text-lg md:text-xl font-bold text-primary">
+            <p className="text-[9px] md:text-[10px] text-slate-400 dark:text-purple-400/60 uppercase font-bold tracking-widest mb-0.5">Price</p>
+            <p className="text-base md:text-xl font-extrabold text-primary">
               Rs.{art.price?.toLocaleString() || 0}
             </p>
           </div>
           
           <button 
             onClick={handleAddToCart}
-            className="flex-grow flex items-center justify-center gap-2 bg-primary text-white py-2.5 md:py-3 px-4 rounded-xl md:rounded-2xl font-bold text-[11px] md:text-sm hover:shadow-primary/40 transition-all shadow-lg shadow-primary/20 active:scale-95 whitespace-nowrap group/btn min-w-[100px] md:min-w-[120px]"
+            className="flex-grow sm:flex-grow-0 flex items-center justify-center gap-2 bg-primary text-white py-2.5 px-4 md:px-6 rounded-xl md:rounded-2xl font-bold text-[11px] md:text-sm hover:shadow-primary/40 transition-all shadow-lg shadow-primary/20 active:scale-95 whitespace-nowrap group/btn"
           >
             <FaCartPlus className="text-sm md:text-base transition-transform group-hover/btn:-rotate-12" />
-            <span>Add To Cart</span>
+            <span className="inline sm:hidden lg:inline">Add To Cart</span>
+            <span className="hidden sm:inline lg:hidden">Add</span>
           </button>
         </div>
       </div>

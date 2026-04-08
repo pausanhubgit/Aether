@@ -1,6 +1,7 @@
 "use client";
 
 import { updateUserProfile } from "@/redux/auth/authActions";
+import { logoutUser } from "@/redux/auth/authSlice";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -42,7 +43,10 @@ import {
   FaEdit,
   FaTrash,
   FaCheckCircle,
-  FaMedal
+  FaMedal,
+  FaChevronRight,
+  FaTimes,
+  FaUsers
 } from "react-icons/fa";
 import apiInstance from "@/api/api";
 import { format } from "date-fns";
@@ -51,7 +55,7 @@ const VideoThumb = ({ vid, formatImageUrl, setActiveDropdown, activeDropdown, ha
   const videoRef = useRef(null);
   const [isHovering, setIsHovering] = useState(false);
   const vidImage = vid.imageUrls?.[0] || vid.image || vid.thumbnail;
-  const vidVideo = vid.videoUrls?.[0] || (typeof vid.media === 'string' && vid.media.endsWith('.mp4') ? vid.media : null);
+  const vidVideo = vid.videoUrls?.[0] || (typeof vid.media === 'string' ? vid.media : null);
 
   const handleMouseEnter = () => {
     setIsHovering(true);
@@ -75,11 +79,12 @@ const VideoThumb = ({ vid, formatImageUrl, setActiveDropdown, activeDropdown, ha
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {vidVideo && (isHovering || vid.hide === false || vid.hide === 'false') ? (
+      {vidVideo ? (
         <video 
           ref={videoRef}
           src={formatImageUrl(vidVideo)}
-          className="w-full h-full object-cover"
+          poster={vidImage ? formatImageUrl(vidImage) : undefined}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           muted
           playsInline
           loop
@@ -121,46 +126,61 @@ const VideoThumb = ({ vid, formatImageUrl, setActiveDropdown, activeDropdown, ha
 };
 
 const MusicTrack = ({ music, formatImageUrl, setActiveDropdown, activeDropdown, handleDeleteItem, handleEditItem }) => {
+  const musicRef = useRef(null);
   const [isHovering, setIsHovering] = useState(false);
   const musicImage = music.imageUrls?.[0] || music.image || music.thumbnail;
+  const musicMedia = music.videoUrls?.[0] || music.audioUrls?.[0] || (typeof music.media === 'string' ? music.media : null);
+
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+    if (musicRef.current) {
+      musicRef.current.play().catch(err => console.log("Playback failed", err));
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+    if (musicRef.current) {
+      musicRef.current.pause();
+      musicRef.current.currentTime = 0;
+    }
+  };
 
   return (
     <div 
       key={music._id} 
-      className="relative flex items-center gap-4 p-4 bg-white dark:bg-[#160327] rounded-2xl border border-gray-100 dark:border-slate-700 hover:shadow-lg transition group"
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
+      className="group relative aspect-video rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 dark:border-slate-700"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      <Link href={`/music/detail/${music._id}`} className="flex-1 flex items-center gap-4 cursor-pointer">
-        <div className="h-14 w-14 rounded-xl overflow-hidden bg-blue-100 flex-shrink-0 relative">
-          {musicImage ? (
-            <img src={formatImageUrl(musicImage)} className={`w-full h-full object-cover ${isHovering ? 'scale-110' : ''} transition-transform duration-500`} />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <FaMusic className="text-blue-500 text-xl" />
-            </div>
-          )}
-          {isHovering && (
-            <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-              <div className="flex gap-0.5 items-end h-4">
-                <div className="w-1 bg-white animate-[music-bar_0.6s_ease-in-out_infinite]" style={{height: '60%'}}></div>
-                <div className="w-1 bg-white animate-[music-bar_0.8s_ease-in-out_infinite]" style={{height: '100%'}}></div>
-                <div className="w-1 bg-white animate-[music-bar_0.7s_ease-in-out_infinite]" style={{height: '80%'}}></div>
-              </div>
-            </div>
-          )}
+      {musicMedia ? (
+        <video 
+          ref={musicRef}
+          src={formatImageUrl(musicMedia)}
+          poster={musicImage ? formatImageUrl(musicImage) : undefined}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          muted
+          playsInline
+          loop
+          autoPlay={isHovering || music.hide === false || music.hide === 'false'}
+        />
+      ) : musicImage ? (
+        <img 
+          src={formatImageUrl(musicImage)} 
+          alt={music.title} 
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-slate-800 group-hover:scale-105 transition-transform duration-500">
+          <FaMusic className="text-gray-400 text-4xl" />
         </div>
-        <div className="flex-1 min-w-0">
-          <p className={`font-bold ${isHovering ? 'text-primary' : 'text-black dark:text-white'} transition-colors truncate`}>{music.title}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">{music.genre || 'Various'}</p>
-        </div>
-      </Link>
+      )}
       
       <button 
-        onClick={() => setActiveDropdown(activeDropdown === `music-${music._id}` ? null : `music-${music._id}`)}
-        className={`p-2 transition-colors z-20 ${isHovering ? 'text-primary' : 'text-gray-400 hover:text-purple-600'}`}
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDropdown(activeDropdown === `music-${music._id}` ? null : `music-${music._id}`); }}
+        className="absolute top-4 right-4 p-2 bg-black/40 backdrop-blur text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-20 hover:bg-black/60"
       >
-        <FaEllipsisV />
+        <FaEllipsisV className="text-xs" />
       </button>
       {activeDropdown === `music-${music._id}` && (
         <div className="absolute top-12 right-4 w-32 bg-white dark:bg-[#160327] rounded-xl shadow-2xl border border-gray-100 dark:border-slate-700 py-1 z-30 overflow-hidden">
@@ -168,6 +188,13 @@ const MusicTrack = ({ music, formatImageUrl, setActiveDropdown, activeDropdown, 
           <button onClick={(e) => handleDeleteItem('music', music._id, e)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-left"><FaTrash/> Delete</button>
         </div>
       )}
+
+      <Link href={`/music/detail/${music._id}`}>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-6 flex flex-col justify-end z-10 cursor-pointer pointer-events-auto">
+          <p className="text-white font-bold text-lg">{music.title}</p>
+          <p className="text-blue-400 text-xs font-semibold uppercase tracking-widest flex items-center gap-2"><FaMusic /> Listen Now</p>
+        </div>
+      </Link>
     </div>
   );
 };
@@ -181,6 +208,8 @@ const ProfilePage = () => {
   const [registrations, setRegistrations] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [fullProfile, setFullProfile] = useState(null);
+  const [showFollowModal, setShowFollowModal] = useState({ type: null, users: [] });
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -238,6 +267,7 @@ const ProfilePage = () => {
           ]);
           setStats(statsRes.data);
           setCreations(profileRes.data.creations);
+          setFullProfile(profileRes.data.user);
           setRegistrations(regRes.data);
         } catch (err) {
           console.error("Failed to load profile data", err);
@@ -246,6 +276,12 @@ const ProfilePage = () => {
     }
     fetchData();
   }, [user?._id]);
+
+  const openFollowList = (type) => {
+    if (!fullProfile) return;
+    const list = type === 'followers' ? fullProfile.followers : fullProfile.following;
+    setShowFollowModal({ type, users: list || [] });
+  };
 
   const {
     register,
@@ -271,6 +307,21 @@ const ProfilePage = () => {
       })
     );
   }
+
+  const handleDeleteAccount = async () => {
+    const confirm = window.confirm("Are you sure you want to delete your account? This action is permanent and cannot be undone.");
+    if (!confirm) return;
+
+    try {
+      await api.deleteUser(user._id);
+      toast.success("Account deleted successfully.");
+      dispatch(logoutUser());
+      router.push("/");
+    } catch (err) {
+      console.error("Failed to delete account:", err);
+      toast.error("Failed to delete account. Please try again.");
+    }
+  };
 
   useEffect(() => {
     if (error) {
@@ -348,6 +399,13 @@ const ProfilePage = () => {
                       <FaChartLine className="text-green-600 group-hover:scale-110 transition-transform" />
                       <span className="font-semibold text-sm">Dashboard</span>
                     </Link>
+                    <button
+                      onClick={() => { setShowSettings(false); handleDeleteAccount(); }}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition group border-t border-gray-100 dark:border-slate-700 mt-1"
+                    >
+                      <FaTrash className="group-hover:scale-110 transition-transform" />
+                      <span className="font-semibold text-sm">Delete Account</span>
+                    </button>
                   </div>
                 )}
               </div>
@@ -383,6 +441,19 @@ const ProfilePage = () => {
                     </span>
                   )}
                 </div>
+
+                {/* Follow Stats */}
+                <div className="flex items-center justify-center md:justify-start gap-4 mt-6">
+                  <button onClick={() => openFollowList('followers')} className="group text-center flex flex-col items-center gap-1 transition-all hover:scale-105 active:scale-95 outline-none border-none">
+                     <span className="text-xl font-black text-purple-600 dark:text-purple-400 leading-none">{fullProfile?.followers?.length || 0}</span>
+                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest group-hover:text-purple-500">Followers</span>
+                  </button>
+                  <div className="w-px h-8 bg-gray-200 dark:bg-slate-700"></div>
+                  <button onClick={() => openFollowList('following')} className="group text-center flex flex-col items-center gap-1 transition-all hover:scale-105 active:scale-95 outline-none border-none">
+                     <span className="text-xl font-black text-blue-600 dark:text-blue-400 leading-none">{fullProfile?.following?.length || 0}</span>
+                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest group-hover:text-blue-500">Following</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -393,8 +464,8 @@ const ProfilePage = () => {
           {/* Tab Content */}
           <div className="p-8 sm:p-10">
             {activeTab === "overview" ? (
-              <div className="space-y-12">
-                <section>
+              <div>
+                <section className="mb-8">
                   <h3 className="flex items-center gap-2 text-xl font-bold text-gray-800 dark:text-white mb-4">
                     <FaInfoCircle className="text-purple-600" /> Biography
                   </h3>
@@ -403,110 +474,17 @@ const ProfilePage = () => {
                   </p>
                 </section>
 
-                <section>
-                   <div className="flex flex-col gap-8">
-                      {/* Detailed Stats */}
-                      <div className="flex-1 space-y-4">
-                        <h3 className="flex items-center gap-2 text-xl font-bold text-gray-800 dark:text-white mb-4">
-                          <FaChartLine className="text-blue-600" /> Performance Metrics
-                        </h3>
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                          <div className="p-5 bg-purple-50 dark:bg-purple-900/20 rounded-2xl border border-purple-100 dark:border-purple-800 shadow-sm">
-                            <p className="text-[10px] font-bold text-purple-500 uppercase mb-1 tracking-widest">Arts</p>
-                            <p className="text-3xl font-semibold text-purple-700 dark:text-purple-300">{Math.max(0, stats?.totalArts || 0)}</p>
-                          </div>
-                          <div className="p-5 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800 shadow-sm">
-                            <p className="text-[10px] font-bold text-blue-500 uppercase mb-1 tracking-widest">Music</p>
-                            <p className="text-3xl font-semibold text-blue-700 dark:text-blue-300">{Math.max(0, stats?.totalMusics || 0)}</p>
-                          </div>
-                          <div className="p-5 bg-green-50 dark:bg-green-900/20 rounded-2xl border border-green-100 dark:border-green-800 shadow-sm">
-                            <p className="text-[10px] font-bold text-green-500 uppercase mb-1 tracking-widest">Videos</p>
-                            <p className="text-3xl font-semibold text-green-700 dark:text-green-300">{Math.max(0, stats?.totalVideos || 0)}</p>
-                          </div>
-                          <div className="p-5 bg-orange-50 dark:bg-orange-900/20 rounded-2xl border border-orange-100 dark:border-orange-800 shadow-sm">
-                            <p className="text-[10px] font-bold text-orange-500 uppercase mb-1 tracking-widest">Events</p>
-                            <p className="text-3xl font-semibold text-orange-700 dark:text-orange-300">{Math.max(0, stats?.totalEvents || 0)}</p>
-                          </div>
-                          <div className="p-5 bg-pink-50 dark:bg-pink-900/20 rounded-2xl border border-pink-100 dark:border-pink-800 shadow-sm md:col-span-4 lg:col-span-1 flex lg:flex-col justify-between items-center lg:items-start lg:justify-center">
-                            <div>
-                               <p className="text-[10px] font-bold text-pink-500 uppercase mb-1 tracking-widest">Reactions</p>
-                               <p className="text-3xl font-semibold text-pink-700 dark:text-pink-300">{Math.max(0, stats?.totalReactions || 0)}</p>
-                            </div>
-                            <FaHeart className="text-pink-400 text-3xl opacity-50 lg:mt-2" />
-                          </div>
-                        </div>
-                      </div>
 
-                      {/* Achievements / Trophies Section */}
-                      <div className="flex-1 space-y-4">
-                        <h3 className="flex items-center gap-2 text-xl font-bold text-gray-800 dark:text-white mb-4">
-                          <FaMedal className="text-amber-500" /> Professional Awards & Badges
-                        </h3>
-                        <div className="flex flex-wrap gap-4">
-                          {stats?.totalArts > 0 && (
-                            <div className="flex items-center gap-3 px-4 py-2 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl shadow-sm">
-                               <FaPalette className="text-purple-500 text-lg" />
-                               <div>
-                                  <p className="text-[9px] font-bold uppercase text-purple-400 leading-none mb-0.5 tracking-tighter">Art Connoisseur</p>
-                                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">{Math.max(0, stats.totalArts)} Artworks</p>
-                               </div>
-                            </div>
-                          )}
-                          {stats?.totalMusics > 0 && (
-                            <div className="flex items-center gap-3 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl shadow-sm">
-                               <FaMusic className="text-blue-500 text-lg" />
-                               <div>
-                                  <p className="text-[9px] font-bold uppercase text-blue-400 leading-none mb-0.5 tracking-tighter">Melody Maker</p>
-                                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">{Math.max(0, stats.totalMusics)} Tracks</p>
-                               </div>
-                            </div>
-                          )}
-                          {stats?.totalVideos > 0 && (
-                            <div className="flex items-center gap-3 px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl shadow-sm">
-                               <FaVideo className="text-green-500 text-lg" />
-                               <div>
-                                  <p className="text-[9px] font-bold uppercase text-green-400 leading-none mb-0.5 tracking-tighter">Director</p>
-                                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">{Math.max(0, stats.totalVideos)} Videos</p>
-                               </div>
-                            </div>
-                          )}
-                          {stats?.totalEvents > 0 && (
-                            <div className="flex items-center gap-3 px-4 py-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800 rounded-xl shadow-sm">
-                               <FaCalendarAlt className="text-orange-500 text-lg" />
-                               <div>
-                                  <p className="text-[9px] font-bold uppercase text-orange-400 leading-none mb-0.5 tracking-tighter">Host Elite</p>
-                                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">{Math.max(0, stats.totalEvents)} Events</p>
-                               </div>
-                            </div>
-                          )}
-                          {stats?.totalReactions > 0 && (
-                            <div className="flex items-center gap-3 px-4 py-2 bg-pink-50 dark:bg-pink-900/20 border border-pink-100 dark:border-pink-800 rounded-xl shadow-sm">
-                               <FaHeart className="text-pink-500 text-lg" />
-                               <div>
-                                  <p className="text-[9px] font-bold uppercase text-pink-400 leading-none mb-0.5 tracking-tighter">Community Fav</p>
-                                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">{Math.max(0, stats.totalReactions)} Likes</p>
-                               </div>
-                            </div>
-                          )}
-                          {!stats?.totalArts && !stats?.totalMusics && !stats?.totalVideos && !stats?.totalEvents && !stats?.totalReactions && (
-                             <div className="p-8 w-full text-center bg-gray-50 dark:bg-[#160327]/40 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700">
-                                <p className="text-gray-400 font-medium italic">Keep creating and engaging to earn your first badge!</p>
-                             </div>
-                          )}
-                        </div>
-                      </div>
-                   </div>
-                </section>
 
                 {/* My Creative Portfolio */}
-                <section>
+                <section className="mb-8">
                   <div className="flex items-center justify-between mb-8">
                      <h3 className="flex items-center gap-2 text-2xl font-semibold text-black dark:text-white">
                         <FaPalette className="text-purple-600" /> My Collections
                      </h3>
                   </div>
 
-                  <div className="space-y-12">
+                  <div className="space-y-8">
                     {/* Arts Section */}
                     {creations.arts?.length > 0 && (
                       <div>
@@ -541,8 +519,8 @@ const ProfilePage = () => {
                                   </div>
                                 )}
 
-                                <Link href={`/arts/detail/${art._id}`}>
-                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4 z-10 cursor-pointer">
+                                <Link href={`/arts/${art._id || art.id}`}>
+                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4 z-10 cursor-pointer pointer-events-auto">
                                     <p className="text-white font-bold text-sm truncate">{art.title}</p>
                                     <p className="text-purple-300 text-[10px] font-semibold uppercase">View Details →</p>
                                   </div>
@@ -557,8 +535,8 @@ const ProfilePage = () => {
                     {/* Music Section */}
                     {creations.musics?.length > 0 && (
                       <div>
-                        <h4 className="flex items-center gap-2 text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 ml-1">Music Tracks</h4>
-                        <div className="space-y-3">
+                        <h4 className="flex items-center gap-2 text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 ml-1">Music Library</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {creations.musics.map((music) => (
                             <MusicTrack 
                               key={music._id}
@@ -745,11 +723,80 @@ const ProfilePage = () => {
                     />
                   </div>
                 </form>
+
+                {/* Danger Zone */}
+                <div className="mt-20 pt-10 border-t-2 border-dashed border-red-100 dark:border-red-900/20">
+                   <div className="bg-red-50 dark:bg-red-950/10 rounded-[2.5rem] p-8 md:p-10 border border-red-100 dark:border-red-900/20">
+                      <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                         <div className="text-center md:text-left">
+                            <h4 className="text-xl font-bold text-red-600 mb-2">Danger Zone</h4>
+                            <p className="text-sm text-red-500/70 font-medium max-w-md">Once you delete your account, there is no going back. All your arts, music, and videos will be removed from the Aether arena.</p>
+                         </div>
+                         <button 
+                            onClick={handleDeleteAccount}
+                            className="px-8 py-4 bg-white dark:bg-red-950/20 border-2 border-red-600 text-red-600 font-black rounded-2xl hover:bg-red-600 hover:text-white transition-all shadow-xl shadow-red-600/10 active:scale-95 uppercase tracking-widest text-xs"
+                         >
+                            Delete My Account
+                         </button>
+                      </div>
+                   </div>
+                </div>
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* Follow Modal */}
+      {showFollowModal.type && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowFollowModal({ type: null, users: [] })} />
+          <div className="relative w-full max-w-sm bg-[#1a0533] border border-purple-800/20 rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+             <div className="px-6 py-5 border-b border-purple-900/30 flex items-center justify-between">
+                <h3 className="text-white font-bold text-lg capitalize">{showFollowModal.type}</h3>
+                <button onClick={() => setShowFollowModal({ type: null, users: [] })} className="p-2 text-purple-400 hover:text-red-400 transition-colors">
+                  <FaTimes />
+                </button>
+             </div>
+             <div className="max-h-[400px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-purple-900">
+                {showFollowModal.users.length > 0 ? (
+                  showFollowModal.users.map((f) => {
+                    // Check if f is populated or just an ID
+                    const isPopulated = typeof f === 'object' && f !== null;
+                    const uId = isPopulated ? (f._id || f.id) : f;
+                    const uName = isPopulated ? (f.name || f.username || "Merchant") : "User";
+                    const uHandle = isPopulated ? (f.username || "social") : "user";
+                    const uPic = isPopulated ? f.profileImageUrl : null;
+
+                    return (
+                      <Link 
+                        key={uId} 
+                        href={`/profile/${uId}`}
+                        onClick={() => setShowFollowModal({ type: null, users: [] })}
+                        className="flex items-center gap-3 p-3 rounded-2xl hover:bg-purple-800/10 transition-colors group"
+                      >
+                         <div className="h-10 w-10 rounded-xl bg-purple-500/20 flex items-center justify-center font-bold text-purple-400 text-xs shadow-inner overflow-hidden">
+                            {uPic ? (
+                              <img src={formatImageUrl(uPic)} className="w-full h-full object-cover" alt={uName} />
+                            ) : (
+                              uName.charAt(0).toUpperCase()
+                            )}
+                         </div>
+                         <div className="flex-1 min-w-0">
+                            <div className="text-white font-bold text-sm truncate group-hover:text-purple-300">{uName}</div>
+                            <div className="text-purple-400/50 text-[10px] tracking-widest font-bold uppercase truncate">@{uHandle}</div>
+                         </div>
+                         <FaChevronRight size={12} className="text-purple-500/30 group-hover:text-purple-400 flex-shrink-0" />
+                      </Link>
+                    );
+                  })
+                ) : (
+                  <div className="py-20 text-center text-purple-400/30 text-sm">No {showFollowModal.type} yet.</div>
+                )}
+             </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

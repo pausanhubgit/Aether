@@ -8,6 +8,8 @@ import musicReducer from "@/redux/music/musicSlice";
 import videoReducer from "@/redux/video/videoSlice";
 import eventReducer from "@/redux/events/eventSlice";
 import artReducer from "@/redux/art/artSlice";
+import notificationReducer from "@/redux/notifications/notificationSlice";
+import socialPersistenceReducer from "@/redux/social/socialSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -18,6 +20,8 @@ const rootReducer = combineReducers({
   video: videoReducer,
   events: eventReducer,
   art: artReducer,
+  notifications: notificationReducer,
+  socialPersistence: socialPersistenceReducer,
 });
 
 export default rootReducer;

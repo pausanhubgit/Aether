@@ -7,6 +7,8 @@ import { FaChartBar, FaHeart, FaPlay, FaImage, FaMusic, FaVideo, FaTrophy, FaArr
 import artsAPI from "@/api/arts";
 import musicAPI from "@/api/music";
 import videoAPI from "@/api/video";
+import usersAPI from "@/api/users";
+import { FaUserFriends, FaUserCheck } from "react-icons/fa";
 
 const DashboardHome = () => {
   const router = useRouter();
@@ -19,6 +21,8 @@ const DashboardHome = () => {
     totalVideos: 0,
     totalLikes: 0,
     totalViews: 0,
+    followersCount: 0,
+    followingCount: 0,
   });
 
   const [contentBreakdown, setContentBreakdown] = useState({
@@ -38,15 +42,18 @@ const DashboardHome = () => {
       if (!user?._id) return;
       try {
         const query = { merchant: user._id };
-        const [artsRes, musicRes, videosRes] = await Promise.all([
+        const [artsRes, musicRes, videosRes, profileRes] = await Promise.all([
           artsAPI.getArt(query),
           musicAPI.getMusic(query),
-          videoAPI.getVideo(query)
+          videoAPI.getVideo(query),
+          usersAPI.getUserProfile(user._id)
         ]);
 
         const allArts = Array.isArray(artsRes.data) ? artsRes.data : (artsRes.data?.arts || []);
         const allMusic = Array.isArray(musicRes.data) ? musicRes.data : (musicRes.data?.music || []);
         const allVideos = Array.isArray(videosRes.data) ? videosRes.data : (videosRes.data?.videos || []);
+        
+        const userData = profileRes?.data?.user || {};
 
         const arts = allArts.filter(a => a.merchant?._id === user._id || a.merchant === user._id);
         const music = allMusic.filter(m => m.merchant?._id === user._id || m.merchant === user._id);
@@ -66,6 +73,8 @@ const DashboardHome = () => {
             music.reduce((sum, m) => sum + Math.max(0, m.views || 0), 0) +
             videos.reduce((sum, v) => sum + Math.max(0, v.views || 0), 0)
           ),
+          followersCount: userData.followers?.length || 0,
+          followingCount: userData.following?.length || 0,
         });
 
         setContentBreakdown({
@@ -108,9 +117,9 @@ const DashboardHome = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-10">
           {/* Badge */}
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6 text-center">
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6 text-center xl:col-span-1">
             <div className="text-3xl mb-2">{getBadge().split(" ")[getBadge().split(" ").length - 1]}</div>
             <p className="text-sm font-semibold text-purple-900">{getBadge().split(" ").slice(0, -1).join(" ")}</p>
             <p className="text-xs text-gray-600 mt-2">{stats.totalLikes} total likes</p>
@@ -154,6 +163,26 @@ const DashboardHome = () => {
             </div>
             <p className="text-sm font-semibold text-yellow-900">Creator Level</p>
             <p className="text-xs text-gray-600 mt-1">Keep creating!</p>
+          </div>
+
+          {/* Followers */}
+          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
+            <div className="flex items-center justify-between mb-2">
+              <FaUserFriends className="text-indigo-600 text-xl" />
+              <span className="text-2xl font-bold text-indigo-600">{stats.followersCount}</span>
+            </div>
+            <p className="text-sm font-semibold text-indigo-900">Followers</p>
+            <p className="text-xs text-gray-600 mt-1">Your community</p>
+          </div>
+
+          {/* Following */}
+          <div className="bg-teal-50 border border-teal-200 rounded-lg p-6">
+            <div className="flex items-center justify-between mb-2">
+              <FaUserCheck className="text-teal-600 text-xl" />
+              <span className="text-2xl font-bold text-teal-600">{stats.followingCount}</span>
+            </div>
+            <p className="text-sm font-semibold text-teal-900">Following</p>
+            <p className="text-xs text-gray-600 mt-1">Creators you love</p>
           </div>
         </div>
 

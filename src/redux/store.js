@@ -24,7 +24,7 @@ const storage = typeof window !== "undefined" ? createWebStorage("local") : crea
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["userPreferences", "auth", "cart"],
+  whitelist: ["userPreferences", "auth", "cart", "notifications", "socialPersistence"],
 };
 
 const persistedReducer = typeof window !== "undefined" ? persistReducer(persistConfig, rootReducer) : rootReducer;

@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Logo from './Logo';
 import NavMenu from './NavMenu';
 import { useAuth } from '@/lib/authContext';
-import { IoSunnyOutline, IoMoonOutline } from 'react-icons/io5';
+import { IoSunnyOutline, IoMoonOutline, IoSearchOutline } from 'react-icons/io5';
 import { MdOutlineAddShoppingCart } from 'react-icons/md';
 import { FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 import { CiLogin } from "react-icons/ci";
@@ -15,6 +15,7 @@ import { toast } from 'react-toastify';
 import { DARK_THEME, LIGHT_THEME } from '@/constants/theme';
 import { toggleTheme } from '@/redux/userPreferences/userPreferenceSlice';
 import { formatImageUrl } from '../helpers/url';
+import NotificationBell from './NotificationBell';
 
 const Header = () => {
   const router = useRouter();
@@ -44,11 +45,11 @@ const Header = () => {
       className="fixed top-0 left-0 z-[60] w-full border-b shadow-sm transition-colors duration-300"
       style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
     >
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-5 lg:px-6 py-3">
-
+      <div className="container-7xl flex items-center justify-between py-4 md:py-5">
         {/* LEFT: Logo + Nav */}
-        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+        <div className="flex items-center gap-6 min-w-0">
           <Logo />
+          <div className="hidden lg:block h-6 w-px bg-gray-200 dark:bg-purple-900/30"></div>
           <NavMenu />
         </div>
 
@@ -63,11 +64,21 @@ const Header = () => {
               aria-label="Toggle Theme"
             >
               {theme === DARK_THEME
-                ? <IoSunnyOutline size={20} />
-                : <IoMoonOutline size={20} />
+                ? <IoSunnyOutline size={22} />
+                : <IoMoonOutline size={22} />
               }
             </button>
           )}
+
+          {/* Search Icon */}
+          <Link href="/search/profiles">
+            <div
+              className="p-1.5 text-primary hover:text-primary/70 transition-all cursor-pointer active:scale-90 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/30"
+              aria-label="Search User Profiles"
+            >
+              <IoSearchOutline size={22} />
+            </div>
+          </Link>
 
           {/* Cart */}
           <Link href="/arts/cart">
@@ -75,7 +86,7 @@ const Header = () => {
               className="p-1.5 text-primary hover:text-primary/70 transition-all cursor-pointer active:scale-90 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/30 relative"
               aria-label="Cart"
             >
-              <MdOutlineAddShoppingCart size={20} />
+              <MdOutlineAddShoppingCart size={22} />
               {mounted && cartItemsCount > 0 && (
                 <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm">
                   {cartItemsCount}
@@ -88,6 +99,9 @@ const Header = () => {
           {mounted && (
             isAuthenticated ? (
               <div className="flex items-center gap-1 sm:gap-2">
+
+                {/* Notification Bell */}
+                <NotificationBell />
 
                 {/* Profile Avatar */}
                 <Link

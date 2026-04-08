@@ -46,14 +46,14 @@ const Contact = () => {
     <div className="relative min-h-screen bg-slate-50 dark:bg-[#0d0118] overflow-hidden">
       <div className="container-responsive relative z-10 py-24">
         {/* Header */}
-        <div className="flex flex-col mb-20 space-y-4">
+        <div className="flex flex-col mb-20 space-y-4 max-w-6xl mx-auto w-full">
           <div className="inline-flex items-center w-fit gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-semibold uppercase tracking-[0.2em]">
              <FaEnvelope /> <span>Get In Touch</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-semibold text-slate-800 dark:text-white leading-[1.1]">
             Contact <span className="text-primary italic">Aether</span>
           </h1>
-          <p className="text-xl text-slate-500 dark:text-slate-400 max-w-2xl font-medium leading-relaxed">
+          <p className="text-xl text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-2xl">
             Have questions or feedback? We'd love to hear from you. Reach out to the Aether Hub team.
           </p>
         </div>
@@ -113,8 +113,8 @@ const Contact = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white dark:bg-[#160327] border border-transparent dark:border-purple-900/40 rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-purple-100 mb-6">Send us a Message</h2>
+          <div className="bg-white dark:bg-[#160327]/80 border border-gray-100 dark:border-slate-700/50 rounded-[2rem] shadow-xl shadow-purple-500/5 p-8 sm:p-10">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Send us a Message</h2>
 
             {submitted ? (
               <div className="text-center py-8">
@@ -136,7 +136,7 @@ const Contact = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-purple-900/40 dark:bg-[#0d0118] dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-4 bg-gray-50 border border-gray-200 dark:border-slate-700 dark:bg-[#0d0118]/50 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
                       placeholder="Your full name"
                     />
                   </div>
@@ -150,7 +150,7 @@ const Contact = () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-purple-900/40 dark:bg-[#0d0118] dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-4 bg-gray-50 border border-gray-200 dark:border-slate-700 dark:bg-[#0d0118]/50 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
                       placeholder="your@email.com"
                     />
                   </div>
@@ -166,7 +166,7 @@ const Contact = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-purple-900/40 dark:bg-[#0d0118] dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-4 bg-gray-50 border border-gray-200 dark:border-slate-700 dark:bg-[#0d0118]/50 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
                     placeholder="Your phone number"
                   />
                 </div>
@@ -181,7 +181,7 @@ const Contact = () => {
                     value={formData.subject}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-purple-900/40 dark:bg-[#0d0118] dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-4 bg-gray-50 border border-gray-200 dark:border-slate-700 dark:bg-[#0d0118]/50 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
                     placeholder="What's this about?"
                   />
                 </div>
@@ -196,7 +196,7 @@ const Contact = () => {
                     onChange={handleInputChange}
                     required
                     rows={6}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-purple-900/40 dark:bg-[#0d0118] dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                    className="w-full px-4 py-4 bg-gray-50 border border-gray-200 dark:border-slate-700 dark:bg-[#0d0118]/50 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors resize-none"
                     placeholder="Tell us how we can help you..."
                   />
                 </div>

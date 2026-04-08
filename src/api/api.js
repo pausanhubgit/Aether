@@ -24,44 +24,27 @@ api.interceptors.request.use(
           }
 
           // Search all possible token locations (case-insensitive priority)
-          const tokenDetails = findToken(authState);
+          const tokenDetails = findTokenAdvanced(authState);
           
           if (tokenDetails.token) {
             let cleanToken = String(tokenDetails.token).trim();
+            cleanToken = cleanToken.replace(/^"|"$/g, ""); // remove quotes
             
-            // Remove any potential double Bearer if it somehow got in
             if (cleanToken.startsWith("Bearer ")) {
                 cleanToken = cleanToken.substring(7).trim();
             }
             
-            // Remove quotes
-            cleanToken = cleanToken.replace(/^"|"$/g, "");
-            
-            // CRITICAL: Prevent sending "null" or "undefined" as strings
             if (cleanToken !== "null" && cleanToken !== "undefined" && cleanToken.length > 20) {
               config.headers.Authorization = `Bearer ${cleanToken}`;
-              // Log once to verify, but keep it quiet for performance
               if (!window._apiLogDone) {
                    console.log(`[API] Auth Token successfully attached from ${tokenDetails.source}`);
                    window._apiLogDone = true;
               }
-            } else {
-              console.error(`[API] Invalid token detected. Value: "${cleanToken}", Length: ${cleanToken.length}, Source: ${tokenDetails.source}`);
             }
           } else {
-            // Enhanced debugging for missing token
-            console.groupCollapsed("[API] Auth Debugging (Token Not Found)");
-            console.log("Persisted Root exists:", !!persistedRoot);
-            console.log("Auth State exists:", !!authState);
-            if (authState) {
-               console.log("Auth keys:", Object.keys(authState));
-               console.log("Token value:", authState.token);
-               console.log("User nested token:", authState.user?.token || authState.user?.authtoken);
-            }
-            console.groupEnd();
-
-            const publicRoutes = ['/api/auths/login', '/api/auths/register', '/api/auths/forgot-password', '/api/auths/reset-password'];
-            if (!publicRoutes.some(route => config.url?.includes(route))) {
+            // Enhanced debugging or quiet mode for public routes
+            const isPublicSearch = config.url?.includes("/api/users") && config.method === "get";
+            if (!isPublicSearch) {
                 console.warn(`[API] No token found for protected route: ${config.url}`);
             }
           }
@@ -75,16 +58,25 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-function findToken(authState) {
-    // 1. Check root level of auth state
+function findTokenAdvanced(authState) {
+    // 1. Check Redux Persist Store
     if (authState?.token) return { token: authState.token, source: "state.token" };
     if (authState?.authtoken) return { token: authState.authtoken, source: "state.authtoken" };
-    if (authState?.authToken) return { token: authState.authToken, source: "state.authToken" };
     
     // 2. Check nested user object
     if (authState?.user?.authtoken) return { token: authState.user.authtoken, source: "state.user.authtoken" };
     if (authState?.user?.token) return { token: authState.user.token, source: "state.user.token" };
-    if (authState?.user?.authToken) return { token: authState.user.authToken, source: "state.user.authToken" };
+    
+    // 3. Fallback to common direct localStorage keys
+    const directKeys = ['token', 'authtoken', 'authToken', 'userToken'];
+    for (const key of directKeys) {
+        const val = localStorage.getItem(key);
+        if (val) return { token: val, source: `localStorage.${key}` };
+    }
+    
+    // 4. Fallback to Cookies
+    const cookieToken = (`; ${document.cookie}`).split(`; authtoken=`).pop().split(';').shift();
+    if (cookieToken) return { token: cookieToken, source: "document.cookie" };
     
     return { token: null, source: "none" };
 }
@@ -94,13 +86,16 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.group("🚨 [API] 401 UNAUTHORIZED DETECTED");
-      console.error("Endpoint:", error.config?.url);
-      console.error("Method:", error.config?.method?.toUpperCase());
-      console.error("Token Sent:", error.config?.headers?.Authorization ? "Yes" : "No");
-      console.error("Backend Message:", error.response?.data?.message || "No message provided");
-      console.error("Full Error Response:", error.response?.data);
-      console.groupEnd();
+      // Quiet 401 handling for public-facing search pages
+      const isPublicSearch = error.config?.url?.includes("/api/users") && error.config?.method === "get";
+      if (!isPublicSearch) {
+        console.group("🚨 [API] 401 UNAUTHORIZED DETECTED");
+        console.error("Endpoint:", error.config?.url);
+        console.error("Method:", error.config?.method?.toUpperCase());
+        console.error("Token Sent:", error.config?.headers?.Authorization ? "Yes" : "No");
+        console.error("Backend Message:", error.response?.data?.message || "No message provided");
+        console.groupEnd();
+      }
     }
     return Promise.reject(error);
   }
