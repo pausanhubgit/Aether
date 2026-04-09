@@ -113,18 +113,13 @@ const Hero = () => {
 
                 {/* Image */}
                 <div className="w-full md:w-1/2 flex justify-center md:justify-end relative group py-8 md:py-0">
-                  <div className="absolute -inset-10 bg-primary/30 rounded-full blur-[100px] opacity-20 group-hover:opacity-40 animate-glow transition-opacity pointer-events-none"></div>
                   <div className="relative w-full aspect-square sm:aspect-video md:aspect-[4/3] max-w-[450px] flex items-center justify-center">
                     <Image
                       src={slide.image}
-                      className={`w-full h-full rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] object-cover ring-1 ring-black/5 dark:ring-white/10 transition-all duration-700 group-hover:scale-[1.03] group-hover:-rotate-1 
-                        ${slide.id === 2 ? 'mix-blend-multiply dark:invert dark:mix-blend-screen' : ''}`}
+                      className="w-full h-full rounded-[3rem] object-cover transition-all duration-700 group-hover:scale-[1.03] group-hover:-rotate-1"
                       alt={slide.title}
                       priority
                     />
-                    {/* Decorative Elements */}
-                    <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl animate-pulse"></div>
-                    <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-secondary/20 rounded-full blur-3xl animate-pulse delay-700"></div>
                   </div>
                 </div>
               </div>
@@ -152,7 +147,7 @@ const Hero = () => {
       </div>
 
       {/* Slider Dots */}
-      <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-4 z-20">
+      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4 z-20">
         {slides.map((_, index) => (
           <button
             key={index}

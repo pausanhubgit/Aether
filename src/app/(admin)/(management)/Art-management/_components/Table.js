@@ -103,7 +103,7 @@ const ArtsTable = () => {
   }, [refresh, sortBy, sortOrder, page]);
 
   return (
-    <div className="relative overflow-hidden backdrop-blur-md bg-white/80 dark:bg-[#160327]/80 shadow-2xl border border-white/20 dark:border-gray-700/30 sm:rounded-2xl transition-all duration-300">
+    <div className="relative backdrop-blur-md bg-white/80 dark:bg-[#160327]/80 shadow-2xl border border-white/20 dark:border-gray-700/30 sm:rounded-2xl transition-all duration-300">
       <div className="flex flex-col px-6 py-6 space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center flex-1 space-x-4">
           <div className="p-1 bg-primary/10 rounded-xl overflow-hidden shadow-inner flex items-center justify-center">
