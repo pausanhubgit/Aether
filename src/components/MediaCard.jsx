@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaHeart, FaShare, FaRegHeart, FaComment, FaEdit, FaTrash, FaPlay, FaMusic, FaFilm } from 'react-icons/fa';
@@ -48,6 +48,56 @@ export default function MediaCard({ item, type, view }) {
   const [commentsCount, setCommentsCount] = useState(Array.isArray(item.comments) ? item.comments.length : (item.commentsCount || 0));
   const [showComments, setShowComments] = useState(false);
   const isListView = view === LIST_VIEW;
+
+  // Ref for the primary media element in this card
+  const mediaRef = useRef(null);
+
+  // Pause all other video/audio elements when this one starts playing
+  const handleMediaPlay = useCallback(() => {
+    const allMedia = document.querySelectorAll('video, audio');
+    allMedia.forEach((el) => {
+      if (el !== mediaRef.current && !el.paused) {
+        el.pause();
+      }
+    });
+  }, []);
+
+  // When this media ends, auto-play the next media element in DOM order
+  const handleMediaEnded = useCallback(() => {
+    const allMedia = Array.from(document.querySelectorAll('video, audio'));
+    const currentIndex = allMedia.indexOf(mediaRef.current);
+    if (currentIndex !== -1 && currentIndex < allMedia.length - 1) {
+      const next = allMedia[currentIndex + 1];
+      next.closest('[data-media-card]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => {
+        next.play().catch(() => {});
+      }, 600);
+    }
+  }, []);
+
+  // ── IntersectionObserver: auto-play when ≥60% visible, pause when not ──
+  useEffect(() => {
+    const el = mediaRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // Pause every other media first, then play this one
+          document.querySelectorAll('video, audio').forEach((m) => {
+            if (m !== el && !m.paused) m.pause();
+          });
+          el.play().catch(() => {}); // browser may block without user gesture
+        } else {
+          el.pause();
+        }
+      },
+      { threshold: 0.6 } // 60% of the element must be visible
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const detailHref = type === 'art' ? `/arts/${item._id}` : `/${type}/detail/${item._id}`;
 
@@ -153,6 +203,7 @@ export default function MediaCard({ item, type, view }) {
   if (!isListView && type === "music") {
     return (
       <div
+        data-media-card
         onClick={handleCardClick}
         className="group relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:-translate-y-1 bg-gradient-to-br from-[#12002a] via-[#1e0540] to-[#0a001a] border border-purple-800/30 flex flex-col cursor-pointer"
       >
@@ -160,9 +211,13 @@ export default function MediaCard({ item, type, view }) {
         <div className="relative h-56 flex items-center justify-center overflow-hidden bg-black">
           {(item.videoUrls?.length > 0 || item.videoUrl || (mediaUrl && (mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i) || mediaUrl.includes('/video/')))) ? (
             <video
+              ref={mediaRef}
               controls
+              muted
               src={item.videoUrls?.[0] || item.videoUrl || mediaUrl}
               className="w-full h-full object-cover"
+              onPlay={handleMediaPlay}
+              onEnded={handleMediaEnded}
             />
           ) : (
             <>
@@ -219,10 +274,13 @@ export default function MediaCard({ item, type, view }) {
           {/* Audio player */}
           {!(item.videoUrls?.length > 0 || item.videoUrl || (mediaUrl && (mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i) || mediaUrl.includes('/video/')))) && (
             <audio
+              ref={mediaRef}
               controls
               src={item.audioUrls?.[0] || mediaUrl}
               className="w-full h-9 rounded-lg"
               style={{ filter: 'invert(1) hue-rotate(240deg) brightness(0.9)' }}
+              onPlay={handleMediaPlay}
+              onEnded={handleMediaEnded}
             />
           )}
 
@@ -242,8 +300,8 @@ export default function MediaCard({ item, type, view }) {
               <button onClick={handleShare} className="p-1.5 rounded-full text-purple-400 hover:text-white transition-colors" title="Share">
                 <FaShare size={12} />
               </button>
-              <Link href={`/music/detail/${item._id}`} className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5">
-                <FaPlay size={10} /> Listen
+              <Link href={`/music/detail/${item._id}`} className="bg-purple-600 hover:bg-purple-500 !text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5">
+                <FaPlay size={10} className="!text-white" /> <span className="!text-white">Listen</span>
               </Link>
             </div>
           </div>
@@ -269,16 +327,21 @@ export default function MediaCard({ item, type, view }) {
     const thumbnail = item.thumbnail || item.imageUrls?.[0] || item.image;
     return (
       <div
+        data-media-card
         onClick={handleCardClick}
         className="group relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 hover:-translate-y-1 bg-[#00080f] border border-blue-900/30 flex flex-col cursor-pointer"
       >
         {/* Thumbnail / Video preview area */}
         <div className="relative aspect-video sm:min-h-[220px] overflow-hidden bg-black flex items-center justify-center group">
           <video
+            ref={mediaRef}
             controls
+            muted
             src={mediaUrl}
             className="w-full h-full object-cover z-0 relative"
             preload="metadata"
+            onPlay={handleMediaPlay}
+            onEnded={handleMediaEnded}
           />
 
           {/* Duration / genre badge */}
@@ -333,8 +396,8 @@ export default function MediaCard({ item, type, view }) {
               <button onClick={handleShare} className="p-1.5 rounded-full text-slate-400 hover:text-white transition-colors" title="Share">
                 <FaShare size={12} />
               </button>
-              <Link href={`/video/detail/${item._id}`} className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5">
-                <FaPlay size={10} /> Watch
+              <Link href={`/video/detail/${item._id}`} className="bg-blue-600 hover:bg-blue-500 !text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5">
+                <FaPlay size={10} className="!text-white" /> <span className="!text-white">Watch</span>
               </Link>
             </div>
           </div>
@@ -370,10 +433,13 @@ export default function MediaCard({ item, type, view }) {
       )}
       {(isVideo || (type === "music" && item.videoUrls?.length > 0)) ? (
         <video
+          ref={mediaRef}
           controls
           poster={item.imageUrls?.[0] || item.thumbnail || item.image}
           src={item.videoUrls?.[0] || mediaUrl}
           className="w-full h-full object-cover bg-black"
+          onPlay={handleMediaPlay}
+          onEnded={handleMediaEnded}
         />
       ) : type === "music" ? (
         <div className="w-full h-full bg-gradient-to-br from-[#1a0533] to-[#3b0764] flex flex-col items-center justify-center p-5 gap-3 relative overflow-hidden">
@@ -383,7 +449,7 @@ export default function MediaCard({ item, type, view }) {
           </div>
           <div className="text-5xl text-purple-300 drop-shadow-lg relative z-10 select-none">♫</div>
           <p className="text-purple-200 text-xs font-semibold truncate max-w-full relative z-10 text-center px-2">{item.title}</p>
-          <audio controls src={item.audioUrls?.[0] || mediaUrl} className="w-full h-10 relative z-10" style={{ filter: 'invert(1) hue-rotate(280deg)' }} />
+          <audio ref={mediaRef} controls src={item.audioUrls?.[0] || mediaUrl} className="w-full h-10 relative z-10" style={{ filter: 'invert(1) hue-rotate(280deg)' }} onPlay={handleMediaPlay} onEnded={handleMediaEnded} />
         </div>
       ) : (
         <Image
@@ -405,7 +471,7 @@ export default function MediaCard({ item, type, view }) {
   if (isListView) {
     const viewLabel = type === 'art' ? 'Art' : type === 'music' ? 'Music' : 'Video';
     return (
-      <div className="group bg-white dark:bg-[#0f021b] border border-slate-200 dark:border-purple-900/40 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden flex flex-col md:flex-row" style={{ minHeight: '220px' }}>
+      <div data-media-card className="group bg-white dark:bg-[#0f021b] border border-slate-200 dark:border-purple-900/40 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden flex flex-col md:flex-row" style={{ minHeight: '220px' }}>
         <div className="w-full md:w-[300px] lg:w-[340px] relative h-52 md:h-auto flex-shrink-0 overflow-hidden">
           <MediaContent className="w-full h-full" />
         </div>
