@@ -14,8 +14,8 @@ export const generateMetadata = async ({ params }) => {
   const response = await artsAPI.getArtById(artId);
   const art = response.data;
   return {
-    title: art?.name,
-    keywords: `${art?.name}, ${art?.brand}, ${art?.category}`,
+    title: art?.name || art?.title,
+    keywords: `${art?.name || art?.title}, ${art?.brand}, ${art?.category}`,
   };
 };
 
@@ -354,7 +354,7 @@ const ArtDetails = async ({ params }) => {
             <h2 className="section-title">You Might Also Like</h2>
             <div className="section-line" />
           </div>
-          <MediaFeed type="art" genre={art.category} />
+          <MediaFeed type="art" genre={art.category} excludeId={artId} />
         </div>
       </div>
     </main>

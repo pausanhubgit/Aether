@@ -10,7 +10,7 @@ import Spinner from "./Spinner";
 import { useSelector } from "react-redux";
 import { GRID_VIEW } from "@/constants/artView";
 
-export default function MediaFeed({ type, genre, searchName, minPrice, maxPrice, sort, limit }) {
+export default function MediaFeed({ type, genre, searchName, minPrice, maxPrice, sort, limit, excludeId }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { productView } = useSelector((state) => state.userPreferences);
@@ -38,7 +38,7 @@ export default function MediaFeed({ type, genre, searchName, minPrice, maxPrice,
         } else if (type === "art") {
           response = await artsAPI.getArt({ category: genre, ...apiParams });
         }
-        
+
         setItems(response.data || []);
       } catch (error) {
         console.error(`Failed to fetch ${type}:`, error);
@@ -52,8 +52,16 @@ export default function MediaFeed({ type, genre, searchName, minPrice, maxPrice,
   }, [type, genre, searchName, minPrice, maxPrice, sort, limit]);
 
   const sortedItems = useMemo(() => {
-     return [...items].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  }, [items]);
+    let result = [...items];
+    if (excludeId) {
+      result = result.filter(item => {
+        const itemId = String(item._id || item.id || "");
+        const excludeVal = String(excludeId || "");
+        return itemId !== excludeVal;
+      });
+    }
+    return result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }, [items, excludeId]);
 
   if (loading) {
     return (
@@ -68,11 +76,10 @@ export default function MediaFeed({ type, genre, searchName, minPrice, maxPrice,
   }
 
   return (
-    <div className={`w-full min-w-0 ${
-      productView === GRID_VIEW
+    <div className={`w-full min-w-0 ${productView === GRID_VIEW
         ? `grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5`
         : 'flex flex-col gap-5'
-    }`}>
+      }`}>
       {sortedItems.map((item) => (
         <MediaCard key={item._id} item={item} type={type} view={productView} />
       ))}
