@@ -13,6 +13,7 @@ import videoApi from "@/api/video";
 import MediaFeed from "@/components/MediaFeed";
 import ReviewsSection from "@/components/ReviewsSection";
 import Spinner from "@/components/Spinner";
+import { formatImageUrl } from "@/helpers/url";
 
 const VideoDetail = ({ params }) => {
   const { id } = React.use(params);
@@ -74,9 +75,9 @@ const VideoDetail = ({ params }) => {
     );
 
   const allUrls = [];
-  if (video.videoUrls && Array.isArray(video.videoUrls)) allUrls.push(...video.videoUrls);
-  if (video.url) allUrls.push(video.url);
-  if (video.videoUrl) allUrls.push(video.videoUrl);
+  if (video.videoUrls && Array.isArray(video.videoUrls)) allUrls.push(...video.videoUrls.map(formatImageUrl));
+  if (video.url) allUrls.push(formatImageUrl(video.url));
+  if (video.videoUrl) allUrls.push(formatImageUrl(video.videoUrl));
   
   const videoRegex = /\.(mp4|webm|mov|m4v|ogv|mkv)(\?.*)?$/i;
   const videoUrl = allUrls.find(url => videoRegex.test(url)) || allUrls[0] || null;
@@ -281,9 +282,12 @@ const VideoDetail = ({ params }) => {
                 <video
                   key={videoUrl}
                   controls
+                  playsInline
+                  crossOrigin="anonymous"
+                  preload="metadata"
                   src={videoUrl}
                   className="vi-video"
-                  poster={video.thumbnailUrl || video.imageUrls?.[0] || undefined}
+                  poster={formatImageUrl(video.thumbnailUrl || video.imageUrls?.[0]) || undefined}
                 />
               ) : (
                 <div className="vi-no-video">

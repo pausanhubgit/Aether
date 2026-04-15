@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import { getFeedItems } from "@/lib/storage";
+import { formatImageUrl } from "@/helpers/url";
 
 const renderType = {
   art: "Art",
@@ -63,11 +64,14 @@ export default function Feed({ limit = 25 }) {
                 {item.type === "video" ? (
                   <video
                     controls
-                    src={mediaUrl}
+                    playsInline
+                    crossOrigin="anonymous"
+                    preload="metadata"
+                    src={formatImageUrl(mediaUrl)}
                     className="max-h-36 rounded-lg border border-[var(--border)]"
                   />
                 ) : item.type === "music" ? (
-                  <audio controls src={mediaUrl} className="w-full max-w-xs" />
+                  <audio controls crossOrigin="anonymous" src={formatImageUrl(mediaUrl)} className="w-full max-w-xs" />
                 ) : item.type === "photo" || item.type === "art" ? (
                   <Image
                     src={mediaUrl}

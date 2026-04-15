@@ -16,6 +16,7 @@ import { addToCart } from "@/redux/cart/cartSlice";
 import { addNotification } from "@/redux/notifications/notificationSlice";
 import { MdOutlineAddShoppingCart } from 'react-icons/md';
 import { LIST_VIEW, GRID_VIEW } from "@/constants/artView";
+import { formatImageUrl } from "@/helpers/url";
 
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
@@ -213,8 +214,10 @@ export default function MediaCard({ item, type, view }) {
             <video
               ref={mediaRef}
               controls
+              playsInline
+              crossOrigin="anonymous"
               muted
-              src={item.videoUrls?.[0] || item.videoUrl || mediaUrl}
+              src={formatImageUrl(item.videoUrls?.[0] || item.videoUrl || mediaUrl)}
               className="w-full h-full object-cover"
               onPlay={handleMediaPlay}
               onEnded={handleMediaEnded}
@@ -336,8 +339,10 @@ export default function MediaCard({ item, type, view }) {
           <video
             ref={mediaRef}
             controls
+            playsInline
+            crossOrigin="anonymous"
             muted
-            src={mediaUrl}
+            src={formatImageUrl(mediaUrl)}
             className="w-full h-full object-cover z-0 relative"
             preload="metadata"
             onPlay={handleMediaPlay}
@@ -435,8 +440,11 @@ export default function MediaCard({ item, type, view }) {
         <video
           ref={mediaRef}
           controls
-          poster={item.imageUrls?.[0] || item.thumbnail || item.image}
-          src={item.videoUrls?.[0] || mediaUrl}
+          playsInline
+          crossOrigin="anonymous"
+          preload="metadata"
+          poster={formatImageUrl(item.imageUrls?.[0] || item.thumbnail || item.image)}
+          src={formatImageUrl(item.videoUrls?.[0] || mediaUrl)}
           className="w-full h-full object-cover bg-black"
           onPlay={handleMediaPlay}
           onEnded={handleMediaEnded}

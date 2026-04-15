@@ -174,7 +174,7 @@ const AddMusic = () => {
                   <div className="bg-purple-50 p-4 rounded-lg">
                     <FaMusic className="text-purple-600 text-3xl mx-auto mb-2" />
                     {formData.audio?.type?.startsWith('video/') ? (
-                      <video controls src={audioPreview} className="w-full max-h-48 object-cover rounded-md" />
+                      <video controls playsInline src={audioPreview} className="w-full max-h-48 object-cover rounded-md" />
                     ) : (
                       <audio controls src={audioPreview} className="w-full" />
                     )}

@@ -172,7 +172,7 @@ const AddVideo = () => {
                 <div className="space-y-4">
                   <div className="bg-purple-50 p-4 rounded-lg">
                     <FaVideo className="text-purple-600 text-3xl mx-auto mb-2" />
-                    <video controls src={videoPreview} className="w-full max-h-48 rounded-lg" />
+                    <video controls playsInline src={videoPreview} className="w-full max-h-48 rounded-lg" />
                   </div>
                   <button
                     type="button"

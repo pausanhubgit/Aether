@@ -13,6 +13,7 @@ import musicApi from "@/api/music";
 import MediaFeed from "@/components/MediaFeed";
 import ReviewsSection from "@/components/ReviewsSection";
 import Spinner from "@/components/Spinner";
+import { formatImageUrl } from "@/helpers/url";
 
 const MusicDetail = ({ params }) => {
   const { id } = React.use(params);
@@ -75,11 +76,11 @@ const MusicDetail = ({ params }) => {
 
   const getAllMedia = () => {
     const urls = [];
-    if (music.audioUrls && Array.isArray(music.audioUrls)) urls.push(...music.audioUrls);
-    if (music.videoUrls && Array.isArray(music.videoUrls)) urls.push(...music.videoUrls);
-    if (music.url) urls.push(music.url);
-    if (music.audioUrl) urls.push(music.audioUrl);
-    if (music.videoUrl) urls.push(music.videoUrl);
+    if (music.audioUrls && Array.isArray(music.audioUrls)) urls.push(...music.audioUrls.map(formatImageUrl));
+    if (music.videoUrls && Array.isArray(music.videoUrls)) urls.push(...music.videoUrls.map(formatImageUrl));
+    if (music.url) urls.push(formatImageUrl(music.url));
+    if (music.audioUrl) urls.push(formatImageUrl(music.audioUrl));
+    if (music.videoUrl) urls.push(formatImageUrl(music.videoUrl));
     return urls.filter(Boolean);
   };
 
@@ -326,9 +327,12 @@ const MusicDetail = ({ params }) => {
                 <video 
                   key={videoUrl}
                   controls 
+                  playsInline
+                  crossOrigin="anonymous"
+                  preload="metadata"
                   src={videoUrl} 
                   className="mu-video-player"
-                  poster={music.thumbnailUrl || music.imageUrls?.[0] || undefined}
+                  poster={formatImageUrl(music.thumbnailUrl || music.imageUrls?.[0]) || undefined}
                 />
               ) : (
                 <>
@@ -337,7 +341,7 @@ const MusicDetail = ({ params }) => {
                   </div>
                   {audioUrl && (
                     <div className="mu-audio-player">
-                      <audio controls src={audioUrl} />
+                      <audio controls crossOrigin="anonymous" src={audioUrl} />
                     </div>
                   )}
                 </>

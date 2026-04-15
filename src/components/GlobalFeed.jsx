@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FaHeart, FaShare, FaMusic } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { getFeedItems, setFeedItems } from '@/lib/storage';
+import { formatImageUrl } from "@/helpers/url";
 
 const renderType = {
   art: "Art",
@@ -110,7 +111,10 @@ export default function GlobalFeed({ limit = 25 }) {
               {item.type === "video" ? (
                 <video
                   controls
-                  src={mediaUrl}
+                  playsInline
+                  crossOrigin="anonymous"
+                  preload="metadata"
+                  src={formatImageUrl(mediaUrl)}
                   className="w-full h-48 object-cover"
                 />
               ) : item.type === "music" ? (
@@ -118,7 +122,10 @@ export default function GlobalFeed({ limit = 25 }) {
                   {(item.videoUrl || (mediaUrl && (mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i) || mediaUrl.includes('/video/')))) ? (
                     <video
                       controls
-                      src={item.videoUrl || mediaUrl}
+                      playsInline
+                      crossOrigin="anonymous"
+                      preload="metadata"
+                      src={formatImageUrl(item.videoUrl || mediaUrl)}
                       className="w-full h-full object-cover"
                     />
                   ) : (

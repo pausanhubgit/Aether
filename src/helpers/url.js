@@ -7,10 +7,19 @@ import config from "@/config";
  */
 export const formatImageUrl = (url) => {
   if (!url) return null;
-  // If it's already an absolute URL or a data URI, return it as is
-  if (url.startsWith("http") || url.startsWith("data:")) return url;
   
-  // Clean up relative path and prepend API URL
-  const cleanPath = url.startsWith("/") ? url : `/${url}`;
-  return `${config.apiUrl}${cleanPath}`;
+  let formattedUrl = url;
+  
+  // If it's not an absolute URL or data URI, prepend API URL
+  if (!url.startsWith("http") && !url.startsWith("data:") && !url.startsWith("blob:")) {
+    const cleanPath = url.startsWith("/") ? url : `/${url}`;
+    formattedUrl = `${config.apiUrl}${cleanPath}`;
+  }
+
+  // Robust HTTPS upgrade for non-localhost URLs
+  if (formattedUrl.startsWith("http://") && !formattedUrl.includes("localhost") && !formattedUrl.includes("127.0.0.1")) {
+    formattedUrl = formattedUrl.replace(/^http:\/\//i, "https://");
+  }
+  
+  return formattedUrl;
 };
