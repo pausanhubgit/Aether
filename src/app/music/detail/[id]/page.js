@@ -75,26 +75,28 @@ const MusicDetail = ({ params }) => {
 
   const getAllMedia = () => {
     const urls = [];
-    if (music.audioUrls) urls.push(...music.audioUrls);
-    if (music.videoUrls) urls.push(...music.videoUrls);
+    if (music.audioUrls && Array.isArray(music.audioUrls)) urls.push(...music.audioUrls);
+    if (music.videoUrls && Array.isArray(music.videoUrls)) urls.push(...music.videoUrls);
     if (music.url) urls.push(music.url);
-    return urls;
+    if (music.audioUrl) urls.push(music.audioUrl);
+    if (music.videoUrl) urls.push(music.videoUrl);
+    return urls.filter(Boolean);
   };
 
-  const mediaUrl = getAllMedia().find(url => 
-    url?.toLowerCase().endsWith(".mp4") || 
-    url?.toLowerCase().endsWith(".mov") || 
-    url?.toLowerCase().endsWith(".webm")
-  ) || music.audioUrls?.[0] || music.url || null;
+  const allUrls = getAllMedia();
+  
+  // Robust check for video extensions
+  const videoRegex = /\.(mp4|webm|mov|m4v|ogv|mkv)(\?.*)?$/i;
+  
+  const videoUrlCandidate = allUrls.find(url => videoRegex.test(url));
+  
+  const isVideoMusic = !!videoUrlCandidate || (music.videoUrls && music.videoUrls.length > 0) || !!music.videoUrl;
 
-  const isVideoMusic = mediaUrl?.toLowerCase().endsWith(".mp4") || 
-                       mediaUrl?.toLowerCase().endsWith(".mov") || 
-                       mediaUrl?.toLowerCase().endsWith(".webm") ||
-                       (music.videoUrls && music.videoUrls.length > 0);
+  const mediaUrl = videoUrlCandidate || allUrls[0] || null;
 
   const videoUrl = isVideoMusic ? mediaUrl : null;
   const audioUrl = !isVideoMusic ? mediaUrl : null;
-  const genreLabel = music.subcategory || music.genre || "Music";
+  const genreLabel = music.subcategory || music.genre || music.category || "Music";
 
   return (
     <>
@@ -322,10 +324,11 @@ const MusicDetail = ({ params }) => {
             <div className="mu-banner">
               {isVideoMusic ? (
                 <video 
+                  key={videoUrl}
                   controls 
                   src={videoUrl} 
                   className="mu-video-player"
-                  poster={music.thumbnailUrl || undefined}
+                  poster={music.thumbnailUrl || music.imageUrls?.[0] || undefined}
                 />
               ) : (
                 <>
@@ -419,7 +422,7 @@ const MusicDetail = ({ params }) => {
               <h2 className="mu-related-title">More Like This</h2>
               <div className="mu-related-line" />
             </div>
-            <MediaFeed type="music" genre={music.subcategory || music.genre} />
+            <MediaFeed type="music" genre={music.subcategory || music.genre || music.category} excludeId={id} />
           </div>
         </div>
       </div>

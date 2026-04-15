@@ -19,27 +19,55 @@ export default function MediaFeed({ type, genre, searchName, minPrice, maxPrice,
     const fetchData = async () => {
       setLoading(true);
       try {
-        let response;
         const apiParams = {
           name: searchName,
           title: searchName,
           minPrice,
           maxPrice,
           sort,
-          limit,
+          limit: limit || 12,
         };
 
+        let primaryResults = [];
         if (type === "music") {
-          // backend stores genres in `category` field — send as `category`
-          response = await musicApi.getMusic({ category: genre, ...apiParams });
+          const res = await musicApi.getMusic({ category: genre, ...apiParams });
+          primaryResults = res.data || [];
         } else if (type === "video") {
-          // backend stores genres in `category` field — send as `category`
-          response = await videoApi.getVideo({ category: genre, ...apiParams });
+          const res = await videoApi.getVideo({ category: genre, ...apiParams });
+          primaryResults = res.data || [];
         } else if (type === "art") {
-          response = await artsAPI.getArt({ category: genre, ...apiParams });
+          const res = await artsAPI.getArt({ category: genre, ...apiParams });
+          primaryResults = res.data || [];
         }
 
-        setItems(response.data || []);
+        let finalResults = [...primaryResults];
+
+        // Fallback: If results are too few, fetch general items of the same type
+        if (finalResults.length < 4) {
+          let secondaryResults = [];
+          if (type === "music") {
+            const res = await musicApi.getMusic({ ...apiParams, limit: 12 });
+            secondaryResults = res.data || [];
+          } else if (type === "video") {
+            const res = await videoApi.getVideo({ ...apiParams, limit: 12 });
+            secondaryResults = res.data || [];
+          } else if (type === "art") {
+            const res = await artsAPI.getArt({ ...apiParams, limit: 12 });
+            secondaryResults = res.data || [];
+          }
+
+          // Merge and de-duplicate
+          const existingIds = new Set(finalResults.map(item => String(item._id || item.id)));
+          secondaryResults.forEach(item => {
+            const id = String(item._id || item.id);
+            if (!existingIds.has(id)) {
+              finalResults.push(item);
+              existingIds.add(id);
+            }
+          });
+        }
+
+        setItems(finalResults);
       } catch (error) {
         console.error(`Failed to fetch ${type}:`, error);
         setItems([]);
@@ -54,14 +82,12 @@ export default function MediaFeed({ type, genre, searchName, minPrice, maxPrice,
   const sortedItems = useMemo(() => {
     let result = [...items];
     if (excludeId) {
-      result = result.filter(item => {
-        const itemId = String(item._id || item.id || "");
-        const excludeVal = String(excludeId || "");
-        return itemId !== excludeVal;
-      });
+      const excludeVal = String(excludeId || "");
+      result = result.filter(item => String(item._id || item.id || "") !== excludeVal);
     }
-    return result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  }, [items, excludeId]);
+    // Return early if we have enough items, or just return the sorted list
+    return result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, limit || 8);
+  }, [items, excludeId, limit]);
 
   if (loading) {
     return (

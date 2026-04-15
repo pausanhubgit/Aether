@@ -73,8 +73,14 @@ const VideoDetail = ({ params }) => {
       </div>
     );
 
-  const videoUrl = video.videoUrls?.[0] || video.url || null;
-  const genreLabel = video.subcategory || video.genre || "Video";
+  const allUrls = [];
+  if (video.videoUrls && Array.isArray(video.videoUrls)) allUrls.push(...video.videoUrls);
+  if (video.url) allUrls.push(video.url);
+  if (video.videoUrl) allUrls.push(video.videoUrl);
+  
+  const videoRegex = /\.(mp4|webm|mov|m4v|ogv|mkv)(\?.*)?$/i;
+  const videoUrl = allUrls.find(url => videoRegex.test(url)) || allUrls[0] || null;
+  const genreLabel = video.subcategory || video.genre || video.category || "Video";
 
   return (
     <>
@@ -273,10 +279,11 @@ const VideoDetail = ({ params }) => {
             <div className="vi-player-wrap">
               {videoUrl ? (
                 <video
+                  key={videoUrl}
                   controls
                   src={videoUrl}
                   className="vi-video"
-                  poster={video.thumbnailUrl || undefined}
+                  poster={video.thumbnailUrl || video.imageUrls?.[0] || undefined}
                 />
               ) : (
                 <div className="vi-no-video">
@@ -363,7 +370,7 @@ const VideoDetail = ({ params }) => {
               <h2 className="vi-related-title">More Like This</h2>
               <div className="vi-related-line" />
             </div>
-            <MediaFeed type="video" genre={video.subcategory || video.genre} />
+            <MediaFeed type="video" genre={video.subcategory || video.genre || video.category} excludeId={id} />
           </div>
         </div>
       </div>

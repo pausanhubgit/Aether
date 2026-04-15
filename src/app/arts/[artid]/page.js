@@ -354,7 +354,7 @@ const ArtDetails = async ({ params }) => {
             <h2 className="section-title">You Might Also Like</h2>
             <div className="section-line" />
           </div>
-          <MediaFeed type="art" genre={art.category} excludeId={artId} />
+          <MediaFeed type="art" genre={art.category} excludeId={artId || art._id} />
         </div>
       </div>
     </main>
