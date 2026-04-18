@@ -141,15 +141,21 @@ export default function NotificationBell() {
 
   useEffect(() => {
     if (currentUser?._id || currentUser?.id) {
-      // Initial fetch
-      dispatch(fetchNotifications());
-
-      // Set up background polling every 60 seconds for near real-time updates (increased to avoid request loop)
-      const pollInterval = setInterval(() => {
+      // Check for token existence before attempting protected calls
+      const hasToken = typeof window !== "undefined" && 
+                     (localStorage.getItem("authtoken") || localStorage.getItem("persist:root")?.includes("token"));
+      
+      if (hasToken) {
+        // Initial fetch
         dispatch(fetchNotifications());
-      }, 60000);
 
-      return () => clearInterval(pollInterval);
+        // Set up background polling every 60 seconds
+        const pollInterval = setInterval(() => {
+          dispatch(fetchNotifications());
+        }, 60000);
+
+        return () => clearInterval(pollInterval);
+      }
     }
   }, [dispatch, currentUser?._id, currentUser?.id]);
 

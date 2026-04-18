@@ -1,6 +1,7 @@
 "use client";
 
 import { LOGIN_ROUTE } from "@/constants/routes";
+import { ADMIN_ROLE } from "@/constants/userRoles";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
@@ -31,11 +32,13 @@ const AdminLayout = ({ children }) => {
       </div>
     );
 
+  const isAdmin = user?.roles?.includes(ADMIN_ROLE);
   const isNoSidebarPage = pathname === "/profile" || pathname.includes("/profile/") || pathname === "/dashboard";
+  const showSidebar = !isNoSidebarPage && isAdmin;
 
   return (
-    <div className={`relative ${isNoSidebarPage ? '' : 'lg:pl-64'}`}>
-      {!isNoSidebarPage && <Sidebar />}
+    <div className={`relative ${showSidebar ? 'lg:pl-64' : ''}`}>
+      {showSidebar && <Sidebar />}
       <section className={`bg-gray-50 dark:bg-[#0d0118] min-h-screen py-4 sm:py-8`}>
         {children}
       </section>

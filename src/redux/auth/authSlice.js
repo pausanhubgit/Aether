@@ -21,6 +21,9 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null; // Clear token on logout
       state.isAuthenticated = false;
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("authtoken");
+      }
     },
 
     resetSuccess: (state) => {
@@ -60,6 +63,11 @@ const authSlice = createSlice({
         state.token = result?.authtoken ?? result?.token ?? result?.authToken ?? 
                       userObj?.authtoken ?? userObj?.token;
         state.isAuthenticated = true;
+
+        // Persist token for plain localStorage fallback (Axios interceptors)
+        if (typeof window !== "undefined" && state.token) {
+          localStorage.setItem("authtoken", state.token);
+        }
       })
       .addCase(loginWithGoogle.rejected, (state, action) => {
         state.loading = false;
@@ -93,6 +101,11 @@ const authSlice = createSlice({
                       userObj?.authtoken ?? userObj?.token;
         
         state.isAuthenticated = true;
+
+        // Persist token for plain localStorage fallback (Axios interceptors)
+        if (typeof window !== "undefined" && state.token) {
+          localStorage.setItem("authtoken", state.token);
+        }
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -124,6 +137,11 @@ const authSlice = createSlice({
                       userObj?.authtoken ?? userObj?.token;
                       
         state.isAuthenticated = true;
+
+        // Persist token for plain localStorage fallback (Axios interceptors)
+        if (typeof window !== "undefined" && state.token) {
+          localStorage.setItem("authtoken", state.token);
+        }
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -150,6 +168,9 @@ const authSlice = createSlice({
         const newToken = action.payload?.authtoken ?? action.payload?.token;
         if (newToken) {
             state.token = newToken;
+            if (typeof window !== "undefined") {
+              localStorage.setItem("authtoken", newToken);
+            }
         }
       })
       .addCase(updateUserProfile.rejected, (state, action) => {
