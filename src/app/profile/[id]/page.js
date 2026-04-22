@@ -211,7 +211,7 @@ export default function UserProfile() {
               {(!currentUser || String(currentUser._id || currentUser.id || "") !== String(id)) && (
                 <button
                   onClick={handleFollowToggle}
-                  className={`w-full py-3.5 px-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 shadow-xl ${
+                  className={`w-3/4 mx-auto py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 shadow-md ${
                     isFollowing 
                       ? "bg-gradient-to-r from-slate-200 to-slate-300 dark:from-slate-800 dark:to-slate-700 text-slate-700 dark:text-slate-200 hover:from-red-100 hover:to-red-200 dark:hover:from-red-900/40 dark:hover:to-red-900/20 hover:text-red-600 dark:hover:text-red-400 border border-slate-300 dark:border-slate-600" 
                       : "bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-500 hover:to-indigo-500 shadow-purple-500/30 border border-purple-500/20"
@@ -219,11 +219,11 @@ export default function UserProfile() {
                 >
                   {isFollowing ? (
                     <>
-                      <FaUserMinus size={18} className="opacity-80" /> <span className="tracking-wide uppercase letter-spacing-wide">Unfollow</span>
+                      <FaUserMinus size={14} className="opacity-80" /> <span className="tracking-wide uppercase letter-spacing-wide">Unfollow</span>
                     </>
                   ) : (
                     <>
-                      <FaUserPlus size={18} className="animate-pulse" /> <span className="tracking-wide uppercase letter-spacing-wide">Follow Artist</span>
+                      <FaUserPlus size={14} className="animate-pulse" /> <span className="tracking-wide uppercase letter-spacing-wide">Follow Artist</span>
                     </>
                   )}
                 </button>

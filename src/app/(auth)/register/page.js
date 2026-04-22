@@ -200,7 +200,7 @@ const Register = () => {
                   type="button"
                   onClick={verifyOtpCode}
                   disabled={verifyingOtp || otp.length < 6}
-                  className="rounded-xl bg-green-600 px-4 py-2 text-xs font-medium text-white hover:bg-green-700 transition"
+                  className="rounded-xl bg-green-600 px-4 py-2 text-xs font-medium text-white hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {verifyingOtp ? "Verifying..." : "Verify"}
                 </button>

@@ -32,7 +32,7 @@ const AdminLayout = ({ children }) => {
       </div>
     );
 
-  const isAdmin = user?.roles?.includes(ADMIN_ROLE);
+  const isAdmin = user?.roles?.some(role => role.toLowerCase() === ADMIN_ROLE.toLowerCase()) || user?.role?.toLowerCase() === ADMIN_ROLE.toLowerCase() || user?.roles?.includes(ADMIN_ROLE);
   const isNoSidebarPage = pathname === "/profile" || pathname.includes("/profile/") || pathname === "/dashboard";
   const showSidebar = !isNoSidebarPage && isAdmin;
 
