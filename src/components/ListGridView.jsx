@@ -13,7 +13,11 @@ const ListGridView = () => {
     <button
       className="bg-gray-100 dark:bg-[#160327] text-gray-600 dark:text-gray-300 p-2.5 rounded-xl border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
       onClick={() => dispatch(toggleArtView())}
-      title={productView === GRID_VIEW ? "Switch to List View" : "Switch to Grid View"}
+      title={
+        productView === GRID_VIEW
+          ? "Switch to List View"
+          : "Switch to Grid View"
+      }
     >
       {productView === GRID_VIEW ? (
         <MdFormatListBulleted className="w-5 h-5" />

@@ -1,8 +1,8 @@
-import CheckoutComponent from './CheckoutComponent';
+import CheckoutComponent from "./CheckoutComponent";
 
 export const metadata = {
-  title: 'Checkout | Aether',
-  description: 'Complete your purchase securely',
+  title: "Checkout | Aether",
+  description: "Complete your purchase securely",
 };
 
 export default function CheckoutPage() {

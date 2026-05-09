@@ -22,7 +22,8 @@
   --secondary: #fdfbff;
   --surface: #ffffff;
   --border: #e9d5ff;
-  --font-geist-sans: "Geist Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-geist-sans:
+    "Geist Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-geist-mono: "Geist Mono", SF;
 }
 
@@ -58,12 +59,12 @@ a {
 
 /* Manual Theme Overrides */
 .dark {
-  --background: #0d0118; 
+  --background: #0d0118;
   --foreground: #f8fafc;
   --muted: #e9d5ff;
-  --primary: #c084fc; 
+  --primary: #c084fc;
   --secondary: #1e0a35;
-  --surface: #0f021b; 
+  --surface: #0f021b;
   --border: #4c1d95;
   color-scheme: dark;
 }
@@ -80,7 +81,9 @@ a {
 body {
   background-color: var(--background);
   color: var(--foreground);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* ─── Page Wrapper ─────────────────────────────────────────── */
@@ -146,9 +149,10 @@ body {
 }
 
 /* ─── Global Max-Width Wrapper ───────────────────────────────── */
-.content-wrapper, .container-7xl {
+.content-wrapper,
+.container-7xl {
   width: 100%;
-  max-width: 1280px; 
+  max-width: 1280px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 1.5rem;
@@ -156,14 +160,16 @@ body {
 }
 
 @media (min-width: 768px) {
-  .content-wrapper, .container-7xl {
+  .content-wrapper,
+  .container-7xl {
     padding-left: 2rem;
     padding-right: 2rem;
   }
 }
 
 @media (min-width: 1536px) {
-  .content-wrapper, .container-7xl {
+  .content-wrapper,
+  .container-7xl {
     max-width: 1440px;
   }
 }
@@ -192,7 +198,11 @@ section {
 }
 
 /* ─── Overflow Guards ──────────────────────────────────────── */
-img, video, audio, iframe, svg {
+img,
+video,
+audio,
+iframe,
+svg {
   max-width: 100%;
 }
 
@@ -219,8 +229,13 @@ table {
 }
 
 @keyframes music-bar {
-  0%, 100% { height: 40%; }
-  50% { height: 100%; }
+  0%,
+  100% {
+    height: 40%;
+  }
+  50% {
+    height: 100%;
+  }
 }
 
 .scrollbar-none {
@@ -232,13 +247,25 @@ table {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 @keyframes glow {
-  0%, 100% { opacity: 0.5; filter: blur(40px); }
-  50% { opacity: 0.8; filter: blur(60px); }
+  0%,
+  100% {
+    opacity: 0.5;
+    filter: blur(40px);
+  }
+  50% {
+    opacity: 0.8;
+    filter: blur(60px);
+  }
 }
 
 .animate-float {

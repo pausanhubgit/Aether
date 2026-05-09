@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const Painting = () => {
-  return (
-    <div>
-      Painting
-    </div>
-  )
-}
+  return <div>Painting</div>;
+};
 
-export default Painting
+export default Painting;

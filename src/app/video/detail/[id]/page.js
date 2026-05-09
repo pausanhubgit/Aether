@@ -3,9 +3,16 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  FaHeart, FaRegHeart, FaShare, FaArrowLeft,
-  FaVideo, FaPlay, FaUser, FaCalendarAlt, FaComment,
-  FaCheckCircle
+  FaHeart,
+  FaRegHeart,
+  FaShare,
+  FaArrowLeft,
+  FaVideo,
+  FaPlay,
+  FaUser,
+  FaCalendarAlt,
+  FaComment,
+  FaCheckCircle,
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -45,7 +52,10 @@ const VideoDetail = ({ params }) => {
   }, [id]);
 
   const handleLike = async () => {
-    if (!user) { toast.info("Please login to like this video."); return; }
+    if (!user) {
+      toast.info("Please login to like this video.");
+      return;
+    }
     if (isLiking) return;
     setIsLiking(true);
     try {
@@ -69,19 +79,29 @@ const VideoDetail = ({ params }) => {
   if (loading) return <Spinner />;
   if (!video)
     return (
-      <div style={{ textAlign: "center", padding: "5rem 1rem", color: "#94a3b8", fontSize: "1.1rem" }}>
+      <div
+        style={{
+          textAlign: "center",
+          padding: "5rem 1rem",
+          color: "#94a3b8",
+          fontSize: "1.1rem",
+        }}
+      >
         Video not found.
       </div>
     );
 
   const allUrls = [];
-  if (video.videoUrls && Array.isArray(video.videoUrls)) allUrls.push(...video.videoUrls.map(formatImageUrl));
+  if (video.videoUrls && Array.isArray(video.videoUrls))
+    allUrls.push(...video.videoUrls.map(formatImageUrl));
   if (video.url) allUrls.push(formatImageUrl(video.url));
   if (video.videoUrl) allUrls.push(formatImageUrl(video.videoUrl));
-  
+
   const videoRegex = /\.(mp4|webm|mov|m4v|ogv|mkv)(\?.*)?$/i;
-  const videoUrl = allUrls.find(url => videoRegex.test(url)) || allUrls[0] || null;
-  const genreLabel = video.subcategory || video.genre || video.category || "Video";
+  const videoUrl =
+    allUrls.find((url) => videoRegex.test(url)) || allUrls[0] || null;
+  const genreLabel =
+    video.subcategory || video.genre || video.category || "Video";
 
   return (
     <>
@@ -287,7 +307,11 @@ const VideoDetail = ({ params }) => {
                   preload="metadata"
                   src={videoUrl}
                   className="vi-video"
-                  poster={formatImageUrl(video.thumbnailUrl || video.imageUrls?.[0]) || undefined}
+                  poster={
+                    formatImageUrl(
+                      video.thumbnailUrl || video.imageUrls?.[0],
+                    ) || undefined
+                  }
                 />
               ) : (
                 <div className="vi-no-video">
@@ -310,7 +334,9 @@ const VideoDetail = ({ params }) => {
                       <FaUser size={11} />
                       By{" "}
                       <Link href={`/profile/${video.createdBy._id}`}>
-                        {video.createdBy.name || video.createdBy.username || "Unknown Creator"}
+                        {video.createdBy.name ||
+                          video.createdBy.username ||
+                          "Unknown Creator"}
                       </Link>
                     </p>
                   )}
@@ -344,7 +370,9 @@ const VideoDetail = ({ params }) => {
                   Uploaded:{" "}
                   {video.createdAt
                     ? new Date(video.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric", month: "short", day: "numeric",
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
                       })
                     : "—"}
                 </span>
@@ -353,7 +381,8 @@ const VideoDetail = ({ params }) => {
                   className="vi-toggle-comments"
                 >
                   <FaComment size={12} />
-                  {showComments ? "Hide" : "View"} {video.comments?.length || 0} Comment(s)
+                  {showComments ? "Hide" : "View"} {video.comments?.length || 0}{" "}
+                  Comment(s)
                 </button>
               </div>
             </div>
@@ -374,7 +403,11 @@ const VideoDetail = ({ params }) => {
               <h2 className="vi-related-title">More Like This</h2>
               <div className="vi-related-line" />
             </div>
-            <MediaFeed type="video" genre={video.subcategory || video.genre || video.category} excludeId={id} />
+            <MediaFeed
+              type="video"
+              genre={video.subcategory || video.genre || video.category}
+              excludeId={id}
+            />
           </div>
         </div>
       </div>

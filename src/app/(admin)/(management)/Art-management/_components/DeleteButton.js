@@ -13,7 +13,8 @@ const DeleteArtButton = ({ id }) => {
   const dispatch = useDispatch();
 
   function confirmDelete() {
-    artsAPI.deleteArts(id)
+    artsAPI
+      .deleteArts(id)
       .then(() => {
         dispatch(refreshList(true));
         toast.success("Art deleted successfully.", { autoClose: 1500 });
@@ -24,7 +25,10 @@ const DeleteArtButton = ({ id }) => {
 
   return (
     <>
-      <button onClick={() => setShowModal(true)} className="text-red-600 hover:text-red-800 transition-colors flex items-center gap-1">
+      <button
+        onClick={() => setShowModal(true)}
+        className="text-red-600 hover:text-red-800 transition-colors flex items-center gap-1"
+      >
         <FaTrash /> <span className="text-xs font-semibold">Delete</span>
       </button>
       <Modal

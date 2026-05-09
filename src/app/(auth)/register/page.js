@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import { registerUser, loginWithGoogle } from "@/redux/auth/authActions";
 import { FaEye, FaEyeSlash, FaEnvelope, FaPhone } from "react-icons/fa";
 import { GoogleLogin } from "@react-oauth/google";
@@ -15,11 +15,11 @@ import { COUNTRIES, DEFAULT_COUNTRY } from "@/constants/countries";
 const Register = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { loading, error } = useSelector(state => state.auth);
+  const { loading, error } = useSelector((state) => state.auth);
   const [passwordValue, setPasswordValue] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   // Verification State
   const [verificationMethod, setVerificationMethod] = useState("email"); // 'email' or 'phone'
   const [otpSent, setOtpSent] = useState(false);
@@ -27,8 +27,10 @@ const Register = () => {
   const [otp, setOtp] = useState("");
   const [sendingOtp, setSendingOtp] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(COUNTRIES.find(c => c.dialCode === '+977') || DEFAULT_COUNTRY);
-  
+  const [selectedCountry, setSelectedCountry] = useState(
+    COUNTRIES.find((c) => c.dialCode === "+977") || DEFAULT_COUNTRY,
+  );
+
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       await dispatch(loginWithGoogle(credentialResponse.credential)).unwrap();
@@ -59,18 +61,18 @@ const Register = () => {
       toast.error(`Please enter your ${verificationMethod} first`);
       return;
     }
-    
+
     // Prepend dial code for phone verification
     if (verificationMethod === "phone") {
       contactInfo = `${selectedCountry.dialCode}${contactInfo}`;
     }
-    
+
     setSendingOtp(true);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       await axios.post(`${apiUrl}/api/auths/send-otp`, {
         contactInfo,
-        method: verificationMethod
+        method: verificationMethod,
       });
       setOtpSent(true);
       toast.success("Verification code sent!");
@@ -83,17 +85,17 @@ const Register = () => {
 
   const verifyOtpCode = async () => {
     let contactInfo = verificationMethod === "email" ? emailValue : phoneValue;
-    
+
     if (verificationMethod === "phone") {
       contactInfo = `${selectedCountry.dialCode}${contactInfo}`;
     }
-    
+
     setVerifyingOtp(true);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       await axios.post(`${apiUrl}/api/auths/verify-otp`, {
         contactInfo,
-        otp
+        otp,
       });
       setIsVerified(true);
       toast.success("Verification successful!");
@@ -115,14 +117,18 @@ const Register = () => {
     }
 
     try {
-      const result = await dispatch(registerUser({
-        email: data.email,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
-        username: data.name,
-        phone: data.phone ? `${selectedCountry.dialCode}${data.phone}` : undefined,
-        role: "MERCHANT", // Every new user is a Merchant
-      })).unwrap();
+      const result = await dispatch(
+        registerUser({
+          email: data.email,
+          password: data.password,
+          confirmPassword: data.confirmPassword,
+          username: data.name,
+          phone: data.phone
+            ? `${selectedCountry.dialCode}${data.phone}`
+            : undefined,
+          role: "MERCHANT", // Every new user is a Merchant
+        }),
+      ).unwrap();
 
       toast.success("Account created successfully!", {
         position: "top-right",
@@ -142,10 +148,15 @@ const Register = () => {
     <div className="space-y-6">
       <div className="rounded-2xl border border-gray-200 bg-white p-6">
         <h1 className="text-2xl font-medium text-black">Create an account</h1>
-        <p className="mt-2 text-sm text-gray-600">Sign up to get started with Aether</p>
+        <p className="mt-2 text-sm text-gray-600">
+          Sign up to get started with Aether
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit(submitForm)} className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4">
+      <form
+        onSubmit={handleSubmit(submitForm)}
+        className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4"
+      >
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Full Name</label>
           <input
@@ -154,21 +165,28 @@ const Register = () => {
             {...register("name", { required: "Name is required" })}
             className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
-          {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+          {errors.name && (
+            <p className="text-red-500 text-sm">{errors.name.message}</p>
+          )}
         </div>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-gray-700">Email Address</label>
+            <label className="text-sm font-medium text-gray-700">
+              Email Address
+            </label>
           </div>
 
           <div className="flex gap-2">
             <input
               type="email"
               placeholder="you@example.com"
-              {...register("email", { 
+              {...register("email", {
                 required: "Email is required",
-                pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email" }
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Invalid email",
+                },
               })}
               disabled={isVerified}
               className="flex-1 rounded-xl border border-gray-300 bg-white px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-50"
@@ -187,7 +205,9 @@ const Register = () => {
 
           {otpSent && !isVerified && (
             <div className="flex flex-col gap-2 mt-2">
-              <label className="text-xs font-medium text-gray-500">Enter Verification Code</label>
+              <label className="text-xs font-medium text-gray-500">
+                Enter Verification Code
+              </label>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -207,7 +227,11 @@ const Register = () => {
               </div>
             </div>
           )}
-          {isVerified && <p className="text-xs text-green-600 font-medium">✓ Verified successfully</p>}
+          {isVerified && (
+            <p className="text-xs text-green-600 font-medium">
+              ✓ Verified successfully
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -218,7 +242,10 @@ const Register = () => {
               placeholder="••••••••"
               {...register("password", {
                 required: "Password is required",
-                minLength: { value: 6, message: "Password must be at least 6 characters" }
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
               })}
               onChange={(e) => setPasswordValue(e.target.value)}
               className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 pr-10"
@@ -231,18 +258,23 @@ const Register = () => {
               {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
             </button>
           </div>
-          {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="text-red-500 text-sm">{errors.password.message}</p>
+          )}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Confirm Password</label>
+          <label className="text-sm font-medium text-gray-700">
+            Confirm Password
+          </label>
           <div className="relative">
             <input
               type={showConfirmPassword ? "text" : "password"}
               placeholder="••••••••"
               {...register("confirmPassword", {
                 required: "Please confirm your password",
-                validate: (value) => value === passwordValue || "Passwords do not match"
+                validate: (value) =>
+                  value === passwordValue || "Passwords do not match",
               })}
               className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 pr-10"
             />
@@ -251,15 +283,23 @@ const Register = () => {
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
             >
-              {showConfirmPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+              {showConfirmPassword ? (
+                <FaEyeSlash size={18} />
+              ) : (
+                <FaEye size={18} />
+              )}
             </button>
           </div>
-          {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
+          {errors.confirmPassword && (
+            <p className="text-red-500 text-sm">
+              {errors.confirmPassword.message}
+            </p>
+          )}
         </div>
 
-        <button 
-          type="submit" 
-          disabled={!isVerified || loading} 
+        <button
+          type="submit"
+          disabled={!isVerified || loading}
           className="w-full rounded-xl bg-purple-600 py-3 text-sm font-semibold text-white hover:bg-purple-700 transition disabled:opacity-50"
         >
           {loading ? "Creating account..." : "Complete Registration"}
@@ -270,7 +310,9 @@ const Register = () => {
             <span className="w-full border-t border-gray-200"></span>
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-gray-500">Or continue with</span>
+            <span className="bg-white px-2 text-gray-500">
+              Or continue with
+            </span>
           </div>
         </div>
 
@@ -287,11 +329,16 @@ const Register = () => {
             />
           </div>
         </div>
-
       </form>
 
       <p className="text-center text-sm text-gray-600">
-        Already have an account? <Link href="/login" className="text-purple-600 hover:text-purple-700 font-medium">Login</Link>
+        Already have an account?{" "}
+        <Link
+          href="/login"
+          className="text-purple-600 hover:text-purple-700 font-medium"
+        >
+          Login
+        </Link>
       </p>
     </div>
   );

@@ -1,21 +1,23 @@
-'use client';
+"use client";
 
-import { useEffect, Suspense } from 'react';
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchCategories } from '@/lib/slices/artsSlice';
+import { useEffect, Suspense } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories } from "@/lib/slices/artsSlice";
 import MediaFeed from "@/components/MediaFeed";
 import FilterButton from "./_components/FilterButton";
 import MediaSearch from "@/components/MediaSearch";
 import ListGridView from "@/components/ListGridView";
 import Table from "./_components/Table";
-import Spinner from '@/components/Spinner';
-import { useSearchParams } from 'next/navigation';
+import Spinner from "@/components/Spinner";
+import { useSearchParams } from "next/navigation";
 
 const ArtsContent = () => {
   const dispatch = useDispatch();
   const searchParams = useSearchParams();
-  const { arts, categories, loading, error } = useSelector(state => state.arts);
+  const { arts, categories, loading, error } = useSelector(
+    (state) => state.arts,
+  );
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -51,14 +53,14 @@ const ArtsContent = () => {
         </div>
       </div>
       <div className="pb-8">
-        <MediaFeed 
-          type="art" 
-          genre={searchParams.get('category')} 
-          searchName={searchParams.get('name')}
-          minPrice={searchParams.get('min')}
-          maxPrice={searchParams.get('max')}
-          sort={searchParams.get('sort')}
-          limit={searchParams.get('limit')}
+        <MediaFeed
+          type="art"
+          genre={searchParams.get("category")}
+          searchName={searchParams.get("name")}
+          minPrice={searchParams.get("min")}
+          maxPrice={searchParams.get("max")}
+          sort={searchParams.get("sort")}
+          limit={searchParams.get("limit")}
         />
       </div>
     </div>

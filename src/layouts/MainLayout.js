@@ -21,7 +21,13 @@ const MainLayout = ({ children }) => {
   }
 
   return (
-    <div className={`${theme} min-h-screen w-full overflow-x-hidden transition-colors duration-300`} style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+    <div
+      className={`${theme} min-h-screen w-full overflow-x-hidden transition-colors duration-300`}
+      style={{
+        backgroundColor: "var(--background)",
+        color: "var(--foreground)",
+      }}
+    >
       {children}
     </div>
   );

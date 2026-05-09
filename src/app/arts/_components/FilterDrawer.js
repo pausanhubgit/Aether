@@ -50,8 +50,6 @@ const FilterDrawer = ({ showFilter, setShowFilter, brands, categories }) => {
     setShowFilter(false);
   }
 
-
-
   return (
     <div className={showFilter ? "block" : "hidden"}>
       <div
@@ -61,7 +59,7 @@ const FilterDrawer = ({ showFilter, setShowFilter, brands, categories }) => {
       <div className="fixed top-0 left-0 z-[60] h-full w-80 bg-white shadow-2xl p-6 flex flex-col transition-transform">
         <div className="flex justify-between items-center mb-6">
           <h4 className="text-xl font-bold text-slate-900">Filters</h4>
-          <button 
+          <button
             onClick={() => setShowFilter(false)}
             className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors"
           >
@@ -72,7 +70,10 @@ const FilterDrawer = ({ showFilter, setShowFilter, brands, categories }) => {
         <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-6">
           {/* Limit */}
           <div>
-            <label htmlFor="limit" className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+            <label
+              htmlFor="limit"
+              className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2"
+            >
               Items Per Page
             </label>
             <select
@@ -90,7 +91,10 @@ const FilterDrawer = ({ showFilter, setShowFilter, brands, categories }) => {
 
           {/* Order By */}
           <div>
-            <label htmlFor="orderBy" className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+            <label
+              htmlFor="orderBy"
+              className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2"
+            >
               Sort By
             </label>
             <select
@@ -99,10 +103,18 @@ const FilterDrawer = ({ showFilter, setShowFilter, brands, categories }) => {
               className="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-purple-500 focus:border-purple-500 p-2.5 outline-none transition-all"
               onChange={(e) => setSort(e.target.value)}
             >
-              <option value={JSON.stringify({ createdAt: -1 })}>Newest First</option>
-              <option value={JSON.stringify({ createdAt: 1 })}>Oldest First</option>
-              <option value={JSON.stringify({ price: 1 })}>Price: Low to High</option>
-              <option value={JSON.stringify({ price: -1 })}>Price: High to Low</option>
+              <option value={JSON.stringify({ createdAt: -1 })}>
+                Newest First
+              </option>
+              <option value={JSON.stringify({ createdAt: 1 })}>
+                Oldest First
+              </option>
+              <option value={JSON.stringify({ price: 1 })}>
+                Price: Low to High
+              </option>
+              <option value={JSON.stringify({ price: -1 })}>
+                Price: High to Low
+              </option>
               <option value={JSON.stringify({ name: 1 })}>Name: A - Z</option>
               <option value={JSON.stringify({ name: -1 })}>Name: Z - A</option>
             </select>
@@ -115,7 +127,9 @@ const FilterDrawer = ({ showFilter, setShowFilter, brands, categories }) => {
             </label>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <span className="text-[10px] text-slate-500 mb-1 block font-medium">MIN (Rs)</span>
+                <span className="text-[10px] text-slate-500 mb-1 block font-medium">
+                  MIN (Rs)
+                </span>
                 <input
                   type="number"
                   id="min"
@@ -127,14 +141,18 @@ const FilterDrawer = ({ showFilter, setShowFilter, brands, categories }) => {
                 />
               </div>
               <div>
-                <span className="text-[10px] text-slate-500 mb-1 block font-medium">MAX (Rs)</span>
+                <span className="text-[10px] text-slate-500 mb-1 block font-medium">
+                  MAX (Rs)
+                </span>
                 <input
                   type="number"
                   id="max"
                   value={maxPrice === DEFAULT_MAX_PRICE ? "" : maxPrice}
                   className="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-purple-500 focus:border-purple-500 p-2.5 outline-none transition-all"
                   placeholder="No limit"
-                  onChange={(e) => setMaxPrice(e.target.value || DEFAULT_MAX_PRICE)}
+                  onChange={(e) =>
+                    setMaxPrice(e.target.value || DEFAULT_MAX_PRICE)
+                  }
                 />
               </div>
             </div>
@@ -142,7 +160,10 @@ const FilterDrawer = ({ showFilter, setShowFilter, brands, categories }) => {
 
           {/* Category */}
           <div>
-            <label htmlFor="category" className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+            <label
+              htmlFor="category"
+              className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2"
+            >
               Category
             </label>
             <select
@@ -153,8 +174,8 @@ const FilterDrawer = ({ showFilter, setShowFilter, brands, categories }) => {
             >
               <option value="">All Categories</option>
               {categories.map((cat, index) => {
-                const val = typeof cat === 'object' ? cat.id || cat.name : cat;
-                const lab = typeof cat === 'object' ? cat.name : cat;
+                const val = typeof cat === "object" ? cat.id || cat.name : cat;
+                const lab = typeof cat === "object" ? cat.name : cat;
                 return (
                   <option key={index} value={val}>
                     {lab}

@@ -1,12 +1,12 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
-import authReducer from './slices/authSlice';
-import cartReducer from './slices/cartSlice';
-import artsReducer from './slices/artsSlice';
-import ordersReducer from './slices/ordersSlice';
-import musicReducer from './slices/musicSlice';
-import videoReducer from './slices/videoSlice';
-import feedReducer from './slices/feedSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import { persistStore, persistReducer } from "redux-persist";
+import authReducer from "./slices/authSlice";
+import cartReducer from "./slices/cartSlice";
+import artsReducer from "./slices/artsSlice";
+import ordersReducer from "./slices/ordersSlice";
+import musicReducer from "./slices/musicSlice";
+import videoReducer from "./slices/videoSlice";
+import feedReducer from "./slices/feedSlice";
 
 const createNoopStorage = () => {
   return {
@@ -22,10 +22,13 @@ const createNoopStorage = () => {
   };
 };
 
-const storage = typeof window !== 'undefined' ? require('redux-persist/lib/storage').default : createNoopStorage();
+const storage =
+  typeof window !== "undefined"
+    ? require("redux-persist/lib/storage").default
+    : createNoopStorage();
 
 const persistConfig = {
-  key: 'root',
+  key: "root",
   storage,
 };
 
@@ -45,7 +48,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
       },
     }),
 });

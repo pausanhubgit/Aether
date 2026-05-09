@@ -75,17 +75,23 @@ const VideoTable = () => {
   async function getAllVideo(query) {
     setLoading(true);
     try {
-      const isAdmin = user?.roles?.some(r => r.toUpperCase() === ADMIN_ROLE.toUpperCase());
+      const isAdmin = user?.roles?.some(
+        (r) => r.toUpperCase() === ADMIN_ROLE.toUpperCase(),
+      );
       const apiQuery = isAdmin ? query : { ...query, createdBy: user._id };
-      
+
       const response = await videoAPI.getVideo(apiQuery);
       // Backend returns array directly
       setVideoList(Array.isArray(response?.data) ? response.data : []);
-      
-      const countRes = await videoAPI.getVideoCount(isAdmin ? { name: query.name } : { createdBy: user._id });
-      setTotal(typeof countRes?.data === 'number' ? countRes.data : 0);
+
+      const countRes = await videoAPI.getVideoCount(
+        isAdmin ? { name: query.name } : { createdBy: user._id },
+      );
+      setTotal(typeof countRes?.data === "number" ? countRes.data : 0);
     } catch (error) {
-      toast.error(error?.response?.data?.error || "Failed to fetch videos", { autoClose: 1500 });
+      toast.error(error?.response?.data?.error || "Failed to fetch videos", {
+        autoClose: 1500,
+      });
     } finally {
       setLoading(false);
       dispatch(refreshList(false));
@@ -96,7 +102,7 @@ const VideoTable = () => {
     const query = {
       limit: PAGE_LIMIT,
       offset: PAGE_LIMIT * (page - 1),
-      sort: JSON.stringify({ [sortBy]: sortOrder })
+      sort: JSON.stringify({ [sortBy]: sortOrder }),
     };
     getAllVideo(query);
   }, [refresh, sortBy, sortOrder, page]);
@@ -109,8 +115,12 @@ const VideoTable = () => {
             <FaVideo className="text-primary text-xl" />
           </div>
           <div>
-            <h5 className="text-xl font-bold text-black dark:text-white">Video Library</h5>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Manage and oversee your video content</p>
+            <h5 className="text-xl font-bold text-black dark:text-white">
+              Video Library
+            </h5>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Manage and oversee your video content
+            </p>
           </div>
         </div>
         <div className="flex items-center space-x-3">
@@ -150,7 +160,11 @@ const VideoTable = () => {
                     {column.sortable && (
                       <div className="text-gray-300 dark:text-gray-600">
                         {column.key == sortBy ? (
-                          sortOrder == 1 ? <HiArrowSmallUp className="text-primary" /> : <HiArrowSmallDown className="text-primary" />
+                          sortOrder == 1 ? (
+                            <HiArrowSmallUp className="text-primary" />
+                          ) : (
+                            <HiArrowSmallDown className="text-primary" />
+                          )
                         ) : (
                           <HiMiniArrowsUpDown />
                         )}
@@ -159,74 +173,81 @@ const VideoTable = () => {
                   </div>
                 </th>
               ))}
-              <th scope="col" className="px-6 py-4 text-center sticky right-0 bg-gray-50/50 dark:bg-[#160327]/50 shadow-[-5px_0_10px_rgba(0,0,0,0.02)]">
+              <th
+                scope="col"
+                className="px-6 py-4 text-center sticky right-0 bg-gray-50/50 dark:bg-[#160327]/50 shadow-[-5px_0_10px_rgba(0,0,0,0.02)]"
+              >
                 <FaCog className="mx-auto" />
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-            {loading ? (
-              [...Array(5)].map((_, i) => (
-                <tr key={i} className="animate-pulse">
-                  <td colSpan={7} className="px-6 py-4">
-                    <div className="h-4 bg-gray-100 dark:bg-[#160327] rounded-full w-full"></div>
-                  </td>
-                </tr>
-              ))
-            ) : videoList.map((video, index) => (
-              <tr
-                key={video._id || index}
-                className="group hover:bg-primary/[0.02] dark:hover:bg-primary/[0.01] transition-colors"
-              >
-                <td className="px-6 py-4 font-medium text-gray-400">
-                  {((page - 1) * PAGE_LIMIT) + index + 1}
-                </td>
-                <th
-                  scope="row"
-                  className="px-6 py-4"
-                >
-                  <div className="flex items-center font-semibold text-black dark:text-gray-100 group-hover:text-primary transition-colors">
-                    <div className="h-10 w-10 mr-4 bg-primary/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <FaVideo className="text-primary" />
-                    </div>
-                    <div>
-                      <span className="block">{video.title || "Untitled"}</span>
-                      <span className="text-[11px] text-gray-400 font-normal">ID: {video._id?.slice(-6) || "N/A"}</span>
-                    </div>
-                  </div>
-                </th>
-                <td className="px-6 py-4">
-                  <span className="px-3 py-1 bg-gray-100 dark:bg-[#160327] rounded-full text-[11px] font-medium">
-                    {video.artist || "System Admin"}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[11px] font-bold rounded-lg uppercase">
-                    {video.subcategory || video.genre || "General"}
-                  </span>
-                </td>
-                <td className="px-6 py-4 font-bold">
-                  <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 font-bold px-10"></div>
-                    {video.reactions || video.likes || 0}
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-gray-500 dark:text-gray-400 font-medium">
-                  {video.createdAt ? format(new Date(video.createdAt), "MMM dd, yyyy") : "---"}
-                </td>
-                <td className="px-6 py-4 sticky right-0 bg-white dark:bg-[#160327] shadow-[-5px_0_10px_rgba(0,0,0,0.02)] group-hover:bg-primary/[0.02] dark:group-hover:bg-[#1c0433] transition-colors">
-                  <div className="flex items-center gap-3 justify-center text-lg">
-                    <Link
-                      href={`${VIDEO_MANAGEMENT_ROUTE}/edit/${video._id}`}
-                      className="flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all"
-                    >
-                      <FaPencil className="w-4 h-4" /> <span className="text-xs font-semibold">Edit</span>
-                    </Link>
-                    <DeleteVideoButton id={video._id} />
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {loading
+              ? [...Array(5)].map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td colSpan={7} className="px-6 py-4">
+                      <div className="h-4 bg-gray-100 dark:bg-[#160327] rounded-full w-full"></div>
+                    </td>
+                  </tr>
+                ))
+              : videoList.map((video, index) => (
+                  <tr
+                    key={video._id || index}
+                    className="group hover:bg-primary/[0.02] dark:hover:bg-primary/[0.01] transition-colors"
+                  >
+                    <td className="px-6 py-4 font-medium text-gray-400">
+                      {(page - 1) * PAGE_LIMIT + index + 1}
+                    </td>
+                    <th scope="row" className="px-6 py-4">
+                      <div className="flex items-center font-semibold text-black dark:text-gray-100 group-hover:text-primary transition-colors">
+                        <div className="h-10 w-10 mr-4 bg-primary/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <FaVideo className="text-primary" />
+                        </div>
+                        <div>
+                          <span className="block">
+                            {video.title || "Untitled"}
+                          </span>
+                          <span className="text-[11px] text-gray-400 font-normal">
+                            ID: {video._id?.slice(-6) || "N/A"}
+                          </span>
+                        </div>
+                      </div>
+                    </th>
+                    <td className="px-6 py-4">
+                      <span className="px-3 py-1 bg-gray-100 dark:bg-[#160327] rounded-full text-[11px] font-medium">
+                        {video.artist || "System Admin"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[11px] font-bold rounded-lg uppercase">
+                        {video.subcategory || video.genre || "General"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 font-bold">
+                      <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 font-bold px-10"></div>
+                        {video.reactions || video.likes || 0}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-gray-500 dark:text-gray-400 font-medium">
+                      {video.createdAt
+                        ? format(new Date(video.createdAt), "MMM dd, yyyy")
+                        : "---"}
+                    </td>
+                    <td className="px-6 py-4 sticky right-0 bg-white dark:bg-[#160327] shadow-[-5px_0_10px_rgba(0,0,0,0.02)] group-hover:bg-primary/[0.02] dark:group-hover:bg-[#1c0433] transition-colors">
+                      <div className="flex items-center gap-3 justify-center text-lg">
+                        <Link
+                          href={`${VIDEO_MANAGEMENT_ROUTE}/edit/${video._id}`}
+                          className="flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all"
+                        >
+                          <FaPencil className="w-4 h-4" />{" "}
+                          <span className="text-xs font-semibold">Edit</span>
+                        </Link>
+                        <DeleteVideoButton id={video._id} />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             {!loading && videoList.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-6 py-20 text-center">
@@ -234,8 +255,12 @@ const VideoTable = () => {
                     <div className="w-20 h-20 bg-gray-50 dark:bg-[#160327] rounded-full flex items-center justify-center mb-4">
                       <FaVideo className="text-gray-300 text-3xl" />
                     </div>
-                    <h3 className="text-lg font-bold text-black dark:text-white">No videos yet</h3>
-                    <p className="text-gray-500 max-w-[200px] mx-auto mt-1">Start by adding your first masterpiece to the collection.</p>
+                    <h3 className="text-lg font-bold text-black dark:text-white">
+                      No videos yet
+                    </h3>
+                    <p className="text-gray-500 max-w-[200px] mx-auto mt-1">
+                      Start by adding your first masterpiece to the collection.
+                    </p>
                   </div>
                 </td>
               </tr>

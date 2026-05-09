@@ -6,7 +6,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { FiAlertCircle } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 
-const RemoveFromCart = ({Art }) => {
+const RemoveFromCart = ({ Art }) => {
   const [showModal, setShowModal] = useState(false);
 
   const dispatch = useDispatch();
@@ -46,6 +46,6 @@ const RemoveFromCart = ({Art }) => {
       />
     </>
   );
-}
+};
 
-export default RemoveFromCart 
+export default RemoveFromCart;

@@ -21,14 +21,15 @@ const Checkout = ({ Arts, total: totalPrice }) => {
 
     setLoading(true);
 
-    orderAPI.createOrder({
-      orderItems: Arts.map((Art) => ({
-        Art: Art._id,
-        quantity: Art.quantity,
-      })),
-      totalPrice,
-      shippingAddress: user?.address,
-    })
+    orderAPI
+      .createOrder({
+        orderItems: Arts.map((Art) => ({
+          Art: Art._id,
+          quantity: Art.quantity,
+        })),
+        totalPrice,
+        shippingAddress: user?.address,
+      })
       .then(() => {
         toast.success("Order created successfully.", { autoClose: 1500 });
 

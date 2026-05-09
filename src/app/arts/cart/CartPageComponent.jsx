@@ -1,18 +1,22 @@
 "use client";
 
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useRouter } from 'next/navigation';
-import { removeFromCart, updateQuantity, clearCart } from '@/lib/slices/cartSlice';
-import { FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
-import { toast } from 'react-toastify';
-import Link from 'next/link';
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import {
+  removeFromCart,
+  updateQuantity,
+  clearCart,
+} from "@/lib/slices/cartSlice";
+import { FaTrash, FaMinus, FaPlus } from "react-icons/fa";
+import { toast } from "react-toastify";
+import Link from "next/link";
 
 function CartPage() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { items, total } = useSelector(state => state.cart);
-  const { isAuthenticated } = useSelector(state => state.auth);
+  const { items, total } = useSelector((state) => state.cart);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   const handleRemove = (id) => {
     dispatch(removeFromCart(id));
@@ -25,7 +29,7 @@ function CartPage() {
   };
 
   const handleClearCart = () => {
-    if (confirm('Are you sure you want to clear the cart?')) {
+    if (confirm("Are you sure you want to clear the cart?")) {
       dispatch(clearCart());
     }
   };
@@ -33,9 +37,13 @@ function CartPage() {
   if (items.length === 0) {
     return (
       <div className="py-10 px-4">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">Shopping Cart</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
+          Shopping Cart
+        </h1>
         <div className="text-center py-20">
-          <p className="text-gray-600 dark:text-gray-400 text-lg mb-6">Your cart is empty</p>
+          <p className="text-gray-600 dark:text-gray-400 text-lg mb-6">
+            Your cart is empty
+          </p>
           <Link
             href="/arts"
             className="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition font-medium"
@@ -49,23 +57,38 @@ function CartPage() {
 
   return (
     <div className="py-10 px-4">
-      <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Shopping Cart</h1>
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">
+        Shopping Cart
+      </h1>
 
       {/* Cart Table */}
       <div className="overflow-x-auto bg-white dark:bg-[#160327] rounded-lg shadow-lg mb-6">
         <table className="w-full">
           <thead className="bg-gray-100 dark:bg-[#160327] border-b border-gray-300 dark:border-gray-600">
             <tr>
-              <th className="px-6 py-4 text-left font-semibold text-gray-800 dark:text-white">Product</th>
-              <th className="px-6 py-4 text-left font-semibold text-gray-800 dark:text-white">Price</th>
-              <th className="px-6 py-4 text-left font-semibold text-gray-800 dark:text-white">Quantity</th>
-              <th className="px-6 py-4 text-left font-semibold text-gray-800 dark:text-white">Subtotal</th>
-              <th className="px-6 py-4 text-center font-semibold text-gray-800 dark:text-white">Action</th>
+              <th className="px-6 py-4 text-left font-semibold text-gray-800 dark:text-white">
+                Product
+              </th>
+              <th className="px-6 py-4 text-left font-semibold text-gray-800 dark:text-white">
+                Price
+              </th>
+              <th className="px-6 py-4 text-left font-semibold text-gray-800 dark:text-white">
+                Quantity
+              </th>
+              <th className="px-6 py-4 text-left font-semibold text-gray-800 dark:text-white">
+                Subtotal
+              </th>
+              <th className="px-6 py-4 text-center font-semibold text-gray-800 dark:text-white">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={item.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition">
+              <tr
+                key={item.id}
+                className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition"
+              >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-4">
                     {item.image && (
@@ -80,7 +103,7 @@ function CartPage() {
                         {item.title || item.name}
                       </p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Merchant: {item.merchantName || 'Unknown'}
+                        Merchant: {item.merchantName || "Unknown"}
                       </p>
                     </div>
                   </div>
@@ -91,7 +114,9 @@ function CartPage() {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2 bg-gray-100 dark:bg-[#160327] rounded-lg w-fit p-1">
                     <button
-                      onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                      onClick={() =>
+                        handleUpdateQuantity(item.id, item.quantity - 1)
+                      }
                       className="p-1 text-gray-600 dark:text-gray-300 hover:text-primary transition"
                     >
                       <FaMinus size={14} />
@@ -100,7 +125,9 @@ function CartPage() {
                       {item.quantity}
                     </span>
                     <button
-                      onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                      onClick={() =>
+                        handleUpdateQuantity(item.id, item.quantity + 1)
+                      }
                       className="p-1 text-gray-600 dark:text-gray-300 hover:text-primary transition"
                     >
                       <FaPlus size={14} />
@@ -128,7 +155,9 @@ function CartPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="md:col-span-2"></div>
         <div className="bg-white dark:bg-[#160327] rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Order Summary</h3>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+            Order Summary
+          </h3>
           <div className="space-y-3 mb-6">
             <div className="flex justify-between text-gray-700 dark:text-gray-300">
               <span>Subtotal:</span>
@@ -140,7 +169,9 @@ function CartPage() {
             </div>
             <div className="flex justify-between text-gray-700 dark:text-gray-300">
               <span>Tax:</span>
-              <span className="font-semibold">Rs. {(total * 0.1).toFixed(2)}</span>
+              <span className="font-semibold">
+                Rs. {(total * 0.1).toFixed(2)}
+              </span>
             </div>
             <hr className="border-gray-300 dark:border-gray-600" />
             <div className="flex justify-between text-lg font-bold text-gray-800 dark:text-white">

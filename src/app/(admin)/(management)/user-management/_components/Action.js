@@ -14,14 +14,17 @@ const Action = ({ id, userRoles = [] }) => {
   const isSelf = currentUser?._id === id || currentUser?.id === id;
 
   // Case-insensitive role check
-  const hasRole = (role) => roles.some(r => r.toUpperCase() === role.toUpperCase());
+  const hasRole = (role) =>
+    roles.some((r) => r.toUpperCase() === role.toUpperCase());
 
   function updateRole(role) {
     let updatedRoles = [...roles];
 
     if (hasRole(role)) {
       // Remove match case-insensitively
-      updatedRoles = updatedRoles.filter((item) => item.toUpperCase() != role.toUpperCase());
+      updatedRoles = updatedRoles.filter(
+        (item) => item.toUpperCase() != role.toUpperCase(),
+      );
     } else {
       updatedRoles.push(role);
     }
@@ -31,24 +34,33 @@ const Action = ({ id, userRoles = [] }) => {
 
   function update() {
     // Normalize to uppercase for backend consistency
-    const normalizedRoles = roles.map(r => r.toUpperCase());
+    const normalizedRoles = roles.map((r) => r.toUpperCase());
     const primaryRole = normalizedRoles[0] || "USER";
 
     // Backend might be case-sensitive (admin vs ADMIN) or expect 'role' vs 'roles'.
     // We send both with lowercase values to maximize compatibility.
-    const lowercaseRoles = normalizedRoles.map(r => r.toLowerCase());
-    
-    usersApi.updateUserRoles(id, { 
-      roles: lowercaseRoles,
-      role: lowercaseRoles[0] 
-    })
+    const lowercaseRoles = normalizedRoles.map((r) => r.toLowerCase());
+
+    usersApi
+      .updateUserRoles(id, {
+        roles: lowercaseRoles,
+        role: lowercaseRoles[0],
+      })
       .then(() => {
-        toast.success(`User roles updated to: ${lowercaseRoles.join(', ')}`, { autoClose: 1500 });
-        setTimeout(() => window.location.reload(), 1000); 
+        toast.success(`User roles updated to: ${lowercaseRoles.join(", ")}`, {
+          autoClose: 1500,
+        });
+        setTimeout(() => window.location.reload(), 1000);
       })
       .catch((error) => {
-        console.error("User Role Sync Error:", error.response?.data || error.message);
-        const errMsg = error.response?.data?.message || error.response?.data || "User update failed.";
+        console.error(
+          "User Role Sync Error:",
+          error.response?.data || error.message,
+        );
+        const errMsg =
+          error.response?.data?.message ||
+          error.response?.data ||
+          "User update failed.";
         toast.error(errMsg, { autoClose: 3500 });
       })
       .finally(() => {
@@ -58,11 +70,18 @@ const Action = ({ id, userRoles = [] }) => {
 
   function removeUser() {
     if (isSelf) {
-      return toast.error("You cannot delete your own account from the admin panel.");
+      return toast.error(
+        "You cannot delete your own account from the admin panel.",
+      );
     }
 
-    if (window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
-      usersApi.deleteUser(id)
+    if (
+      window.confirm(
+        "Are you sure you want to delete this user? This action cannot be undone.",
+      )
+    ) {
+      usersApi
+        .deleteUser(id)
         .then(() => {
           toast.success("User deleted successfully.");
           setTimeout(() => window.location.reload(), 1000);
@@ -113,7 +132,12 @@ const Action = ({ id, userRoles = [] }) => {
                   onChange={() => updateRole(ADMIN_ROLE)}
                   disabled={isSelf}
                 />
-                <label htmlFor={`admin-${id}`} className="ml-2 text-sm font-bold text-gray-700 cursor-pointer group-hover:text-purple-600 transition-colors">ADMIN</label>
+                <label
+                  htmlFor={`admin-${id}`}
+                  className="ml-2 text-sm font-bold text-gray-700 cursor-pointer group-hover:text-purple-600 transition-colors"
+                >
+                  ADMIN
+                </label>
               </div>
               <div className="flex items-center group">
                 <input
@@ -123,7 +147,12 @@ const Action = ({ id, userRoles = [] }) => {
                   checked={hasRole(MERCHANT_ROLE)}
                   onChange={() => updateRole(MERCHANT_ROLE)}
                 />
-                <label htmlFor={`merchant-${id}`} className="ml-2 text-sm font-bold text-gray-700 cursor-pointer group-hover:text-blue-600 transition-colors">MERCHANT</label>
+                <label
+                  htmlFor={`merchant-${id}`}
+                  className="ml-2 text-sm font-bold text-gray-700 cursor-pointer group-hover:text-blue-600 transition-colors"
+                >
+                  MERCHANT
+                </label>
               </div>
               <div className="flex items-center group">
                 <input
@@ -133,7 +162,12 @@ const Action = ({ id, userRoles = [] }) => {
                   checked={hasRole(USER_ROLE)}
                   disabled
                 />
-                <label htmlFor={`user-${id}`} className="ml-2 text-sm font-bold text-gray-400 cursor-not-allowed">USER</label>
+                <label
+                  htmlFor={`user-${id}`}
+                  className="ml-2 text-sm font-bold text-gray-400 cursor-not-allowed"
+                >
+                  USER
+                </label>
               </div>
             </div>
           </div>

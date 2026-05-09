@@ -91,17 +91,17 @@ export default function NotificationBell() {
   const { items: notifications } = useSelector((s) => s.notifications);
   const { user: currentUser } = useSelector((s) => s.auth);
   const { followedUserIds } = useSelector((s) => s.socialPersistence);
-  
+
   // Filter notifications for the current user
   const currentUserId = String(currentUser?._id || currentUser?.id || "");
-  const userNotifications = (notifications || []).filter(n => {
+  const userNotifications = (notifications || []).filter((n) => {
     // n.targetUserId is normalized in the slice (Remote)
     // n.recipient might be present in local-only dispatches
     const target = n.targetUserId || n.recipient;
     if (!target) return true; // Show global if no target is specified
     return String(target) === currentUserId;
   });
-  
+
   const unreadCount = userNotifications.filter((n) => !n.read).length;
 
   const [open, setOpen] = useState(false);
@@ -142,9 +142,11 @@ export default function NotificationBell() {
   useEffect(() => {
     if (currentUser?._id || currentUser?.id) {
       // Check for token existence before attempting protected calls
-      const hasToken = typeof window !== "undefined" && 
-                     (localStorage.getItem("authtoken") || localStorage.getItem("persist:root")?.includes("token"));
-      
+      const hasToken =
+        typeof window !== "undefined" &&
+        (localStorage.getItem("authtoken") ||
+          localStorage.getItem("persist:root")?.includes("token"));
+
       if (hasToken) {
         // Initial fetch
         dispatch(fetchNotifications());
@@ -163,10 +165,10 @@ export default function NotificationBell() {
     e.stopPropagation();
     try {
       await userApi.followUser(followerId);
-      
+
       // Also update local bridge for persistence
       dispatch(localFollow(followerId));
-      
+
       toast.success("Followed back!");
       dispatch(markAsRead(notifId));
     } catch (err) {
@@ -187,12 +189,12 @@ export default function NotificationBell() {
     // For seed notifications (non-DB), just remove locally.
     // For real notifications, remove locally AND delete on backend.
     if (String(id).startsWith("seed-")) {
-       dispatch(removeNotification(id));
+      dispatch(removeNotification(id));
     } else {
-       // Optimistically remove locally
-       dispatch(removeNotification(id));
-       // Persistent delete on backend
-       dispatch(deleteNotificationBackend(id));
+      // Optimistically remove locally
+      dispatch(removeNotification(id));
+      // Persistent delete on backend
+      dispatch(deleteNotificationBackend(id));
     }
   };
 
@@ -207,12 +209,16 @@ export default function NotificationBell() {
             console.group("🔔 [NOTIF DIAGNOSTICS]");
             console.log("Current Logged-in User ID:", currentUserId);
             console.log("Total notifications in memory:", notifications.length);
-            const debugTable = notifications.slice(0, 10).map(n => ({
+            const debugTable = notifications.slice(0, 10).map((n) => ({
               ID: n.id,
               Type: n.type,
               Targeted_To: n.targetUserId || "GLOBAL",
-              Match: n.targetUserId ? (String(n.targetUserId) === currentUserId ? "✅ YES" : "❌ NO") : "🌍 GLOBAL",
-              Message: n.message?.substring(0, 30) + "..."
+              Match: n.targetUserId
+                ? String(n.targetUserId) === currentUserId
+                  ? "✅ YES"
+                  : "❌ NO"
+                : "🌍 GLOBAL",
+              Message: n.message?.substring(0, 30) + "...",
             }));
             console.table(debugTable);
             console.groupEnd();
@@ -250,9 +256,14 @@ export default function NotificationBell() {
           <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
             <div className="flex items-center gap-2">
               <div className="p-1.5 rounded-lg bg-purple-500/10">
-                <FaBell size={13} className="text-purple-600 dark:text-purple-400" />
+                <FaBell
+                  size={13}
+                  className="text-purple-600 dark:text-purple-400"
+                />
               </div>
-              <span className="font-bold text-[var(--foreground)] text-sm">Notifications</span>
+              <span className="font-bold text-[var(--foreground)] text-sm">
+                Notifications
+              </span>
               {mounted && unreadCount > 0 && (
                 <span className="px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
                   {unreadCount} new
@@ -274,9 +285,9 @@ export default function NotificationBell() {
           {/* list */}
           <div className="max-h-[400px] overflow-y-auto divide-y divide-purple-900/30 custom-scrollbar">
             {!mounted ? (
-               <div className="flex justify-center py-10">
-                  <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-primary"></div>
-               </div>
+              <div className="flex justify-center py-10">
+                <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-primary"></div>
+              </div>
             ) : userNotifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 gap-3 text-center">
                 <div className="p-4 rounded-full bg-purple-100 dark:bg-purple-900/30">
@@ -310,9 +321,13 @@ export default function NotificationBell() {
                       className={`flex-shrink-0 h-10 w-10 rounded-2xl ${meta.bg} ring-1 ${meta.ring} flex items-center justify-center font-bold text-sm ${meta.text}`}
                     >
                       {notif.initials?.length > 2 ? (
-                        <span className="text-base leading-none">{notif.initials}</span>
+                        <span className="text-base leading-none">
+                          {notif.initials}
+                        </span>
                       ) : notif.initials ? (
-                        <span className="text-xs font-black">{notif.initials}</span>
+                        <span className="text-xs font-black">
+                          {notif.initials}
+                        </span>
                       ) : (
                         <Icon size={14} />
                       )}
@@ -322,7 +337,9 @@ export default function NotificationBell() {
                     <div className="flex-1 min-w-0">
                       <p
                         className={`text-xs font-bold leading-tight mb-0.5 truncate ${
-                          !notif.read ? "text-[var(--foreground)]" : "text-[var(--muted)]"
+                          !notif.read
+                            ? "text-[var(--foreground)]"
+                            : "text-[var(--muted)]"
                         }`}
                       >
                         {notif.title}
@@ -341,8 +358,10 @@ export default function NotificationBell() {
                               gap: "4px",
                               padding: "1px 7px",
                               borderRadius: "999px",
-                              background: "var(--primary-light, rgba(139,92,246,0.1))",
-                              border: "1px solid var(--primary-border, rgba(139,92,246,0.2))",
+                              background:
+                                "var(--primary-light, rgba(139,92,246,0.1))",
+                              border:
+                                "1px solid var(--primary-border, rgba(139,92,246,0.2))",
                               fontSize: "8px",
                               fontWeight: 800,
                               letterSpacing: "0.05em",
@@ -363,7 +382,6 @@ export default function NotificationBell() {
                           )}
                         </div>
                       )}
-
 
                       <div className="flex items-center gap-2 mt-1.5">
                         <span className="text-[10px] text-[var(--muted)] font-medium">
@@ -396,10 +414,14 @@ export default function NotificationBell() {
           {userNotifications.length > 0 && (
             <div className="px-5 py-3 border-t border-purple-800/30 flex items-center justify-between">
               <span className="text-[11px] text-purple-400/50 font-medium">
-                {userNotifications.length} total notification{userNotifications.length !== 1 ? "s" : ""}
+                {userNotifications.length} total notification
+                {userNotifications.length !== 1 ? "s" : ""}
               </span>
               <button
-                onClick={() => { setOpen(false); router.push("/notifications"); }}
+                onClick={() => {
+                  setOpen(false);
+                  router.push("/notifications");
+                }}
                 className="text-[11px] font-bold text-purple-400 hover:text-purple-200 transition-colors flex items-center gap-1"
               >
                 View all <FiChevronRight size={11} />
@@ -412,19 +434,45 @@ export default function NotificationBell() {
       {/* global wiggle keyframe */}
       <style jsx global>{`
         @keyframes wiggle {
-          0%,100% { transform: rotate(0deg); }
-          15% { transform: rotate(-18deg); }
-          30% { transform: rotate(18deg); }
-          45% { transform: rotate(-12deg); }
-          60% { transform: rotate(12deg); }
-          75% { transform: rotate(-6deg); }
-          90% { transform: rotate(6deg); }
+          0%,
+          100% {
+            transform: rotate(0deg);
+          }
+          15% {
+            transform: rotate(-18deg);
+          }
+          30% {
+            transform: rotate(18deg);
+          }
+          45% {
+            transform: rotate(-12deg);
+          }
+          60% {
+            transform: rotate(12deg);
+          }
+          75% {
+            transform: rotate(-6deg);
+          }
+          90% {
+            transform: rotate(6deg);
+          }
         }
-        .animate-wiggle { animation: wiggle 0.8s ease-in-out; }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 9999px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.5); }
+        .animate-wiggle {
+          animation: wiggle 0.8s ease-in-out;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(139, 92, 246, 0.3);
+          border-radius: 9999px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(139, 92, 246, 0.5);
+        }
       `}</style>
     </div>
   );

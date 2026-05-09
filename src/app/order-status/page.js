@@ -31,11 +31,16 @@ const OrderStatusContent = () => {
       const purchaseOrderId = searchParams.get("purchase_order_id");
 
       if (status === "Completed" && pidx && purchaseOrderId) {
-        orderApi.confirmPayment(purchaseOrderId, { status: "success", pidx })
+        orderApi
+          .confirmPayment(purchaseOrderId, { status: "success", pidx })
           .then(() => {
             fetchOrders();
             // Clear URL to avoid reprocessing
-            window.history.replaceState({}, document.title, window.location.pathname);
+            window.history.replaceState(
+              {},
+              document.title,
+              window.location.pathname,
+            );
           })
           .catch((err) => console.error("Payment confirmation failed:", err));
       }
@@ -84,7 +89,9 @@ const OrderStatusContent = () => {
   const getNextStatus = (currentStatus) => {
     const statuses = ["pending", "confirmed", "shipped", "delivered"];
     const currentIndex = statuses.indexOf(currentStatus);
-    return currentIndex < statuses.length - 1 ? statuses[currentIndex + 1] : null;
+    return currentIndex < statuses.length - 1
+      ? statuses[currentIndex + 1]
+      : null;
   };
 
   if (!isAuthenticated) {
@@ -95,27 +102,41 @@ const OrderStatusContent = () => {
     <div className="min-h-screen bg-white px-4 py-10">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl sm:text-4xl font-bold mb-2">Order Status</h1>
-        <p className="text-gray-600 mb-10">Track your art purchases and manage delivery status</p>
+        <p className="text-gray-600 mb-10">
+          Track your art purchases and manage delivery status
+        </p>
 
         {orders.length === 0 ? (
           <div className="text-center py-20 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-gray-500">No orders yet. Start shopping to see your orders here!</p>
+            <p className="text-gray-500">
+              No orders yet. Start shopping to see your orders here!
+            </p>
           </div>
         ) : (
           <div className="space-y-6">
             {orders.map((order) => (
-              <div key={order.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+              <div
+                key={order.id}
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+              >
                 {/* Order Header */}
                 <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                      <h3 className="font-semibold text-lg">Order #{order.id}</h3>
-                      <p className="text-sm text-gray-600">{new Date(order.date).toLocaleDateString()}</p>
+                      <h3 className="font-semibold text-lg">
+                        Order #{order.id}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {new Date(order.date).toLocaleDateString()}
+                      </p>
                     </div>
                     <div className="flex items-center gap-3">
                       {getStatusIcon(order.status)}
-                      <span className={`px-4 py-2 rounded-full font-semibold text-sm border ${getStatusColor(order.status)}`}>
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                      <span
+                        className={`px-4 py-2 rounded-full font-semibold text-sm border ${getStatusColor(order.status)}`}
+                      >
+                        {order.status.charAt(0).toUpperCase() +
+                          order.status.slice(1)}
                       </span>
                     </div>
                   </div>
@@ -126,9 +147,14 @@ const OrderStatusContent = () => {
                   <h4 className="font-semibold mb-3">Items</h4>
                   <div className="space-y-2">
                     {order.items.map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center bg-gray-50 p-3 rounded">
+                      <div
+                        key={idx}
+                        className="flex justify-between items-center bg-gray-50 p-3 rounded"
+                      >
                         <span className="text-sm">{item.title}</span>
-                        <span className="font-semibold text-purple-600">Rs. {item.price.toFixed(2)}</span>
+                        <span className="font-semibold text-purple-600">
+                          Rs. {item.price.toFixed(2)}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -139,33 +165,65 @@ const OrderStatusContent = () => {
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Total Amount</p>
-                      <p className="text-2xl font-bold text-purple-600">Rs. {order.total.toFixed(2)}</p>
+                      <p className="text-2xl font-bold text-purple-600">
+                        Rs. {order.total.toFixed(2)}
+                      </p>
                     </div>
 
                     {/* Status Progress */}
                     <div className="w-full sm:w-auto">
                       <div className="flex items-center justify-between gap-2">
-                        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${order.status === "pending" || order.status === "confirmed" || order.status === "shipped" || order.status === "delivered" ? "bg-yellow-600 text-white" : "bg-gray-300 text-gray-500"}`}>
+                        <div
+                          className={`flex items-center justify-center w-8 h-8 rounded-full ${order.status === "pending" || order.status === "confirmed" || order.status === "shipped" || order.status === "delivered" ? "bg-yellow-600 text-white" : "bg-gray-300 text-gray-500"}`}
+                        >
                           <FaClock className="text-xs" />
                         </div>
-                        <div className={`h-1 flex-1 ${["pending", "confirmed", "shipped", "delivered"].indexOf(order.status) >= 1 ? "bg-blue-600" : "bg-gray-300"}`}></div>
-                        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${["confirmed", "shipped", "delivered"].includes(order.status) ? "bg-blue-600 text-white" : "bg-gray-300 text-gray-500"}`}>
+                        <div
+                          className={`h-1 flex-1 ${["pending", "confirmed", "shipped", "delivered"].indexOf(order.status) >= 1 ? "bg-blue-600" : "bg-gray-300"}`}
+                        ></div>
+                        <div
+                          className={`flex items-center justify-center w-8 h-8 rounded-full ${["confirmed", "shipped", "delivered"].includes(order.status) ? "bg-blue-600 text-white" : "bg-gray-300 text-gray-500"}`}
+                        >
                           <FaBox className="text-xs" />
                         </div>
-                        <div className={`h-1 flex-1 ${["shipped", "delivered"].includes(order.status) ? "bg-purple-600" : "bg-gray-300"}`}></div>
-                        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${["shipped", "delivered"].includes(order.status) ? "bg-purple-600 text-white" : "bg-gray-300 text-gray-500"}`}>
+                        <div
+                          className={`h-1 flex-1 ${["shipped", "delivered"].includes(order.status) ? "bg-purple-600" : "bg-gray-300"}`}
+                        ></div>
+                        <div
+                          className={`flex items-center justify-center w-8 h-8 rounded-full ${["shipped", "delivered"].includes(order.status) ? "bg-purple-600 text-white" : "bg-gray-300 text-gray-500"}`}
+                        >
                           <FaTruck className="text-xs" />
                         </div>
-                        <div className={`h-1 flex-1 ${order.status === "delivered" ? "bg-green-600" : "bg-gray-300"}`}></div>
-                        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${order.status === "delivered" ? "bg-green-600 text-white" : "bg-gray-300 text-gray-500"}`}>
+                        <div
+                          className={`h-1 flex-1 ${order.status === "delivered" ? "bg-green-600" : "bg-gray-300"}`}
+                        ></div>
+                        <div
+                          className={`flex items-center justify-center w-8 h-8 rounded-full ${order.status === "delivered" ? "bg-green-600 text-white" : "bg-gray-300 text-gray-500"}`}
+                        >
                           <FaCheckCircle className="text-xs" />
                         </div>
                       </div>
                       <div className="flex justify-between mt-3 px-1">
-                        <span className={`text-[10px] font-bold uppercase tracking-tighter ${order.status === 'pending' ? 'text-yellow-600' : 'text-gray-400'}`}>Pending</span>
-                        <span className={`text-[10px] font-bold uppercase tracking-tighter ${order.status === 'confirmed' ? 'text-blue-600' : 'text-gray-400'}`}>Confirmed</span>
-                        <span className={`text-[10px] font-bold uppercase tracking-tighter ${order.status === 'shipped' ? 'text-purple-600' : 'text-gray-400'}`}>Shipped</span>
-                        <span className={`text-[10px] font-bold uppercase tracking-tighter ${order.status === 'delivered' ? 'text-green-600' : 'text-gray-400'}`}>Delivered</span>
+                        <span
+                          className={`text-[10px] font-bold uppercase tracking-tighter ${order.status === "pending" ? "text-yellow-600" : "text-gray-400"}`}
+                        >
+                          Pending
+                        </span>
+                        <span
+                          className={`text-[10px] font-bold uppercase tracking-tighter ${order.status === "confirmed" ? "text-blue-600" : "text-gray-400"}`}
+                        >
+                          Confirmed
+                        </span>
+                        <span
+                          className={`text-[10px] font-bold uppercase tracking-tighter ${order.status === "shipped" ? "text-purple-600" : "text-gray-400"}`}
+                        >
+                          Shipped
+                        </span>
+                        <span
+                          className={`text-[10px] font-bold uppercase tracking-tighter ${order.status === "delivered" ? "text-green-600" : "text-gray-400"}`}
+                        >
+                          Delivered
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -173,10 +231,14 @@ const OrderStatusContent = () => {
                   {/* Update Status Button (Admin Feature) */}
                   {getNextStatus(order.status) && (
                     <button
-                      onClick={() => updateOrderStatus(order.id, getNextStatus(order.status))}
+                      onClick={() =>
+                        updateOrderStatus(order.id, getNextStatus(order.status))
+                      }
                       className="w-full bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition font-semibold"
                     >
-                      Update to {getNextStatus(order.status).charAt(0).toUpperCase() + getNextStatus(order.status).slice(1)}
+                      Update to{" "}
+                      {getNextStatus(order.status).charAt(0).toUpperCase() +
+                        getNextStatus(order.status).slice(1)}
                     </button>
                   )}
                 </div>
@@ -191,11 +253,13 @@ const OrderStatusContent = () => {
 
 const OrderStatus = () => {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full"></div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-white">
+          <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full"></div>
+        </div>
+      }
+    >
       <OrderStatusContent />
     </Suspense>
   );

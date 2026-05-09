@@ -246,7 +246,9 @@ const MusicForm = ({ music, isEditing = false }) => {
 
         <div className="flex items-center gap-4 mt-2">
           {isEditing && music?.image && (
-            <div className={`relative group transition-all duration-300 ${localImageUrls.length > 0 ? 'opacity-40 scale-90' : 'opacity-100'}`}>
+            <div
+              className={`relative group transition-all duration-300 ${localImageUrls.length > 0 ? "opacity-40 scale-90" : "opacity-100"}`}
+            >
               <Image
                 height={80}
                 width={80}
@@ -259,7 +261,9 @@ const MusicForm = ({ music, isEditing = false }) => {
               </div>
               {localImageUrls.length > 0 && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-xl">
-                   <p className="text-[10px] text-white font-black bg-blue-600 px-2 py-0.5 rounded-md shadow-lg rotate-12">REPLACING</p>
+                  <p className="text-[10px] text-white font-black bg-blue-600 px-2 py-0.5 rounded-md shadow-lg rotate-12">
+                    REPLACING
+                  </p>
                 </div>
               )}
             </div>
@@ -271,7 +275,10 @@ const MusicForm = ({ music, isEditing = false }) => {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3">
                   {localImageUrls.map((url, index) => (
-                    <div key={index} className="relative group animate-scale-in">
+                    <div
+                      key={index}
+                      className="relative group animate-scale-in"
+                    >
                       <Image
                         height={80}
                         width={80}
@@ -331,16 +338,23 @@ const MusicForm = ({ music, isEditing = false }) => {
         {(mediaFileUrls.length > 0 || (isEditing && music?.media)) && (
           <div className="sm:col-span-2 flex flex-col gap-2">
             {mediaFileUrls.map((url, index) => (
-              <div key={index} className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-200 dark:border-blue-900/30 animate-fade-in">
-                 <FaPlus className="text-blue-600" />
-                 <span className="text-xs text-blue-700 dark:text-blue-300 font-bold tracking-wide uppercase italic">Replacement File {index + 1} Selected</span>
+              <div
+                key={index}
+                className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-200 dark:border-blue-900/30 animate-fade-in"
+              >
+                <FaPlus className="text-blue-600" />
+                <span className="text-xs text-blue-700 dark:text-blue-300 font-bold tracking-wide uppercase italic">
+                  Replacement File {index + 1} Selected
+                </span>
               </div>
             ))}
             {isEditing && music?.media && mediaFileUrls.length === 0 && (
-                <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-slate-200 dark:border-slate-800">
-                    <FaMusic className="text-slate-500" />
-                    <span className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-widest break-all">Active Source: {music.media.split('/').pop()}</span>
-                </div>
+              <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-slate-200 dark:border-slate-800">
+                <FaMusic className="text-slate-500" />
+                <span className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-widest break-all">
+                  Active Source: {music.media.split("/").pop()}
+                </span>
+              </div>
             )}
           </div>
         )}
@@ -355,4 +369,4 @@ const MusicForm = ({ music, isEditing = false }) => {
   );
 };
 
-export default MusicForm;
+export default MusicForm;

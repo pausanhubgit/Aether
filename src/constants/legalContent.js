@@ -17,7 +17,7 @@ export const LEGAL_PAGES = {
       
       <h2>5. Disclaimers</h2>
       <p>We provide our services using a commercially reasonable level of skill and care. However, we do not promise that the service will be error-free or uninterrupted.</p>
-    `
+    `,
   },
   privacy: {
     title: "Privacy Policy",
@@ -34,13 +34,13 @@ export const LEGAL_PAGES = {
       
       <h2>4. Information Security</h2>
       <p>We work hard to protect Aether Hub and our users from unauthorized access to or unauthorized alteration, disclosure or destruction of information we hold.</p>
-    `
+    `,
   },
   shipping: {
     title: "Shipping Policy",
     lastUpdated: "April 2024",
     content: `
-      <h2>1. Digital Delivery</h2>
+      <h2>1. Digital Delivery </h2>
       <p>Most items on Aether Hub are digital assets (Arts, Music, Videos). These are delivered instantly to your account or via email upon successful payment.</p>
       
       <h2>2. Processing Time</h2>
@@ -51,7 +51,7 @@ export const LEGAL_PAGES = {
       
       <h2>4. Shipping Confirmation</h2>
       <p>You will receive a Shipment Confirmation email once your order has shipped containing your tracking number(s).</p>
-    `
+    `,
   },
   returns: {
     title: "Return & Refund Policy",
@@ -68,6 +68,6 @@ export const LEGAL_PAGES = {
       
       <h2>4. Shipping Costs</h2>
       <p>You will be responsible for paying for your own shipping costs for returning your item. Shipping costs are non-refundable.</p>
-    `
-  }
+    `,
+  },
 };

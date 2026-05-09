@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import artsAPI from '@/api/arts';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import artsAPI from "@/api/arts";
 
 export const fetchArts = createAsyncThunk(
-  'arts/fetchArts',
+  "arts/fetchArts",
   async (searchParams, { rejectWithValue }) => {
     try {
       const response = await artsAPI.getArt(searchParams);
@@ -10,11 +10,11 @@ export const fetchArts = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchArtById = createAsyncThunk(
-  'arts/fetchArtById',
+  "arts/fetchArtById",
   async (id, { rejectWithValue }) => {
     try {
       const response = await artsAPI.getArtsById(id);
@@ -22,11 +22,11 @@ export const fetchArtById = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const createArt = createAsyncThunk(
-  'arts/createArt',
+  "arts/createArt",
   async (data, { rejectWithValue }) => {
     try {
       const response = await artsAPI.createArts(data);
@@ -34,11 +34,11 @@ export const createArt = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const updateArtAsync = createAsyncThunk(
-  'arts/updateArt',
+  "arts/updateArt",
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await artsAPI.updateArt(id, data);
@@ -46,11 +46,11 @@ export const updateArtAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const deleteArtAsync = createAsyncThunk(
-  'arts/deleteArt',
+  "arts/deleteArt",
   async (id, { rejectWithValue }) => {
     try {
       await artsAPI.deleteArts(id);
@@ -58,11 +58,11 @@ export const deleteArtAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchCategories = createAsyncThunk(
-  'arts/fetchCategories',
+  "arts/fetchCategories",
   async (_, { rejectWithValue }) => {
     try {
       const response = await artsAPI.getCategories();
@@ -70,11 +70,11 @@ export const fetchCategories = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const likeArtAsync = createAsyncThunk(
-  'arts/likeArt',
+  "arts/likeArt",
   async ({ artId, userId }, { rejectWithValue }) => {
     try {
       const response = await artsAPI.likeArt(artId, userId);
@@ -82,11 +82,11 @@ export const likeArtAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const unlikeArtAsync = createAsyncThunk(
-  'arts/unlikeArt',
+  "arts/unlikeArt",
   async ({ artId, userId }, { rejectWithValue }) => {
     try {
       const response = await artsAPI.unlikeArt(artId, userId);
@@ -94,11 +94,11 @@ export const unlikeArtAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const addCommentAsync = createAsyncThunk(
-  'arts/addComment',
+  "arts/addComment",
   async ({ artId, data }, { rejectWithValue }) => {
     try {
       const response = await artsAPI.addComment(artId, data);
@@ -106,11 +106,11 @@ export const addCommentAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchCommentsAsync = createAsyncThunk(
-  'arts/fetchComments',
+  "arts/fetchComments",
   async (artId, { rejectWithValue }) => {
     try {
       const response = await artsAPI.getComments(artId);
@@ -118,11 +118,11 @@ export const fetchCommentsAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const deleteCommentAsync = createAsyncThunk(
-  'arts/deleteComment',
+  "arts/deleteComment",
   async ({ artId, commentId }, { rejectWithValue }) => {
     try {
       await artsAPI.deleteComment(artId, commentId);
@@ -130,11 +130,11 @@ export const deleteCommentAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchLikesAnalyticsAsync = createAsyncThunk(
-  'arts/fetchLikesAnalytics',
+  "arts/fetchLikesAnalytics",
   async (merchantId, { rejectWithValue }) => {
     try {
       const response = await artsAPI.getLikesAnalytics(merchantId);
@@ -142,7 +142,7 @@ export const fetchLikesAnalyticsAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 const initialState = {
@@ -156,7 +156,7 @@ const initialState = {
 };
 
 const artsSlice = createSlice({
-  name: 'arts',
+  name: "arts",
   initialState,
   reducers: {
     clearError: (state) => {
@@ -169,16 +169,16 @@ const artsSlice = createSlice({
       state.arts.push(action.payload);
     },
     updateArt: (state, action) => {
-      const index = state.arts.findIndex(art => art.id === action.payload.id);
+      const index = state.arts.findIndex((art) => art.id === action.payload.id);
       if (index !== -1) {
         state.arts[index] = action.payload;
       }
     },
     deleteArt: (state, action) => {
-      state.arts = state.arts.filter(art => art.id !== action.payload);
+      state.arts = state.arts.filter((art) => art.id !== action.payload);
     },
     likeArt: (state, action) => {
-      const art = state.arts.find(a => a.id === action.payload);
+      const art = state.arts.find((a) => a.id === action.payload);
       if (art) {
         art.likes += 1;
       }
@@ -187,7 +187,7 @@ const artsSlice = createSlice({
       state.comments.push(action.payload);
     },
     removeComment: (state, action) => {
-      state.comments = state.comments.filter(c => c.id !== action.payload);
+      state.comments = state.comments.filter((c) => c.id !== action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -220,13 +220,15 @@ const artsSlice = createSlice({
         state.arts.push(action.payload);
       })
       .addCase(updateArtAsync.fulfilled, (state, action) => {
-        const index = state.arts.findIndex(art => art.id === action.payload.id);
+        const index = state.arts.findIndex(
+          (art) => art.id === action.payload.id,
+        );
         if (index !== -1) {
           state.arts[index] = action.payload;
         }
       })
       .addCase(deleteArtAsync.fulfilled, (state, action) => {
-        state.arts = state.arts.filter(art => art.id !== action.payload);
+        state.arts = state.arts.filter((art) => art.id !== action.payload);
       })
       .addCase(fetchCategories.fulfilled, (state, action) => {
         state.categories = action.payload;
@@ -248,7 +250,9 @@ const artsSlice = createSlice({
         state.comments = action.payload;
       })
       .addCase(deleteCommentAsync.fulfilled, (state, action) => {
-        state.comments = state.comments.filter(c => c.id !== action.payload.commentId);
+        state.comments = state.comments.filter(
+          (c) => c.id !== action.payload.commentId,
+        );
       })
       .addCase(fetchLikesAnalyticsAsync.fulfilled, (state, action) => {
         state.likesAnalytics = action.payload;

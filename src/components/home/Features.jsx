@@ -4,7 +4,10 @@ import { FaCheck, FaCreditCard, FaTruck } from "react-icons/fa6";
 
 const Features = () => {
   return (
-    <section id="why-choose-us" className="py-16 bg-white dark:bg-[#0d0118] dark:text-purple-100">
+    <section
+      id="why-choose-us"
+      className="py-16 bg-white dark:bg-[#0d0118] dark:text-purple-100"
+    >
       <div className="container-7xl">
         <div className="mb-10">
           <h2 className="text-3xl font-bold text-center mb-4">
@@ -12,7 +15,7 @@ const Features = () => {
           </h2>
           <p className="text-gray-600 dark:text-purple-300/80 text-center">
             We provide the best shopping experience with our premium quality
-           Arts and all videos and music you can upload.
+            Arts and all videos and music you can upload.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-5 gap-x-8">

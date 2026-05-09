@@ -24,22 +24,28 @@ const ProfileImage = ({ user }) => {
 
     const userId = user?._id || user?.id;
     if (!userId) {
-        toast.error("User ID not found. Please log in again.");
-        return;
+      toast.error("User ID not found. Please log in again.");
+      return;
     }
 
-    userApi.updateProfileImage(userId, formData)
+    userApi
+      .updateProfileImage(userId, formData)
       .then((response) => {
         const updatedUser = response.data?.user || response.data;
-        const newImageUrl = updatedUser.profileImageUrl || updatedUser.profileImage;
+        const newImageUrl =
+          updatedUser.profileImageUrl || updatedUser.profileImage;
         if (newImageUrl) {
-            // dispatch full updated user so header avatar also refreshes
-            dispatch(updateUser({ ...user, profileImageUrl: newImageUrl }));
+          // dispatch full updated user so header avatar also refreshes
+          dispatch(updateUser({ ...user, profileImageUrl: newImageUrl }));
         }
-        toast.success("Profile image updated successfully!", { autoClose: 1500 });
+        toast.success("Profile image updated successfully!", {
+          autoClose: 1500,
+        });
       })
       .catch((error) => {
-        toast.error(error?.response?.data || "Failed to update image", { autoClose: 1500 });
+        toast.error(error?.response?.data || "Failed to update image", {
+          autoClose: 1500,
+        });
       })
       .finally(() => {
         setLoading(false);
@@ -90,7 +96,9 @@ const ProfileImage = ({ user }) => {
       </div>
 
       <div className="text-center sm:text-left">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">{user?.username || user?.name || "Set your name"}</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+          {user?.username || user?.name || "Set your name"}
+        </h2>
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}

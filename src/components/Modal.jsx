@@ -33,29 +33,29 @@ const Modal = ({
           >
             <IoMdClose className="w-5 h-5" />
           </button>
-          
+
           <div className="p-8 md:p-10 text-center">
             <div className="mb-6">{icon}</div>
             <h3 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
               {label}
             </h3>
-            
+
             <div className="mb-8">{info}</div>
-            
+
             <div className="flex items-center justify-center gap-4">
-                {confirmAction}
-                <button
+              {confirmAction}
+              <button
                 className="px-8 py-2.5 text-sm font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-slate-800/50 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-xl transition shadow-sm border border-gray-100 dark:border-slate-700"
                 onClick={closeModal}
-                >
+              >
                 No, cancel
-                </button>
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

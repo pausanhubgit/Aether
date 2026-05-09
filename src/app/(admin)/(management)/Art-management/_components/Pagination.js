@@ -1,5 +1,3 @@
-import artsAPI from "@/api/arts";
-import { useEffect, useState } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 
 const Pagination = ({ page, setPage, total }) => {

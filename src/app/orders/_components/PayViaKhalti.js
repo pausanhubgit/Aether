@@ -7,11 +7,12 @@ import orderApi from "@/api/order";
 const PayViaKhalti = ({ order }) => {
   function initOrderPayment() {
     toast.info("Redirecting to Khalti...", { autoClose: 1000 });
-    
-    orderApi.payViaKhalti(order._id, {
-      return_url: `${window.location.origin}/orders/${order._id}/payment/khalti`,
-      website_url: window.location.origin,
-    })
+
+    orderApi
+      .payViaKhalti(order._id, {
+        return_url: `${window.location.origin}/orders/${order._id}/payment/khalti`,
+        website_url: window.location.origin,
+      })
 
       .then((response) => {
         const data = response.data;
@@ -20,7 +21,9 @@ const PayViaKhalti = ({ order }) => {
         }
       })
       .catch((error) => {
-        toast.error(error.response?.data || "Payment initialization failed", { autoClose: 1500 });
+        toast.error(error.response?.data || "Payment initialization failed", {
+          autoClose: 1500,
+        });
       });
   }
 

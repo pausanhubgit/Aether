@@ -9,9 +9,10 @@ const CashOnDelivery = ({ order }) => {
   const router = useRouter();
 
   function confirmOrder() {
-    orderApi.updateOrder(order._id, {
-      status: ORDER_STATUS_CONFIRMED,
-    })
+    orderApi
+      .updateOrder(order._id, {
+        status: ORDER_STATUS_CONFIRMED,
+      })
       .then(() => {
         toast.success("Order confirmed successfully.", { autoClose: 1000 });
 

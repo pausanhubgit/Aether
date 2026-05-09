@@ -8,19 +8,26 @@ export const fetchNotifications = createAsyncThunk(
     try {
       const response = await api.get("/api/notifications");
       // Map backend fields to frontend fields
-      return response.data.map(n => {
+      return response.data.map((n) => {
         const senderName = n.sender?.name || n.sender?.username || "A user";
         return {
           id: n._id,
-          targetUserId: n.recipient ? String(n.recipient._id || n.recipient) : null,
+          targetUserId: n.recipient
+            ? String(n.recipient._id || n.recipient)
+            : null,
           type: n.type,
           title: n.title,
           message: n.message,
           link: n.link,
           read: n.read,
           createdAt: n.createdAt,
-          initials: n.sender ? makeInitials(senderName) : (n.title?.charAt(0) || "N"),
-          followerId: (n.type === "follow" || n.type === "follow_back") ? n.sender?._id : null,
+          initials: n.sender
+            ? makeInitials(senderName)
+            : n.title?.charAt(0) || "N",
+          followerId:
+            n.type === "follow" || n.type === "follow_back"
+              ? n.sender?._id
+              : null,
           senderInfo: n.sender,
           fromRealAction: true, // Enable toasts for polled notifications
         };
@@ -28,7 +35,7 @@ export const fetchNotifications = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(err.response?.data || "Failed to fetch");
     }
-  }
+  },
 );
 
 export const markReadBackend = createAsyncThunk(
@@ -38,9 +45,11 @@ export const markReadBackend = createAsyncThunk(
       const response = await api.patch(`/api/notifications/${notifId}/read`);
       return response.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data || "Failed to update notification");
+      return rejectWithValue(
+        err.response?.data || "Failed to update notification",
+      );
     }
-  }
+  },
 );
 
 export const deleteNotificationBackend = createAsyncThunk(
@@ -50,9 +59,11 @@ export const deleteNotificationBackend = createAsyncThunk(
       await api.delete(`/api/notifications/${notifId}`);
       return notifId;
     } catch (err) {
-      return rejectWithValue(err.response?.data || "Failed to delete notification");
+      return rejectWithValue(
+        err.response?.data || "Failed to delete notification",
+      );
     }
-  }
+  },
 );
 
 export const markAllReadBackend = createAsyncThunk(
@@ -62,9 +73,11 @@ export const markAllReadBackend = createAsyncThunk(
       await api.patch("/api/notifications/read-all");
       return true;
     } catch (err) {
-      return rejectWithValue(err.response?.data || "Failed to mark all as read");
+      return rejectWithValue(
+        err.response?.data || "Failed to mark all as read",
+      );
     }
-  }
+  },
 );
 
 export const deleteAllNotificationsBackend = createAsyncThunk(
@@ -74,9 +87,11 @@ export const deleteAllNotificationsBackend = createAsyncThunk(
       await api.delete("/api/notifications/delete-all");
       return true;
     } catch (err) {
-      return rejectWithValue(err.response?.data || "Failed to delete all notifications");
+      return rejectWithValue(
+        err.response?.data || "Failed to delete all notifications",
+      );
     }
-  }
+  },
 );
 
 // ── Seed notifications (demo content — shown before any real interactions) ──
@@ -85,7 +100,7 @@ const seedNotifications = [
     id: "seed-1",
     type: "comment",
     title: "New Comment on Your Music",
-    message: "Riya Sharma commented: \"This track is absolutely fire! 🔥\"",
+    message: 'Riya Sharma commented: "This track is absolutely fire! 🔥"',
     initials: "RS",
     color: "purple",
     link: "/music",
@@ -97,7 +112,7 @@ const seedNotifications = [
     id: "seed-2",
     type: "like",
     title: "Someone Liked Your Art",
-    message: "Aarav Thapa liked your artwork \"Nebula Dreams\"",
+    message: 'Aarav Thapa liked your artwork "Nebula Dreams"',
     initials: "AT",
     color: "pink",
     link: "/arts",
@@ -109,7 +124,7 @@ const seedNotifications = [
     id: "seed-3",
     type: "comment",
     title: "Comment on Your Video",
-    message: "Priya Joshi: \"Incredible cinematography, loved every second!\"",
+    message: 'Priya Joshi: "Incredible cinematography, loved every second!"',
     initials: "PJ",
     color: "blue",
     link: "/video",
@@ -133,7 +148,7 @@ const seedNotifications = [
     id: "seed-5",
     type: "like",
     title: "Your Track Is Trending",
-    message: "\"Monsoon Vibes\" received 50+ likes today!",
+    message: '"Monsoon Vibes" received 50+ likes today!',
     initials: "🎵",
     color: "yellow",
     link: "/music",
@@ -145,7 +160,7 @@ const seedNotifications = [
     id: "seed-6",
     type: "event",
     title: "Event Reminder",
-    message: "\"Aether Music Night\" starts in 2 hours. Don't miss it!",
+    message: '"Aether Music Night" starts in 2 hours. Don\'t miss it!',
     initials: "🎪",
     color: "orange",
     link: "/events",
@@ -181,7 +196,7 @@ const notificationSlice = createSlice({
           n.type === payload.type &&
           n.link === payload.link &&
           n.actorName === payload.actorName &&
-          new Date(n.createdAt).getTime() > fiveSecondsAgo
+          new Date(n.createdAt).getTime() > fiveSecondsAgo,
       );
       if (isDuplicate) return;
 
@@ -208,9 +223,11 @@ const notificationSlice = createSlice({
         state.loading = false;
         // Merge with existing real-action or seed items, prioritize backend
         const backendItems = action.payload;
-        const localItems = state.items.filter(n => !backendItems.some(bn => bn.id === n.id));
-        state.items = [...backendItems, ...localItems].sort((a, b) => 
-          new Date(b.createdAt) - new Date(a.createdAt)
+        const localItems = state.items.filter(
+          (n) => !backendItems.some((bn) => bn.id === n.id),
+        );
+        state.items = [...backendItems, ...localItems].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
       })
       .addCase(fetchNotifications.rejected, (state, action) => {
@@ -218,14 +235,14 @@ const notificationSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(markReadBackend.fulfilled, (state, action) => {
-        const notif = state.items.find(n => n.id === action.payload);
+        const notif = state.items.find((n) => n.id === action.payload);
         if (notif) notif.read = true;
       })
       .addCase(deleteNotificationBackend.fulfilled, (state, action) => {
-        state.items = state.items.filter(n => n.id !== action.payload);
+        state.items = state.items.filter((n) => n.id !== action.payload);
       })
       .addCase(markAllReadBackend.fulfilled, (state) => {
-        state.items.forEach(n => (n.read = true));
+        state.items.forEach((n) => (n.read = true));
       })
       .addCase(deleteAllNotificationsBackend.fulfilled, (state) => {
         state.items = [];

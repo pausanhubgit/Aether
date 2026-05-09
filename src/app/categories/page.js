@@ -26,7 +26,9 @@ const Categories = () => {
             className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 transition hover:border-[var(--primary)] hover:bg-black/30"
           >
             <h2 className="text-xl font-semibold text-white">{cat.label}</h2>
-            <p className="mt-1 text-sm text-[var(--muted)]">Go to {cat.label} section.</p>
+            <p className="mt-1 text-sm text-[var(--muted)]">
+              Go to {cat.label} section.
+            </p>
           </Link>
         ))}
       </section>

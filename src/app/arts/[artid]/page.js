@@ -1,4 +1,14 @@
-import { FaStar, FaStarHalfAlt, FaRegStar, FaTruck, FaShieldAlt, FaUndo, FaTag, FaShare, FaCheckCircle } from "react-icons/fa";
+import {
+  FaStar,
+  FaStarHalfAlt,
+  FaRegStar,
+  FaTruck,
+  FaShieldAlt,
+  FaUndo,
+  FaTag,
+  FaShare,
+  FaCheckCircle,
+} from "react-icons/fa";
 import artsAPI from "@/api/arts";
 import { ART_ROUTE } from "@/constants/routes";
 import AddToCart from "../_components/AddToCart";
@@ -259,8 +269,18 @@ const ArtDetails = async ({ params }) => {
           {/* Info Column */}
           <div className="art-info-col">
             {/* Top row: category + availability */}
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
-              <Link href={`${ART_ROUTE}?category=${art.category}`} className="category-badge">
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.75rem",
+                flexWrap: "wrap",
+              }}
+            >
+              <Link
+                href={`${ART_ROUTE}?category=${art.category}`}
+                className="category-badge"
+              >
                 <FaTag style={{ fontSize: "0.7rem" }} />
                 {art.category}
               </Link>
@@ -276,10 +296,16 @@ const ArtDetails = async ({ params }) => {
             {/* Rating */}
             <div className="rating-row">
               <div className="stars">
-                <FaStar /><FaStar /><FaStar /><FaStar /><FaStarHalfAlt />
+                <FaStar />
+                <FaStar />
+                <FaStar />
+                <FaStar />
+                <FaStarHalfAlt />
               </div>
               <span className="rating-label">4.5 out of 5</span>
-              <span className="rating-count">{(initialComments).length + 128} reviews</span>
+              <span className="rating-count">
+                {initialComments.length + 128} reviews
+              </span>
             </div>
 
             <div className="divider" />
@@ -288,7 +314,9 @@ const ArtDetails = async ({ params }) => {
             <div className="price-section">
               <div className="price-label">Current Price</div>
               <div className="price-row">
-                <span className="price-main">Rs. {(art.price * 0.9).toFixed(0)}</span>
+                <span className="price-main">
+                  Rs. {(art.price * 0.9).toFixed(0)}
+                </span>
                 <span className="price-original">Rs. {art.price}</span>
                 <span className="discount-badge">10% OFF</span>
               </div>
@@ -304,21 +332,27 @@ const ArtDetails = async ({ params }) => {
             {/* Perks */}
             <div className="perks-section">
               <div className="perk-item">
-                <div className="perk-icon perk-icon-green"><FaTruck /></div>
+                <div className="perk-icon perk-icon-green">
+                  <FaTruck />
+                </div>
                 <div>
                   <div className="perk-text-main">Free Shipping</div>
                   <div className="perk-text-sub">On orders over Rs. 2000</div>
                 </div>
               </div>
               <div className="perk-item">
-                <div className="perk-icon perk-icon-blue"><FaUndo /></div>
+                <div className="perk-icon perk-icon-blue">
+                  <FaUndo />
+                </div>
                 <div>
                   <div className="perk-text-main">30-Day Returns</div>
                   <div className="perk-text-sub">Money-back guarantee</div>
                 </div>
               </div>
               <div className="perk-item">
-                <div className="perk-icon perk-icon-purple"><FaShieldAlt /></div>
+                <div className="perk-icon perk-icon-purple">
+                  <FaShieldAlt />
+                </div>
                 <div>
                   <div className="perk-text-main">2-Year Warranty</div>
                   <div className="perk-text-sub">Fully covered</div>
@@ -338,7 +372,6 @@ const ArtDetails = async ({ params }) => {
           </div>
         </div>
 
-
         {/* Customer Reviews */}
         <div className="reviews-block">
           <ReviewsSection
@@ -354,7 +387,11 @@ const ArtDetails = async ({ params }) => {
             <h2 className="section-title">You Might Also Like</h2>
             <div className="section-line" />
           </div>
-          <MediaFeed type="art" genre={art.category} excludeId={artId || art._id} />
+          <MediaFeed
+            type="art"
+            genre={art.category}
+            excludeId={artId || art._id}
+          />
         </div>
       </div>
     </main>

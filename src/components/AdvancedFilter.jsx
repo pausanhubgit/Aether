@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
-import { FaFilter, FaTimes } from 'react-icons/fa';
+import React, { useState } from "react";
+import { FaFilter, FaTimes } from "react-icons/fa";
 
 function AdvancedFilter({ categories, onFilter }) {
   const [showFilters, setShowFilters] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 10000]);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [sortBy, setSortBy] = useState('name');
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [sortBy, setSortBy] = useState("name");
 
   const handleFilter = () => {
     onFilter({
@@ -20,13 +20,13 @@ function AdvancedFilter({ categories, onFilter }) {
 
   const handleReset = () => {
     setPriceRange([0, 10000]);
-    setSelectedCategory('');
-    setSortBy('name');
+    setSelectedCategory("");
+    setSortBy("name");
     onFilter({
       priceMin: 0,
       priceMax: 10000,
-      category: '',
-      sortBy: 'name',
+      category: "",
+      sortBy: "name",
     });
   };
 
@@ -43,7 +43,10 @@ function AdvancedFilter({ categories, onFilter }) {
         <div className="absolute right-0 top-12 bg-white dark:bg-[#160327] border border-gray-300 dark:border-gray-600 rounded-lg p-6 w-80 shadow-lg z-50">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold dark:text-white">Filters</h3>
-            <button onClick={() => setShowFilters(false)} className="text-gray-500 hover:text-red-500">
+            <button
+              onClick={() => setShowFilters(false)}
+              className="text-gray-500 hover:text-red-500"
+            >
               <FaTimes />
             </button>
           </div>
@@ -58,7 +61,9 @@ function AdvancedFilter({ categories, onFilter }) {
                 type="number"
                 min="0"
                 value={priceRange[0]}
-                onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                onChange={(e) =>
+                  setPriceRange([Number(e.target.value), priceRange[1]])
+                }
                 className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#160327] dark:text-white"
                 placeholder="Min"
               />
@@ -66,7 +71,9 @@ function AdvancedFilter({ categories, onFilter }) {
               <input
                 type="number"
                 value={priceRange[1]}
-                onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                onChange={(e) =>
+                  setPriceRange([priceRange[0], Number(e.target.value)])
+                }
                 className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#160327] dark:text-white"
                 placeholder="Max"
               />
@@ -87,7 +94,7 @@ function AdvancedFilter({ categories, onFilter }) {
                 <option value="">All Categories</option>
                 {categories.map((cat) => (
                   <option key={cat.id || cat} value={cat.id || cat}>
-                    {typeof cat === 'string' ? cat : cat.name}
+                    {typeof cat === "string" ? cat : cat.name}
                   </option>
                 ))}
               </select>

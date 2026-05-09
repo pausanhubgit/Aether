@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function DELETE(request, { params }) {
   const { commentId } = params;

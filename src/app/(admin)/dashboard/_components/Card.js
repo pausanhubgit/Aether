@@ -5,7 +5,9 @@ const Card = ({ label, value, icon }) => {
         {icon}
         <h3 className="text-gray-700 dark:text-gray-200">{label}</h3>
       </div>
-      <div className="text-3xl font-semibold text-gray-700 dark:text-gray-200">{value}</div>
+      <div className="text-3xl font-semibold text-gray-700 dark:text-gray-200">
+        {value}
+      </div>
     </div>
   );
 };

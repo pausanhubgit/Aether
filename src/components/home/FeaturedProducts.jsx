@@ -22,24 +22,24 @@ const FeaturedArts = async () => {
       <div className="container-7xl">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-8">
           <div className="max-w-2xl">
-             <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em] mb-4">
-                <FaPalette className="text-xs" /> <span>Curated Gallery</span>
-             </div>
-             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-800 dark:text-purple-100">
-                Featured Creations
-             </h2>
-             <p className="text-gray-600 dark:text-purple-300/80 text-lg font-medium">
-                Handpicked top-rated works from our community
-             </p>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em] mb-4">
+              <FaPalette className="text-xs" /> <span>Curated Gallery</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-800 dark:text-purple-100">
+              Featured Creations
+            </h2>
+            <p className="text-gray-600 dark:text-purple-300/80 text-lg font-medium">
+              Handpicked top-rated works from our community
+            </p>
           </div>
-          
+
           <div className="hidden lg:block">
             <Link
               href={ART_ROUTE}
               className="group flex items-center gap-3 text-slate-900 dark:text-purple-100 font-bold hover:text-primary transition-all duration-300"
             >
               <div className="flex items-center justify-center p-4 bg-white dark:bg-[#160327] rounded-2xl group-hover:bg-primary group-hover:text-white transition-all shadow-sm group-hover:shadow-lg group-hover:shadow-primary/20">
-                 <FaArrowRight />
+                <FaArrowRight />
               </div>
               <span>Explore All Masterpieces</span>
             </Link>
@@ -51,7 +51,6 @@ const FeaturedArts = async () => {
             <ArtCard key={art._id || index} art={art} />
           ))}
         </div>
-
       </div>
     </section>
   );

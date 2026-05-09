@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { LOGIN_ROUTE } from "@/constants/routes";
 import { useRouter } from "next/navigation";

@@ -31,13 +31,13 @@ const ArtForm = ({ art, isEditing = false }) => {
     formdata.append("title", data.title);
     formdata.append("price", data.price);
     formdata.append("category", data.category);
-    
+
     if (data.description) formdata.append("description", data.description);
     if (data.stock !== undefined) formdata.append("stock", Number(data.stock));
-    
+
     // Explicitly add merchantId if available from session
     if (user?._id || user?.id) {
-        formdata.append("merchantId", user?._id || user?.id);
+      formdata.append("merchantId", user?._id || user?.id);
     }
 
     if (artImages.length > 0) {
@@ -76,10 +76,17 @@ const ArtForm = ({ art, isEditing = false }) => {
     } catch (error) {
       // Robust error reporting to catch backend validation or auth issues
       if (error.response?.status === 403) {
-          toast.error("403 Forbidden: Your session roles might be stale. Please LOGOUT and LOGIN again to refresh your permissions.", { autoClose: 10000 });
+        toast.error(
+          "403 Forbidden: Your session roles might be stale. Please LOGOUT and LOGIN again to refresh your permissions.",
+          { autoClose: 10000 },
+        );
       } else {
-          const errorMessage = error.response?.data?.message || error.response?.data || error.message || "Upload failed. Please check your connection.";
-          toast.error(errorMessage, { autoClose: 3000 });
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data ||
+          error.message ||
+          "Upload failed. Please check your connection.";
+        toast.error(errorMessage, { autoClose: 3000 });
       }
       console.error("Art Upload Error:", error);
     } finally {
@@ -157,7 +164,7 @@ const ArtForm = ({ art, isEditing = false }) => {
             {...register("stock", {
               required: "Stock quantity is required.",
               valueAsNumber: true,
-              min: { value: 0, message: "Stock cannot be negative." }
+              min: { value: 0, message: "Stock cannot be negative." },
             })}
           />
           <p className="text-red-500 text-sm m-2">{errors.stock?.message}</p>
@@ -234,7 +241,9 @@ const ArtForm = ({ art, isEditing = false }) => {
 
         <div className="flex items-center gap-4 mt-2">
           {isEditing && art?.image && (
-            <div className={`relative group transition-all duration-300 ${localImageUrls.length > 0 ? 'opacity-40 scale-90' : 'opacity-100'}`}>
+            <div
+              className={`relative group transition-all duration-300 ${localImageUrls.length > 0 ? "opacity-40 scale-90" : "opacity-100"}`}
+            >
               <Image
                 height={80}
                 width={80}
@@ -247,7 +256,9 @@ const ArtForm = ({ art, isEditing = false }) => {
               </div>
               {localImageUrls.length > 0 && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-xl">
-                   <p className="text-[10px] text-white font-black bg-purple-600 px-2 py-0.5 rounded-md shadow-lg rotate-12">REPLACING</p>
+                  <p className="text-[10px] text-white font-black bg-purple-600 px-2 py-0.5 rounded-md shadow-lg rotate-12">
+                    REPLACING
+                  </p>
                 </div>
               )}
             </div>
@@ -259,7 +270,10 @@ const ArtForm = ({ art, isEditing = false }) => {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3">
                   {localImageUrls.map((url, index) => (
-                    <div key={index} className="relative group animate-scale-in">
+                    <div
+                      key={index}
+                      className="relative group animate-scale-in"
+                    >
                       <Image
                         height={80}
                         width={80}

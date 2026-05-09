@@ -3,9 +3,16 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  FaHeart, FaRegHeart, FaShare, FaArrowLeft,
-  FaMusic, FaHeadphones, FaPlayCircle, FaUser,
-  FaCalendarAlt, FaComment,
+  FaHeart,
+  FaRegHeart,
+  FaShare,
+  FaArrowLeft,
+  FaMusic,
+  FaHeadphones,
+  FaPlayCircle,
+  FaUser,
+  FaCalendarAlt,
+  FaComment,
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -45,7 +52,10 @@ const MusicDetail = ({ params }) => {
   }, [id]);
 
   const handleLike = async () => {
-    if (!user) { toast.info("Please login to like this track."); return; }
+    if (!user) {
+      toast.info("Please login to like this track.");
+      return;
+    }
     if (isLiking) return;
     setIsLiking(true);
     try {
@@ -69,15 +79,24 @@ const MusicDetail = ({ params }) => {
   if (loading) return <Spinner />;
   if (!music)
     return (
-      <div style={{ textAlign: "center", padding: "5rem 1rem", color: "#94a3b8", fontSize: "1.1rem" }}>
+      <div
+        style={{
+          textAlign: "center",
+          padding: "5rem 1rem",
+          color: "#94a3b8",
+          fontSize: "1.1rem",
+        }}
+      >
         Music track not found.
       </div>
     );
 
   const getAllMedia = () => {
     const urls = [];
-    if (music.audioUrls && Array.isArray(music.audioUrls)) urls.push(...music.audioUrls.map(formatImageUrl));
-    if (music.videoUrls && Array.isArray(music.videoUrls)) urls.push(...music.videoUrls.map(formatImageUrl));
+    if (music.audioUrls && Array.isArray(music.audioUrls))
+      urls.push(...music.audioUrls.map(formatImageUrl));
+    if (music.videoUrls && Array.isArray(music.videoUrls))
+      urls.push(...music.videoUrls.map(formatImageUrl));
     if (music.url) urls.push(formatImageUrl(music.url));
     if (music.audioUrl) urls.push(formatImageUrl(music.audioUrl));
     if (music.videoUrl) urls.push(formatImageUrl(music.videoUrl));
@@ -85,19 +104,23 @@ const MusicDetail = ({ params }) => {
   };
 
   const allUrls = getAllMedia();
-  
+
   // Robust check for video extensions
   const videoRegex = /\.(mp4|webm|mov|m4v|ogv|mkv)(\?.*)?$/i;
-  
-  const videoUrlCandidate = allUrls.find(url => videoRegex.test(url));
-  
-  const isVideoMusic = !!videoUrlCandidate || (music.videoUrls && music.videoUrls.length > 0) || !!music.videoUrl;
+
+  const videoUrlCandidate = allUrls.find((url) => videoRegex.test(url));
+
+  const isVideoMusic =
+    !!videoUrlCandidate ||
+    (music.videoUrls && music.videoUrls.length > 0) ||
+    !!music.videoUrl;
 
   const mediaUrl = videoUrlCandidate || allUrls[0] || null;
 
   const videoUrl = isVideoMusic ? mediaUrl : null;
   const audioUrl = !isVideoMusic ? mediaUrl : null;
-  const genreLabel = music.subcategory || music.genre || music.category || "Music";
+  const genreLabel =
+    music.subcategory || music.genre || music.category || "Music";
 
   return (
     <>
@@ -325,15 +348,19 @@ const MusicDetail = ({ params }) => {
             {/* Banner */}
             <div className="mu-banner">
               {isVideoMusic ? (
-                <video 
+                <video
                   key={videoUrl}
-                  controls 
+                  controls
                   playsInline
                   crossOrigin="anonymous"
                   preload="metadata"
-                  src={videoUrl} 
+                  src={videoUrl}
                   className="mu-video-player"
-                  poster={formatImageUrl(music.thumbnailUrl || music.imageUrls?.[0]) || undefined}
+                  poster={
+                    formatImageUrl(
+                      music.thumbnailUrl || music.imageUrls?.[0],
+                    ) || undefined
+                  }
                 />
               ) : (
                 <>
@@ -363,7 +390,9 @@ const MusicDetail = ({ params }) => {
                       <FaUser size={11} />
                       By{" "}
                       <Link href={`/profile/${music.createdBy._id}`}>
-                        {music.createdBy.name || music.createdBy.username || "Unknown Artist"}
+                        {music.createdBy.name ||
+                          music.createdBy.username ||
+                          "Unknown Artist"}
                       </Link>
                     </p>
                   )}
@@ -397,7 +426,9 @@ const MusicDetail = ({ params }) => {
                   Uploaded:{" "}
                   {music.createdAt
                     ? new Date(music.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric", month: "short", day: "numeric",
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
                       })
                     : "—"}
                 </span>
@@ -406,7 +437,8 @@ const MusicDetail = ({ params }) => {
                   className="mu-toggle-comments"
                 >
                   <FaComment size={12} />
-                  {showComments ? "Hide" : "View"} {music.comments?.length || 0} Comment(s)
+                  {showComments ? "Hide" : "View"} {music.comments?.length || 0}{" "}
+                  Comment(s)
                 </button>
               </div>
             </div>
@@ -427,7 +459,11 @@ const MusicDetail = ({ params }) => {
               <h2 className="mu-related-title">More Like This</h2>
               <div className="mu-related-line" />
             </div>
-            <MediaFeed type="music" genre={music.subcategory || music.genre || music.category} excludeId={id} />
+            <MediaFeed
+              type="music"
+              genre={music.subcategory || music.genre || music.category}
+              excludeId={id}
+            />
           </div>
         </div>
       </div>

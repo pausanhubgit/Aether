@@ -1,43 +1,51 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { FaUpload, FaArrowLeft, FaVideo } from 'react-icons/fa';
-import Link from 'next/link';
-import { toast } from 'react-toastify';
-import { addFeedItem } from '@/lib/storage';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FaUpload, FaArrowLeft, FaVideo } from "react-icons/fa";
+import Link from "next/link";
+import { toast } from "react-toastify";
+import { addFeedItem } from "@/lib/storage";
 
 const AddVideo = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    genre: '',
-    duration: '',
-    video: null
+    title: "",
+    description: "",
+    genre: "",
+    duration: "",
+    video: null,
   });
   const [videoPreview, setVideoPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const genres = [
-    "Music Video", "Tutorial", "Vlog", "Documentary", "Animation",
-    "Short Film", "Comedy", "Educational", "Travel", "Gaming"
+    "Music Video",
+    "Tutorial",
+    "Vlog",
+    "Documentary",
+    "Animation",
+    "Short Film",
+    "Comedy",
+    "Educational",
+    "Travel",
+    "Gaming",
   ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        video: file
+        video: file,
       }));
       const videoUrl = URL.createObjectURL(file);
       setVideoPreview(videoUrl);
@@ -46,7 +54,7 @@ const AddVideo = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.title || !formData.genre || !formData.video) {
       toast.error("Please fill in all required fields and upload a video", {
         position: "top-right",
@@ -54,34 +62,37 @@ const AddVideo = () => {
       });
       return;
     }
-    
+
     setLoading(true);
 
     try {
       const data = new FormData();
-      data.append('title', formData.title);
-      data.append('description', formData.description);
-      data.append('category', 'Video');
-      data.append('subcategory', formData.genre);
-      data.append('duration', formData.duration);
-      data.append('video', formData.video);
+      data.append("title", formData.title);
+      data.append("description", formData.description);
+      data.append("category", "Video");
+      data.append("subcategory", formData.genre);
+      data.append("duration", formData.duration);
+      data.append("video", formData.video);
 
       const response = await videoApi.createVideo(data);
 
-      toast.success('Video added successfully! Redirecting...', {
+      toast.success("Video added successfully! Redirecting...", {
         position: "top-right",
         autoClose: 2000,
       });
-      
+
       setTimeout(() => {
-        router.push('/video');
+        router.push("/video");
       }, 1500);
     } catch (error) {
-      console.error('Error adding video:', error);
-      toast.error(error.response?.data?.error || 'Error adding video. Please try again.', {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      console.error("Error adding video:", error);
+      toast.error(
+        error.response?.data?.error || "Error adding video. Please try again.",
+        {
+          position: "top-right",
+          autoClose: 3000,
+        },
+      );
     } finally {
       setLoading(false);
     }
@@ -90,12 +101,17 @@ const AddVideo = () => {
   return (
     <div className="container mx-auto py-8 px-4 max-w-2xl">
       <div className="mb-6">
-        <Link href="/video" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4">
+        <Link
+          href="/video"
+          className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
+        >
           <FaArrowLeft size={16} />
           Back to Videos
         </Link>
         <h1 className="text-3xl font-semibold text-gray-800">Add New Video</h1>
-        <p className="text-gray-600 mt-2">Share your video content with the community</p>
+        <p className="text-gray-600 mt-2">
+          Share your video content with the community
+        </p>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -129,7 +145,9 @@ const AddVideo = () => {
               >
                 <option value="">Select Genre</option>
                 {genres.map((genre) => (
-                  <option key={genre} value={genre}>{genre}</option>
+                  <option key={genre} value={genre}>
+                    {genre}
+                  </option>
                 ))}
               </select>
             </div>
@@ -172,13 +190,18 @@ const AddVideo = () => {
                 <div className="space-y-4">
                   <div className="bg-purple-50 p-4 rounded-lg">
                     <FaVideo className="text-purple-600 text-3xl mx-auto mb-2" />
-                    <video controls playsInline src={videoPreview} className="w-full max-h-48 rounded-lg" />
+                    <video
+                      controls
+                      playsInline
+                      src={videoPreview}
+                      className="w-full max-h-48 rounded-lg"
+                    />
                   </div>
                   <button
                     type="button"
                     onClick={() => {
                       setVideoPreview(null);
-                      setFormData(prev => ({ ...prev, video: null }));
+                      setFormData((prev) => ({ ...prev, video: null }));
                     }}
                     className="text-red-600 hover:text-red-700 text-sm"
                   >
@@ -188,8 +211,12 @@ const AddVideo = () => {
               ) : (
                 <div>
                   <FaUpload className="mx-auto text-gray-400 text-3xl mb-2" />
-                  <p className="text-gray-600 mb-2">Click to upload or drag and drop</p>
-                  <p className="text-sm text-gray-500">MP4, AVI, MOV up to 100MB</p>
+                  <p className="text-gray-600 mb-2">
+                    Click to upload or drag and drop
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    MP4, AVI, MOV up to 100MB
+                  </p>
                   <input
                     type="file"
                     accept="video/*"
@@ -215,7 +242,7 @@ const AddVideo = () => {
               disabled={loading}
               className="flex-1 bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Adding Video...' : 'Add Video'}
+              {loading ? "Adding Video..." : "Add Video"}
             </button>
             <Link
               href="/video"

@@ -5,10 +5,10 @@ async function submitContact(data) {
 }
 
 async function getContacts() {
-    return await api.get(`/api/contacts`);
+  return await api.get(`/api/contacts`);
 }
 
 export default {
   submitContact,
-  getContacts
+  getContacts,
 };

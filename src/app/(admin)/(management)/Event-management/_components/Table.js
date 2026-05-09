@@ -71,7 +71,7 @@ const EventTable = () => {
     try {
       const response = await eventsAPI.getEvents();
       setEvents(response?.data || []);
-      
+
       try {
         const countRes = await eventsAPI.getEventsCount();
         setTotal(countRes?.data || response?.data?.length || 0);
@@ -79,7 +79,9 @@ const EventTable = () => {
         setTotal(response?.data?.length || 0);
       }
     } catch (error) {
-      toast.error(error?.response?.data || "Failed to fetch events", { autoClose: 1500 });
+      toast.error(error?.response?.data || "Failed to fetch events", {
+        autoClose: 1500,
+      });
     } finally {
       dispatch(refreshList(false));
     }
@@ -135,8 +137,14 @@ const EventTable = () => {
                     {column.label}
                     {column.sortable ? (
                       column.key == sortBy ? (
-                        sortOrder == 1 ? <HiArrowSmallUp /> : <HiArrowSmallDown />
-                      ) : <HiMiniArrowsUpDown />
+                        sortOrder == 1 ? (
+                          <HiArrowSmallUp />
+                        ) : (
+                          <HiArrowSmallDown />
+                        )
+                      ) : (
+                        <HiMiniArrowsUpDown />
+                      )
                     ) : null}
                   </div>
                 </th>
@@ -165,28 +173,41 @@ const EventTable = () => {
                   {event.title}
                 </th>
                 <td className="px-4 py-2">
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded ${
-                    event.eventType === 'Art' ? 'bg-purple-100 text-purple-800' :
-                    event.eventType === 'Music' ? 'bg-blue-100 text-blue-800' :
-                    'bg-green-100 text-green-800'
-                  }`}>
+                  <span
+                    className={`text-xs font-medium px-2 py-0.5 rounded ${
+                      event.eventType === "Art"
+                        ? "bg-purple-100 text-purple-800"
+                        : event.eventType === "Music"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-green-100 text-green-800"
+                    }`}
+                  >
                     {event.eventType}
                   </span>
                 </td>
                 <td className="px-4 py-2 font-medium whitespace-nowrap">
-                  <div className="flex items-center">{event.prizePool || "None"}</div>
+                  <div className="flex items-center">
+                    {event.prizePool || "None"}
+                  </div>
                 </td>
                 <td className="px-4 py-2 font-medium whitespace-nowrap">
                   <div className="flex items-center">
-                    <div className={`inline-block w-3 h-3 mr-2 rounded-full ${
-                      event.status === 'Active' ? 'bg-green-500' : 
-                      event.status === 'Completed' ? 'bg-gray-500' : 'bg-yellow-500'
-                    }`} />
+                    <div
+                      className={`inline-block w-3 h-3 mr-2 rounded-full ${
+                        event.status === "Active"
+                          ? "bg-green-500"
+                          : event.status === "Completed"
+                            ? "bg-gray-500"
+                            : "bg-yellow-500"
+                      }`}
+                    />
                     {event.status}
                   </div>
                 </td>
                 <td className="px-4 py-2 font-medium whitespace-nowrap">
-                  {event.createdAt ? format(new Date(event.createdAt), "dd MMM, yyyy") : "N/A"}
+                  {event.createdAt
+                    ? format(new Date(event.createdAt), "dd MMM, yyyy")
+                    : "N/A"}
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex items-center gap-4 justify-center">
@@ -194,7 +215,7 @@ const EventTable = () => {
                       href={`/Event-management/edit/${event._id}`}
                       className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all flex items-center gap-1.5"
                     >
-                      <FaPencil className="text-xs" /> 
+                      <FaPencil className="text-xs" />
                       <span className="text-xs font-semibold">Edit</span>
                     </Link>
                     <DeleteEventButton id={event._id} />

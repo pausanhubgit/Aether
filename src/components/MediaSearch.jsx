@@ -19,7 +19,7 @@ const MediaSearch = ({ placeholder = "Search..." }) => {
     const delayDebounceFn = setTimeout(() => {
       // Don't push if the term matches the URL param to avoid loops
       if (searchTerm === (searchParams.get("name") || "")) return;
-      
+
       const params = new URLSearchParams(searchParams.toString());
       if (searchTerm) {
         params.set("name", searchTerm);
@@ -71,8 +71,8 @@ const MediaSearch = ({ placeholder = "Search..." }) => {
           </button>
         )}
       </div>
-      <button 
-        onClick={handleSearch} 
+      <button
+        onClick={handleSearch}
         className="flex items-center justify-center p-2.5 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition shadow-sm flex-shrink-0"
         aria-label="Search"
       >

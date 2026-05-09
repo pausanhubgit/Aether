@@ -75,16 +75,22 @@ const MusicTable = () => {
   async function getAllMusic(query) {
     setLoading(true);
     try {
-      const isAdmin = user?.roles?.some(r => r.toUpperCase() === ADMIN_ROLE.toUpperCase());
+      const isAdmin = user?.roles?.some(
+        (r) => r.toUpperCase() === ADMIN_ROLE.toUpperCase(),
+      );
       const apiQuery = isAdmin ? query : { ...query, createdBy: user._id };
-      
+
       const response = await musicAPI.getMusic(apiQuery);
       setMusicList(Array.isArray(response?.data) ? response.data : []);
-      
-      const countRes = await musicAPI.getMusicCount(isAdmin ? { name: query.name } : { createdBy: user._id });
-      setTotal(typeof countRes?.data === 'number' ? countRes.data : 0);
+
+      const countRes = await musicAPI.getMusicCount(
+        isAdmin ? { name: query.name } : { createdBy: user._id },
+      );
+      setTotal(typeof countRes?.data === "number" ? countRes.data : 0);
     } catch (error) {
-       toast.error(error?.response?.data?.error || "Failed to fetch music", { autoClose: 1500 });
+      toast.error(error?.response?.data?.error || "Failed to fetch music", {
+        autoClose: 1500,
+      });
     } finally {
       setLoading(false);
       dispatch(refreshList(false));
@@ -95,7 +101,7 @@ const MusicTable = () => {
     const query = {
       limit: PAGE_LIMIT,
       offset: PAGE_LIMIT * (page - 1),
-      sort: JSON.stringify({ [sortBy]: sortOrder })
+      sort: JSON.stringify({ [sortBy]: sortOrder }),
     };
     getAllMusic(query);
   }, [refresh, sortBy, sortOrder, page]);
@@ -108,8 +114,12 @@ const MusicTable = () => {
             <FaMusic className="text-blue-500 text-xl" />
           </div>
           <div>
-            <h5 className="text-xl font-bold text-black dark:text-white">Music Collection</h5>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Organize and publish your audio tracks</p>
+            <h5 className="text-xl font-bold text-black dark:text-white">
+              Music Collection
+            </h5>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Organize and publish your audio tracks
+            </p>
           </div>
         </div>
         <div className="flex items-center space-x-3">
@@ -149,7 +159,11 @@ const MusicTable = () => {
                     {column.sortable && (
                       <div className="text-gray-300 dark:text-gray-600">
                         {column.key == sortBy ? (
-                          sortOrder == 1 ? <HiArrowSmallUp className="text-blue-500" /> : <HiArrowSmallDown className="text-blue-500" />
+                          sortOrder == 1 ? (
+                            <HiArrowSmallUp className="text-blue-500" />
+                          ) : (
+                            <HiArrowSmallDown className="text-blue-500" />
+                          )
                         ) : (
                           <HiMiniArrowsUpDown />
                         )}
@@ -158,74 +172,85 @@ const MusicTable = () => {
                   </div>
                 </th>
               ))}
-              <th scope="col" className="px-6 py-4 text-center sticky right-0 bg-gray-50/50 dark:bg-[#160327]/50 shadow-[-5px_0_10px_rgba(0,0,0,0.02)]">
+              <th
+                scope="col"
+                className="px-6 py-4 text-center sticky right-0 bg-gray-50/50 dark:bg-[#160327]/50 shadow-[-5px_0_10px_rgba(0,0,0,0.02)]"
+              >
                 <FaCog className="mx-auto" />
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-            {loading ? (
-              [...Array(5)].map((_, i) => (
-                <tr key={i} className="animate-pulse">
-                  <td colSpan={7} className="px-6 py-4">
-                    <div className="h-4 bg-gray-100 dark:bg-[#160327] rounded-full w-full"></div>
-                  </td>
-                </tr>
-              ))
-            ) : musicList.map((music, index) => (
-              <tr
-                key={music._id || index}
-                className="group hover:bg-blue-500/[0.02] dark:hover:bg-blue-500/[0.01] transition-colors"
-              >
-                <td className="px-6 py-4 font-medium text-gray-400">
-                  {((page - 1) * PAGE_LIMIT) + index + 1}
-                </td>
-                <th
-                  scope="row"
-                  className="px-6 py-4"
-                >
-                  <div className="flex items-center font-semibold text-black dark:text-gray-100 group-hover:text-blue-500 transition-colors">
-                    <div className="h-10 w-10 mr-4 bg-blue-500/10 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform">
-                      <FaMusic className="text-blue-500" />
-                    </div>
-                    <div>
-                      <span className="block truncate max-w-[200px]">{music.title || "Untitled Track"}</span>
-                      <span className="text-[10px] text-gray-400 font-normal uppercase tracking-widest">{music.genre || "Instrumental"}</span>
-                    </div>
-                  </div>
-                </th>
-                <td className="px-6 py-4">
-                  <span className="text-gray-600 dark:text-gray-400 font-medium">
-                    {music.artist || "Anonymous"}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-semibold rounded-lg uppercase">
-                    {music.subcategory || music.genre || "N/A"}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300">
-                    <div className="w-1.5 h-1.5 rounded-full bg-red-400 font-bold px-10 "></div>
-                    <span className="font-bold">{music.reactions || music.likes || 0}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase">
-                  {music.createdAt ? format(new Date(music.createdAt), "dd MMM yyyy") : "---"}
-                </td>
-                <td className="px-6 py-4 sticky right-0 bg-white dark:bg-[#160327] shadow-[-5px_0_10px_rgba(0,0,0,0.02)] group-hover:bg-primary/[0.02] dark:group-hover:bg-[#1c0433] transition-colors">
-                  <div className="flex items-center gap-3 justify-center">
-                    <Link
-                      href={`${MUSIC_MANAGEMENT_ROUTE}/edit/${music._id}`}
-                      className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
-                    >
-                      <FaPencil /> <span className="text-xs font-semibold text-blue-500">Edit</span>
-                    </Link>
-                    <DeleteMusicButton id={music._id} />
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {loading
+              ? [...Array(5)].map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td colSpan={7} className="px-6 py-4">
+                      <div className="h-4 bg-gray-100 dark:bg-[#160327] rounded-full w-full"></div>
+                    </td>
+                  </tr>
+                ))
+              : musicList.map((music, index) => (
+                  <tr
+                    key={music._id || index}
+                    className="group hover:bg-blue-500/[0.02] dark:hover:bg-blue-500/[0.01] transition-colors"
+                  >
+                    <td className="px-6 py-4 font-medium text-gray-400">
+                      {(page - 1) * PAGE_LIMIT + index + 1}
+                    </td>
+                    <th scope="row" className="px-6 py-4">
+                      <div className="flex items-center font-semibold text-black dark:text-gray-100 group-hover:text-blue-500 transition-colors">
+                        <div className="h-10 w-10 mr-4 bg-blue-500/10 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform">
+                          <FaMusic className="text-blue-500" />
+                        </div>
+                        <div>
+                          <span className="block truncate max-w-[200px]">
+                            {music.title || "Untitled Track"}
+                          </span>
+                          <span className="text-[10px] text-gray-400 font-normal uppercase tracking-widest">
+                            {music.genre || "Instrumental"}
+                          </span>
+                        </div>
+                      </div>
+                    </th>
+                    <td className="px-6 py-4">
+                      <span className="text-gray-600 dark:text-gray-400 font-medium">
+                        {music.artist || "Anonymous"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-semibold rounded-lg uppercase">
+                        {music.subcategory || music.genre || "N/A"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300">
+                        <div className="w-1.5 h-1.5 rounded-full bg-red-400 font-bold px-10 "></div>
+                        <span className="font-bold">
+                          {music.reactions || music.likes || 0}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase">
+                      {music.createdAt
+                        ? format(new Date(music.createdAt), "dd MMM yyyy")
+                        : "---"}
+                    </td>
+                    <td className="px-6 py-4 sticky right-0 bg-white dark:bg-[#160327] shadow-[-5px_0_10px_rgba(0,0,0,0.02)] group-hover:bg-primary/[0.02] dark:group-hover:bg-[#1c0433] transition-colors">
+                      <div className="flex items-center gap-3 justify-center">
+                        <Link
+                          href={`${MUSIC_MANAGEMENT_ROUTE}/edit/${music._id}`}
+                          className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
+                        >
+                          <FaPencil />{" "}
+                          <span className="text-xs font-semibold text-blue-500">
+                            Edit
+                          </span>
+                        </Link>
+                        <DeleteMusicButton id={music._id} />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             {!loading && musicList.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-6 py-20 text-center">
@@ -233,9 +258,17 @@ const MusicTable = () => {
                     <div className="w-20 h-20 bg-blue-50 dark:bg-[#160327] rounded-full flex items-center justify-center mb-6">
                       <FaMusic className="text-blue-200 text-4xl" />
                     </div>
-                    <h3 className="text-xl font-semibold text-black dark:text-white uppercase tracking-tighter">Silence is Golden</h3>
-                    <p className="text-gray-500 max-w-[250px] mx-auto mt-2 text-sm leading-relaxed">Break the silence by uploading your first musical masterpiece today.</p>
-                    <Link href={`${MUSIC_MANAGEMENT_ROUTE}/add`} className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-full text-sm font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20">
+                    <h3 className="text-xl font-semibold text-black dark:text-white uppercase tracking-tighter">
+                      Silence is Golden
+                    </h3>
+                    <p className="text-gray-500 max-w-[250px] mx-auto mt-2 text-sm leading-relaxed">
+                      Break the silence by uploading your first musical
+                      masterpiece today.
+                    </p>
+                    <Link
+                      href={`${MUSIC_MANAGEMENT_ROUTE}/add`}
+                      className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-full text-sm font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
+                    >
                       Get Started
                     </Link>
                   </div>

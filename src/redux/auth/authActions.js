@@ -18,7 +18,7 @@ export const loginWithGoogle = createAsyncThunk(
         "Google login failed";
       return rejectWithValue(safeError);
     }
-  }
+  },
 );
 
 export const loginUser = createAsyncThunk(
@@ -37,7 +37,7 @@ export const loginUser = createAsyncThunk(
         "Invalid email or password";
       return rejectWithValue(safeError);
     }
-  }
+  },
 );
 
 export const registerUser = createAsyncThunk(
@@ -55,7 +55,7 @@ export const registerUser = createAsyncThunk(
         "Registration failed";
       return rejectWithValue(safeError);
     }
-  }
+  },
 );
 
 export const updateUserProfile = createAsyncThunk(
@@ -67,5 +67,5 @@ export const updateUserProfile = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data);
     }
-  }
+  },
 );

@@ -161,15 +161,18 @@ const VideoForm = ({ video, isEditing = false }) => {
           </p>
         </div>
         <div className="sm:col-span-2 flex items-center gap-2 mb-2">
-           <input
-             id="hide"
-             type="checkbox"
-             {...register("hide")}
-             className="w-4 h-4 text-purple-600 bg-gray-50 rounded border-gray-300 focus:ring-purple-500 dark:bg-[#160327] dark:border-gray-600"
-           />
-           <label htmlFor="hide" className="text-sm font-medium text-black dark:text-white cursor-pointer">
-             Hide Video (Only play on hover, default behavior)
-           </label>
+          <input
+            id="hide"
+            type="checkbox"
+            {...register("hide")}
+            className="w-4 h-4 text-purple-600 bg-gray-50 rounded border-gray-300 focus:ring-purple-500 dark:bg-[#160327] dark:border-gray-600"
+          />
+          <label
+            htmlFor="hide"
+            className="text-sm font-medium text-black dark:text-white cursor-pointer"
+          >
+            Hide Video (Only play on hover, default behavior)
+          </label>
         </div>
         <div>
           <label
@@ -258,7 +261,9 @@ const VideoForm = ({ video, isEditing = false }) => {
 
         <div className="flex items-center gap-4 mt-2">
           {isEditing && video?.image && (
-            <div className={`relative group transition-all duration-300 ${localImageUrls.length > 0 ? 'opacity-40 scale-90' : 'opacity-100'}`}>
+            <div
+              className={`relative group transition-all duration-300 ${localImageUrls.length > 0 ? "opacity-40 scale-90" : "opacity-100"}`}
+            >
               <Image
                 height={80}
                 width={80}
@@ -271,7 +276,9 @@ const VideoForm = ({ video, isEditing = false }) => {
               </div>
               {localImageUrls.length > 0 && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-xl">
-                   <p className="text-[10px] text-white font-black bg-green-600 px-2 py-0.5 rounded-md shadow-lg rotate-12">REPLACING</p>
+                  <p className="text-[10px] text-white font-black bg-green-600 px-2 py-0.5 rounded-md shadow-lg rotate-12">
+                    REPLACING
+                  </p>
                 </div>
               )}
             </div>
@@ -283,7 +290,10 @@ const VideoForm = ({ video, isEditing = false }) => {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3">
                   {localImageUrls.map((url, index) => (
-                    <div key={index} className="relative group animate-scale-in">
+                    <div
+                      key={index}
+                      className="relative group animate-scale-in"
+                    >
                       <Image
                         height={80}
                         width={80}
@@ -343,23 +353,32 @@ const VideoForm = ({ video, isEditing = false }) => {
         {(mediaFileUrls.length > 0 || (isEditing && video?.media)) && (
           <div className="sm:col-span-2 flex flex-col gap-2">
             {mediaFileUrls.map((url, index) => (
-              <div key={index} className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-200 dark:border-green-900/30 animate-fade-in">
-                 <FaPlus className="text-green-600" />
-                 <span className="text-xs text-green-700 dark:text-green-300 font-bold tracking-wide uppercase italic">New Source Video Selected</span>
+              <div
+                key={index}
+                className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-200 dark:border-green-900/30 animate-fade-in"
+              >
+                <FaPlus className="text-green-600" />
+                <span className="text-xs text-green-700 dark:text-green-300 font-bold tracking-wide uppercase italic">
+                  New Source Video Selected
+                </span>
               </div>
             ))}
             {isEditing && video?.media && mediaFileUrls.length === 0 && (
-                <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-slate-200 dark:border-slate-800">
-                    <FaVideo className="text-slate-500" />
-                    <span className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-widest break-all">Active Stream: {video.media.split('/').pop()}</span>
-                </div>
+              <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-slate-200 dark:border-slate-800">
+                <FaVideo className="text-slate-500" />
+                <span className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-widest break-all">
+                  Active Stream: {video.media.split("/").pop()}
+                </span>
+              </div>
             )}
           </div>
         )}
       </div>
 
       <Button
-        label={isEditing ? "Update & Save Video Studio" : "Confirm & Upload Video"}
+        label={
+          isEditing ? "Update & Save Video Studio" : "Confirm & Upload Video"
+        }
         loading={loading}
         className="mt-6 px-16 py-4 text-center sm:mt-10 bg-gradient-to-r from-green-600 to-emerald-600 !text-white hover:from-green-700 hover:to-emerald-700 shadow-xl shadow-green-600/25 rounded-2xl font-bold uppercase tracking-widest text-xs transition-all active:scale-95"
       />
@@ -367,4 +386,4 @@ const VideoForm = ({ video, isEditing = false }) => {
   );
 };
 
-export default VideoForm;
+export default VideoForm;

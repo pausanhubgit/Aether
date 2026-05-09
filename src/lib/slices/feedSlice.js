@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   feed: [],
@@ -7,7 +7,7 @@ const initialState = {
 };
 
 const feedSlice = createSlice({
-  name: 'feed',
+  name: "feed",
   initialState,
   reducers: {
     fetchFeedStart: (state) => {
@@ -25,7 +25,7 @@ const feedSlice = createSlice({
       state.feed.unshift(action.payload);
     },
     likeFeedItem: (state, action) => {
-      const item = state.feed.find(f => f.id === action.payload);
+      const item = state.feed.find((f) => f.id === action.payload);
       if (item) {
         item.likes += 1;
       }

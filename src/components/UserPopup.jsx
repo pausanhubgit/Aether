@@ -27,7 +27,9 @@ const UserPopup = ({ setShowPopup, user }) => {
       <div className="fixed top-0 left-0 h-full w-full bg-black/10 z-10" />
       <div className="bg-white dark:bg-[#160327] rounded-lg shadow-md p-4 min-w-50 flex flex-col items-start gap-1 z-50 relative">
         <div className="text-left">
-          <h3 className="font-semibold text-black dark:text-purple-100">{user.name}</h3>
+          <h3 className="font-semibold text-black dark:text-purple-100">
+            {user.name}
+          </h3>
         </div>
 
         <div className="border-b border-gray-200 h-1 w-full"></div>

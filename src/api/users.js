@@ -49,7 +49,9 @@ async function followUser(id) {
     return await api.post(`/api/users/${id}/follow`);
   } catch (err) {
     if (err.response?.status === 404) {
-      console.warn(`[API] Follow endpoint not found for ${id}. Simulating success.`);
+      console.warn(
+        `[API] Follow endpoint not found for ${id}. Simulating success.`,
+      );
       return { data: { success: true, message: "Simulated follow success" } };
     }
     throw err;
@@ -61,7 +63,9 @@ async function unfollowUser(id) {
     return await api.post(`/api/users/${id}/unfollow`);
   } catch (err) {
     if (err.response?.status === 404) {
-      console.warn(`[API] Unfollow endpoint not found for ${id}. Simulating success.`);
+      console.warn(
+        `[API] Unfollow endpoint not found for ${id}. Simulating success.`,
+      );
       return { data: { success: true, message: "Simulated unfollow success" } };
     }
     throw err;

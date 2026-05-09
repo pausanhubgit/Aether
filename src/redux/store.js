@@ -19,15 +19,27 @@ const createNoopStorage = () => {
   };
 };
 
-const storage = typeof window !== "undefined" ? createWebStorage("local") : createNoopStorage();
+const storage =
+  typeof window !== "undefined"
+    ? createWebStorage("local")
+    : createNoopStorage();
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["userPreferences", "auth", "cart", "notifications", "socialPersistence"],
+  whitelist: [
+    "userPreferences",
+    "auth",
+    "cart",
+    "notifications",
+    "socialPersistence",
+  ],
 };
 
-const persistedReducer = typeof window !== "undefined" ? persistReducer(persistConfig, rootReducer) : rootReducer;
+const persistedReducer =
+  typeof window !== "undefined"
+    ? persistReducer(persistConfig, rootReducer)
+    : rootReducer;
 
 const store = configureStore({
   reducer: persistedReducer,

@@ -9,6 +9,6 @@ async function getSubscribers() {
 }
 
 export default {
-    subscribe,
-    getSubscribers
+  subscribe,
+  getSubscribers,
 };

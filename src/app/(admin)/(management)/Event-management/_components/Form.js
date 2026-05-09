@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import eventsAPI from "@/api/events";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
@@ -29,7 +30,7 @@ const EventForm = ({ eventData, isEditing = false }) => {
     formData.append("prizePool", data.prizePool);
     formData.append("startDate", data.startDate);
     formData.append("endDate", data.endDate);
-    formData.append("status", data.status || 'Active');
+    formData.append("status", data.status || "Active");
 
     if (eventImage) {
       formData.append("image", eventImage);
@@ -53,7 +54,9 @@ const EventForm = ({ eventData, isEditing = false }) => {
       reset();
       toast.success("Event launched successfully.", { autoClose: 1500 });
     } catch (error) {
-      toast.error(error.response?.data?.message || "Operation failed", { autoClose: 1500 });
+      toast.error(error.response?.data?.message || "Operation failed", {
+        autoClose: 1500,
+      });
     } finally {
       setLoading(false);
     }
@@ -63,7 +66,10 @@ const EventForm = ({ eventData, isEditing = false }) => {
     <form onSubmit={handleSubmit(submitForm)}>
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="sm:col-span-2">
-          <label htmlFor="title" className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+          <label
+            htmlFor="title"
+            className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider"
+          >
             Event Title
           </label>
           <input
@@ -73,11 +79,18 @@ const EventForm = ({ eventData, isEditing = false }) => {
             placeholder="e.g. Masterpiece Showdown 2024"
             {...register("title", { required: "Title is required." })}
           />
-          {errors.title && <p className="text-red-500 text-xs mt-2 ml-2 font-bold">{errors.title.message}</p>}
+          {errors.title && (
+            <p className="text-red-500 text-xs mt-2 ml-2 font-bold">
+              {errors.title.message}
+            </p>
+          )}
         </div>
 
         <div>
-          <label htmlFor="eventType" className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+          <label
+            htmlFor="eventType"
+            className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider"
+          >
             Discipline
           </label>
           <select
@@ -92,7 +105,10 @@ const EventForm = ({ eventData, isEditing = false }) => {
         </div>
 
         <div>
-          <label htmlFor="prizePool" className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+          <label
+            htmlFor="prizePool"
+            className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider"
+          >
             Prize Pool
           </label>
           <input
@@ -105,7 +121,10 @@ const EventForm = ({ eventData, isEditing = false }) => {
         </div>
 
         <div>
-          <label htmlFor="startDate" className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+          <label
+            htmlFor="startDate"
+            className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider"
+          >
             Start Date
           </label>
           <input
@@ -117,7 +136,10 @@ const EventForm = ({ eventData, isEditing = false }) => {
         </div>
 
         <div>
-          <label htmlFor="endDate" className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+          <label
+            htmlFor="endDate"
+            className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider"
+          >
             End Date
           </label>
           <input
@@ -129,7 +151,10 @@ const EventForm = ({ eventData, isEditing = false }) => {
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="description" className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+          <label
+            htmlFor="description"
+            className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider"
+          >
             Guidelines & Description
           </label>
           <textarea
@@ -137,7 +162,9 @@ const EventForm = ({ eventData, isEditing = false }) => {
             rows={6}
             className="w-full p-4 bg-gray-50 dark:bg-[#0d0118] border border-gray-200 dark:border-purple-900/40 rounded-2xl focus:ring-4 focus:ring-purple-500/10 outline-none transition-all dark:text-white resize-none"
             placeholder="Define the rules and spirit of your competition..."
-            {...register("description", { required: "Description is required." })}
+            {...register("description", {
+              required: "Description is required.",
+            })}
           />
         </div>
 
@@ -152,37 +179,39 @@ const EventForm = ({ eventData, isEditing = false }) => {
             >
               {localImageUrl || (isEditing && eventData?.image) ? (
                 <div className="absolute inset-0 w-full h-full p-2">
-                   <div className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-inner">
-                    <img 
-                      src={localImageUrl || eventData?.image} 
-                      alt="Preview" 
-                      className={`w-full h-full object-cover transition-all duration-500 ${localImageUrl ? 'scale-105 brightness-110' : 'opacity-70 group-hover:opacity-50'}`} 
+                  <div className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-inner">
+                    <Image
+                      src={localImageUrl || eventData?.image}
+                      alt="Preview"
+                      className={`w-full h-full object-cover transition-all duration-500 ${localImageUrl ? "scale-105 brightness-110" : "opacity-70 group-hover:opacity-50"}`}
                     />
-                    
+
                     {/* Replacing Overlay */}
                     {localImageUrl && isEditing && (
                       <div className="absolute inset-0 flex items-center justify-center bg-purple-600/20 backdrop-blur-[2px]">
-                         <div className="bg-purple-600 text-white px-4 py-1 rounded-full font-black text-[10px] uppercase tracking-tighter shadow-xl rotate-3 animate-pulse">
-                           Replacing Original Cover
-                         </div>
+                        <div className="bg-purple-600 text-white px-4 py-1 rounded-full font-black text-[10px] uppercase tracking-tighter shadow-xl rotate-3 animate-pulse">
+                          Replacing Original Cover
+                        </div>
                       </div>
                     )}
 
                     {!localImageUrl && (
                       <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/10 group-hover:bg-black/30 transition-all">
                         <div className="p-3 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-lg mb-2">
-                            <FaLayerGroup className="text-2xl text-white" />
+                          <FaLayerGroup className="text-2xl text-white" />
                         </div>
-                        <p className="text-white font-black text-xs uppercase tracking-widest shadow-sm">Change Event Image</p>
+                        <p className="text-white font-black text-xs uppercase tracking-widest shadow-sm">
+                          Change Event Image
+                        </p>
                       </div>
                     )}
 
                     {localImageUrl && (
-                       <div className="absolute top-4 right-4 bg-purple-600 text-[10px] text-white px-3 py-1 rounded-full uppercase font-black shadow-lg animate-bounce">
-                          New Selection
-                       </div>
+                      <div className="absolute top-4 right-4 bg-purple-600 text-[10px] text-white px-3 py-1 rounded-full uppercase font-black shadow-lg animate-bounce">
+                        New Selection
+                      </div>
                     )}
-                   </div>
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -190,9 +219,14 @@ const EventForm = ({ eventData, isEditing = false }) => {
                     <FaLayerGroup className="text-3xl text-purple-600" />
                   </div>
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                    <span className="font-black text-purple-600">Click to upload</span> or drag and drop
+                    <span className="font-black text-purple-600">
+                      Click to upload
+                    </span>{" "}
+                    or drag and drop
                   </p>
-                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Premium Showdown Banner (PNG, JPG)</p>
+                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+                    Premium Showdown Banner (PNG, JPG)
+                  </p>
                 </div>
               )}
               <input

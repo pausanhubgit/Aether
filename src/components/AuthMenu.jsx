@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { useAuth } from '@/lib/authContext';
-import { FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
+import React from "react";
+import Link from "next/link";
+import { useAuth } from "@/lib/authContext";
+import { FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
 
 const AuthMenu = () => {
   const { isLoggedIn, logout } = useAuth();

@@ -1,50 +1,54 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { login, signup, forgotPassword, resetPassword } from '@/api/auth';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { login, signup, forgotPassword, resetPassword } from "@/api/auth";
 
 export const loginUser = createAsyncThunk(
-  'auth/loginUser',
+  "auth/loginUser",
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await login({ email, password });
       const { user, token } = response.data;
       return { user, token };
     } catch (error) {
-      console.log('Auth error details:', error); // Debug log
+      console.log("Auth error details:", error); // Debug log
       const safeError =
         error?.response?.data?.message ||
         error?.response?.data?.error ||
-        (typeof error?.response?.data === 'string' && error.response.data) ||
+        (typeof error?.response?.data === "string" && error.response.data) ||
         error?.message ||
         error?.error ||
-        (!error?.response ? 'Network error. Please check your connection.' : 'Invalid email or password. Please try again.');
+        (!error?.response
+          ? "Network error. Please check your connection."
+          : "Invalid email or password. Please try again.");
       return rejectWithValue(safeError);
     }
-  }
+  },
 );
 
 export const registerUser = createAsyncThunk(
-  'auth/registerUser',
+  "auth/registerUser",
   async (userData, { rejectWithValue }) => {
     try {
       const response = await signup(userData);
       const { user, token } = response.data;
       return { user, token };
     } catch (error) {
-      console.log('Registration error details:', error);
+      console.log("Registration error details:", error);
       const safeError =
         error?.response?.data?.message ||
         error?.response?.data?.error ||
-        (typeof error?.response?.data === 'string' && error.response.data) ||
+        (typeof error?.response?.data === "string" && error.response.data) ||
         error?.message ||
         error?.error ||
-        (!error?.response ? 'Network error. Please check your connection.' : 'Registration failed. Please try again.');
+        (!error?.response
+          ? "Network error. Please check your connection."
+          : "Registration failed. Please try again.");
       return rejectWithValue(safeError);
     }
-  }
+  },
 );
 
 export const forgotUserPassword = createAsyncThunk(
-  'auth/forgotPassword',
+  "auth/forgotPassword",
   async (data, { rejectWithValue }) => {
     try {
       const response = await forgotPassword(data);
@@ -52,11 +56,11 @@ export const forgotUserPassword = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const resetUserPassword = createAsyncThunk(
-  'auth/resetPassword',
+  "auth/resetPassword",
   async ({ token, userId, data }, { rejectWithValue }) => {
     try {
       const response = await resetPassword(token, userId, data);
@@ -64,7 +68,7 @@ export const resetUserPassword = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 const initialState = {
@@ -75,7 +79,7 @@ const initialState = {
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     logout: (state) => {
@@ -145,11 +149,7 @@ const authSlice = createSlice({
   },
 });
 
-export const {
-  logout,
-  updateProfile,
-  clearError,
-  initializeAuth,
-} = authSlice.actions;
+export const { logout, updateProfile, clearError, initializeAuth } =
+  authSlice.actions;
 
 export default authSlice.reducer;

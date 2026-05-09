@@ -1,39 +1,39 @@
 "use client";
 
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { FaUpload, FaArrowLeft } from 'react-icons/fa';
-import Link from 'next/link';
-import { toast } from 'react-toastify';
-import { addFeedItem } from '@/lib/storage';
+import React, { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { FaUpload, FaArrowLeft } from "react-icons/fa";
+import Link from "next/link";
+import { toast } from "react-toastify";
+import { addFeedItem } from "@/lib/storage";
 
 const AddArt = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: '',
-    price: '',
-    image: null
+    title: "",
+    description: "",
+    category: "",
+    price: "",
+    image: null,
   });
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        image: file
+        image: file,
       }));
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -45,41 +45,49 @@ const AddArt = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!formData.title || !formData.category || !formData.price || !formData.image) {
+
+    if (
+      !formData.title ||
+      !formData.category ||
+      !formData.price ||
+      !formData.image
+    ) {
       toast.error("Please fill in all required fields and upload an image", {
         position: "top-right",
         autoClose: 3000,
       });
       return;
     }
-    
+
     setLoading(true);
 
     try {
       const data = new FormData();
-      data.append('title', formData.title);
-      data.append('description', formData.description);
-      data.append('category', formData.category);
-      data.append('price', formData.price);
-      data.append('image', formData.image);
+      data.append("title", formData.title);
+      data.append("description", formData.description);
+      data.append("category", formData.category);
+      data.append("price", formData.price);
+      data.append("image", formData.image);
 
       const response = await artsAPI.createArts(data);
 
-      toast.success('Art added successfully! Redirecting...', {
+      toast.success("Art added successfully! Redirecting...", {
         position: "top-right",
         autoClose: 2000,
       });
-      
+
       setTimeout(() => {
-        router.push('/arts');
+        router.push("/arts");
       }, 1500);
     } catch (error) {
-      console.error('Error adding art:', error);
-      toast.error(error.response?.data?.error || 'Error adding art. Please try again.', {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      console.error("Error adding art:", error);
+      toast.error(
+        error.response?.data?.error || "Error adding art. Please try again.",
+        {
+          position: "top-right",
+          autoClose: 3000,
+        },
+      );
     } finally {
       setLoading(false);
     }
@@ -88,12 +96,17 @@ const AddArt = () => {
   return (
     <div className="container mx-auto py-8 px-4 max-w-2xl">
       <div className="mb-6">
-        <Link href="/arts" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4">
+        <Link
+          href="/arts"
+          className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
+        >
           <FaArrowLeft size={16} />
           Back to Arts
         </Link>
         <h1 className="text-3xl font-semibold text-gray-800">Add New Art</h1>
-        <p className="text-gray-600 mt-2">Share your artwork with the community</p>
+        <p className="text-gray-600 mt-2">
+          Share your artwork with the community
+        </p>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -185,7 +198,7 @@ const AddArt = () => {
                     type="button"
                     onClick={() => {
                       setImagePreview(null);
-                      setFormData(prev => ({ ...prev, image: null }));
+                      setFormData((prev) => ({ ...prev, image: null }));
                     }}
                     className="text-red-600 hover:text-red-700 text-sm"
                   >
@@ -195,8 +208,12 @@ const AddArt = () => {
               ) : (
                 <div>
                   <FaUpload className="mx-auto text-gray-400 text-3xl mb-2" />
-                  <p className="text-gray-600 mb-2">Click to upload or drag and drop</p>
-                  <p className="text-sm text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                  <p className="text-gray-600 mb-2">
+                    Click to upload or drag and drop
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    PNG, JPG, GIF up to 10MB
+                  </p>
                   <input
                     type="file"
                     accept="image/*"
@@ -222,7 +239,7 @@ const AddArt = () => {
               disabled={loading}
               className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Adding Art...' : 'Add Art'}
+              {loading ? "Adding Art..." : "Add Art"}
             </button>
             <Link
               href="/arts"

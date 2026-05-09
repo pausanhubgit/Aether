@@ -18,7 +18,7 @@ export function addFeedItem(item) {
       id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
       createdAt: new Date().toISOString(),
       ...item,
-    }
+    },
   ];
 }
 

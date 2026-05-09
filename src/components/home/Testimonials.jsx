@@ -9,7 +9,10 @@ import user5 from "@/assets/images/customers/Person5.jpg";
 
 const Testimonials = () => {
   return (
-    <section id="testimonials" className="py-16 bg-white dark:bg-[#0d0118] dark:text-purple-100">
+    <section
+      id="testimonials"
+      className="py-16 bg-white dark:bg-[#0d0118] dark:text-purple-100"
+    >
       <div className="container-7xl">
         <div className="mb-10">
           <h2 className="text-3xl font-bold text-center mb-4">
@@ -25,10 +28,10 @@ const Testimonials = () => {
               <i className="fa fa-quote-right" />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-300 text-justify">
-              Aether Art Hub is a game changer for digital creators. The platform
-              is intuitive, and the community is incredibly supportive. I've 
-              found amazing artworks here that perfectly suit my home office.
-              The quality of curated pieces is simply outstanding!
+              Aether Art Hub is a game changer for digital creators. The
+              platform is intuitive, and the community is incredibly supportive.
+              I've found amazing artworks here that perfectly suit my home
+              office. The quality of curated pieces is simply outstanding!
             </p>
             <div className="text-yellow-500 text-sm py-3 flex">
               <FaStar />
@@ -47,7 +50,9 @@ const Testimonials = () => {
               />
               <div>
                 <h4 className="font-semibold">Micheal Jackson</h4>
-                <p className="text-xs text-slate-500 dark:text-purple-400/60">Satisfied customer</p>
+                <p className="text-xs text-slate-500 dark:text-purple-400/60">
+                  Satisfied customer
+                </p>
               </div>
             </div>
           </div>
@@ -56,10 +61,10 @@ const Testimonials = () => {
               <i className="fa fa-quote-right" />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-300 text-justify">
-              Aether Art Hub is a game changer for digital creators. The platform
-              is intuitive, and the community is incredibly supportive. I've 
-              found amazing artworks here that perfectly suit my home office.
-              The quality of curated pieces is simply outstanding!
+              Aether Art Hub is a game changer for digital creators. The
+              platform is intuitive, and the community is incredibly supportive.
+              I've found amazing artworks here that perfectly suit my home
+              office. The quality of curated pieces is simply outstanding!
             </p>
             <div className="text-yellow-500 text-sm py-3 flex">
               <FaStar />
@@ -78,7 +83,9 @@ const Testimonials = () => {
               />
               <div>
                 <h4 className="font-semibold">Sarah Jameson</h4>
-                <p className="text-xs text-slate-500 dark:text-purple-400/60">Satisfied customer</p>
+                <p className="text-xs text-slate-500 dark:text-purple-400/60">
+                  Satisfied customer
+                </p>
               </div>
             </div>
           </div>
@@ -87,10 +94,10 @@ const Testimonials = () => {
               <i className="fa fa-quote-right" />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-300 text-justify">
-              Aether Art Hub is a game changer for digital creators. The platform
-              is intuitive, and the community is incredibly supportive. I've 
-              found amazing artworks here that perfectly suit my home office.
-              The quality of curated pieces is simply outstanding!
+              Aether Art Hub is a game changer for digital creators. The
+              platform is intuitive, and the community is incredibly supportive.
+              I've found amazing artworks here that perfectly suit my home
+              office. The quality of curated pieces is simply outstanding!
             </p>
             <div className="text-yellow-500 text-sm py-3 flex">
               <FaStar />
@@ -109,7 +116,9 @@ const Testimonials = () => {
               />
               <div>
                 <h4 className="font-semibold">Jonathan White</h4>
-                <p className="text-xs text-slate-500 dark:text-purple-400/60">Satisfied customer</p>
+                <p className="text-xs text-slate-500 dark:text-purple-400/60">
+                  Satisfied customer
+                </p>
               </div>
             </div>
           </div>
@@ -118,10 +127,10 @@ const Testimonials = () => {
               <i className="fa fa-quote-right" />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-300 text-justify">
-              Aether Art Hub is a game changer for digital creators. The platform
-              is intuitive, and the community is incredibly supportive. I've 
-              found amazing artworks here that perfectly suit my home office.
-              The quality of curated pieces is simply outstanding!
+              Aether Art Hub is a game changer for digital creators. The
+              platform is intuitive, and the community is incredibly supportive.
+              I've found amazing artworks here that perfectly suit my home
+              office. The quality of curated pieces is simply outstanding!
             </p>
             <div className="text-yellow-500 text-sm py-3 flex">
               <FaStar />
@@ -140,7 +149,9 @@ const Testimonials = () => {
               />
               <div>
                 <h4 className="font-semibold">Scarlett Johansson</h4>
-                <p className="text-xs text-slate-500 dark:text-purple-400/60">Satisfied customer</p>
+                <p className="text-xs text-slate-500 dark:text-purple-400/60">
+                  Satisfied customer
+                </p>
               </div>
             </div>
           </div>

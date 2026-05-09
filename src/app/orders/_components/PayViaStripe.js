@@ -20,11 +20,11 @@ const CheckoutForm = ({ order }) => {
 
   const stripe = useStripe();
   const elements = useElements();
-  const router = useRouter()
+  const router = useRouter();
 
   async function initPayment() {
     if (!stripe || !elements) return;
-    
+
     try {
       toast.info("Initializing secure payment...", { autoClose: 1000 });
       const response = await orderApi.payViaStripe(order._id);
@@ -56,7 +56,9 @@ const CheckoutForm = ({ order }) => {
       }
     } catch (err) {
       console.error("Stripe Error:", err);
-      toast.error(err.message || "Payment processing failed. Please try again.");
+      toast.error(
+        err.message || "Payment processing failed. Please try again.",
+      );
     }
   }
 
@@ -76,34 +78,49 @@ const CheckoutForm = ({ order }) => {
         label={"Secure Card Payment"}
         info={
           <div className="mt-4">
-            <div className="p-4 mb-6 text-sm text-indigo-800 rounded-xl bg-indigo-50 dark:bg-[#1a0b35] dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900 shadow-sm" role="alert">
+            <div
+              className="p-4 mb-6 text-sm text-indigo-800 rounded-xl bg-indigo-50 dark:bg-[#1a0b35] dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900 shadow-sm"
+              role="alert"
+            >
               <div className="flex items-center gap-2 mb-2 font-bold text-base">
                 <span>💳 Test Mode — Card Payment</span>
               </div>
-              <p className="mb-1 opacity-90 text-xs">Payment processed in <strong>USD</strong> (Stripe converts from NPR).</p>
+              <p className="mb-1 opacity-90 text-xs">
+                Payment processed in <strong>USD</strong> (Stripe converts from
+                NPR).
+              </p>
               <p className="mb-2 opacity-90">Use the test card below:</p>
               <div className="bg-white dark:bg-[#0f041d] px-4 py-3 rounded-lg border border-indigo-200 dark:border-indigo-800 font-mono text-xl font-bold text-center tracking-[.25em] text-indigo-700 dark:text-indigo-400">
                 4242 4242 4242 4242
               </div>
-              <p className="mt-2 text-[10px] uppercase tracking-wider opacity-60 text-center">Exp: 12/26 • CVC: 123 • ZIP: 10001</p>
+              <p className="mt-2 text-[10px] uppercase tracking-wider opacity-60 text-center">
+                Exp: 12/26 • CVC: 123 • ZIP: 10001
+              </p>
             </div>
-            
+
             <div className="space-y-4">
-               <label className="block text-xs font-semibold uppercase tracking-widest text-gray-400">Card Details</label>
-               <div className="border border-gray-200 dark:border-purple-900/50 p-4 rounded-xl bg-gray-50 dark:bg-[#0f041d] transition-shadow focus-within:ring-2 focus-within:ring-indigo-500">
+              <label className="block text-xs font-semibold uppercase tracking-widest text-gray-400">
+                Card Details
+              </label>
+              <div className="border border-gray-200 dark:border-purple-900/50 p-4 rounded-xl bg-gray-50 dark:bg-[#0f041d] transition-shadow focus-within:ring-2 focus-within:ring-indigo-500">
                 <CardElement
                   options={{
                     style: {
                       base: {
-                        fontSize: '16px',
-                        color: typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? '#ffffff' : '#1a1a1a',
-                        fontFamily: 'Inter, system-ui, sans-serif',
-                        '::placeholder': {
-                          color: '#aab7c4',
+                        fontSize: "16px",
+                        color:
+                          typeof window !== "undefined" &&
+                          window.matchMedia("(prefers-color-scheme: dark)")
+                            .matches
+                            ? "#ffffff"
+                            : "#1a1a1a",
+                        fontFamily: "Inter, system-ui, sans-serif",
+                        "::placeholder": {
+                          color: "#aab7c4",
                         },
                       },
                       invalid: {
-                        color: '#ef4444',
+                        color: "#ef4444",
                       },
                     },
                   }}
@@ -129,7 +146,6 @@ const CheckoutForm = ({ order }) => {
     </>
   );
 };
-
 
 const PayViaStripe = ({ order }) => {
   const stripePromise = loadStripe(config.stripeKey);

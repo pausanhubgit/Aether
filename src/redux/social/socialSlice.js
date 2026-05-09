@@ -14,13 +14,16 @@ const socialSlice = createSlice({
     },
     localUnfollow: (state, action) => {
       const id = String(action.payload);
-      state.followedUserIds = state.followedUserIds.filter(item => item !== id);
+      state.followedUserIds = state.followedUserIds.filter(
+        (item) => item !== id,
+      );
     },
     clearSocialPersistence: (state) => {
       state.followedUserIds = [];
-    }
+    },
   },
 });
 
-export const { localFollow, localUnfollow, clearSocialPersistence } = socialSlice.actions;
+export const { localFollow, localUnfollow, clearSocialPersistence } =
+  socialSlice.actions;
 export default socialSlice.reducer;

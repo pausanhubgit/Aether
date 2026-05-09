@@ -1,43 +1,51 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { FaUpload, FaArrowLeft, FaMusic } from 'react-icons/fa';
-import Link from 'next/link';
-import { toast } from 'react-toastify';
-import { addFeedItem } from '@/lib/storage';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FaUpload, FaArrowLeft, FaMusic } from "react-icons/fa";
+import Link from "next/link";
+import { toast } from "react-toastify";
+import { addFeedItem } from "@/lib/storage";
 
 const AddMusic = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    genre: '',
-    artist: '',
-    audio: null
+    title: "",
+    description: "",
+    genre: "",
+    artist: "",
+    audio: null,
   });
   const [audioPreview, setAudioPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const genres = [
-    "Pop", "Rock", "Hip Hop", "Electronic", "Jazz",
-    "Classical", "Ambient", "Techno", "Country", "R&B"
+    "Pop",
+    "Rock",
+    "Hip Hop",
+    "Electronic",
+    "Jazz",
+    "Classical",
+    "Ambient",
+    "Techno",
+    "Country",
+    "R&B",
   ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleAudioChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        audio: file
+        audio: file,
       }));
       const audioUrl = URL.createObjectURL(file);
       setAudioPreview(audioUrl);
@@ -46,42 +54,53 @@ const AddMusic = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!formData.title || !formData.genre || !formData.artist || !formData.audio) {
-      toast.error("Please fill in all required fields and upload an audio file", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+
+    if (
+      !formData.title ||
+      !formData.genre ||
+      !formData.artist ||
+      !formData.audio
+    ) {
+      toast.error(
+        "Please fill in all required fields and upload an audio file",
+        {
+          position: "top-right",
+          autoClose: 3000,
+        },
+      );
       return;
     }
-    
+
     setLoading(true);
 
     try {
       const data = new FormData();
-      data.append('title', formData.title);
-      data.append('description', formData.description);
-      data.append('artist', formData.artist);
-      data.append('category', 'Music'); // Required by MusicModel
-      data.append('subcategory', formData.genre); // Used as genre
-      data.append('audio', formData.audio);
+      data.append("title", formData.title);
+      data.append("description", formData.description);
+      data.append("artist", formData.artist);
+      data.append("category", "Music"); // Required by MusicModel
+      data.append("subcategory", formData.genre); // Used as genre
+      data.append("audio", formData.audio);
 
       const response = await musicApi.createMusic(data);
 
-      toast.success('Music added successfully! Redirecting...', {
+      toast.success("Music added successfully! Redirecting...", {
         position: "top-right",
         autoClose: 2000,
       });
-      
+
       setTimeout(() => {
-        router.push('/music');
+        router.push("/music");
       }, 1500);
     } catch (error) {
-      console.error('Error adding music:', error);
-      toast.error(error.response?.data?.error || 'Error adding music. Please try again.', {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      console.error("Error adding music:", error);
+      toast.error(
+        error.response?.data?.error || "Error adding music. Please try again.",
+        {
+          position: "top-right",
+          autoClose: 3000,
+        },
+      );
     } finally {
       setLoading(false);
     }
@@ -90,12 +109,17 @@ const AddMusic = () => {
   return (
     <div className="container mx-auto py-8 px-4 max-w-2xl">
       <div className="mb-6">
-        <Link href="/music" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4">
+        <Link
+          href="/music"
+          className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
+        >
           <FaArrowLeft size={16} />
           Back to Music
         </Link>
         <h1 className="text-3xl font-semibold text-gray-800">Add New Music</h1>
-        <p className="text-gray-600 mt-2">Share your music with the community</p>
+        <p className="text-gray-600 mt-2">
+          Share your music with the community
+        </p>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -144,7 +168,9 @@ const AddMusic = () => {
               >
                 <option value="">Select Genre</option>
                 {genres.map((genre) => (
-                  <option key={genre} value={genre}>{genre}</option>
+                  <option key={genre} value={genre}>
+                    {genre}
+                  </option>
                 ))}
               </select>
             </div>
@@ -173,8 +199,13 @@ const AddMusic = () => {
                 <div className="space-y-4">
                   <div className="bg-purple-50 p-4 rounded-lg">
                     <FaMusic className="text-purple-600 text-3xl mx-auto mb-2" />
-                    {formData.audio?.type?.startsWith('video/') ? (
-                      <video controls playsInline src={audioPreview} className="w-full max-h-48 object-cover rounded-md" />
+                    {formData.audio?.type?.startsWith("video/") ? (
+                      <video
+                        controls
+                        playsInline
+                        src={audioPreview}
+                        className="w-full max-h-48 object-cover rounded-md"
+                      />
                     ) : (
                       <audio controls src={audioPreview} className="w-full" />
                     )}
@@ -183,7 +214,7 @@ const AddMusic = () => {
                     type="button"
                     onClick={() => {
                       setAudioPreview(null);
-                      setFormData(prev => ({ ...prev, audio: null }));
+                      setFormData((prev) => ({ ...prev, audio: null }));
                     }}
                     className="text-red-600 hover:text-red-700 text-sm"
                   >
@@ -193,8 +224,12 @@ const AddMusic = () => {
               ) : (
                 <div>
                   <FaUpload className="mx-auto text-gray-400 text-3xl mb-2" />
-                  <p className="text-gray-600 mb-2">Click to upload or drag and drop</p>
-                  <p className="text-sm text-gray-500">MP3, WAV, FLAC, MP4 up to 50MB</p>
+                  <p className="text-gray-600 mb-2">
+                    Click to upload or drag and drop
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    MP3, WAV, FLAC, MP4 up to 50MB
+                  </p>
                   <input
                     type="file"
                     accept="audio/*,video/mp4"
@@ -220,7 +255,7 @@ const AddMusic = () => {
               disabled={loading}
               className="flex-1 bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Adding Music...' : 'Add Music'}
+              {loading ? "Adding Music..." : "Add Music"}
             </button>
             <Link
               href="/music"

@@ -2,7 +2,8 @@
 import usersApi from "@/api/users";
 
 const UsersPage = () => {
-  usersApi.getAllUsers()
+  usersApi
+    .getAllUsers()
     .then((response) => console.log(response))
     .catch((error) => console.log(error));
 

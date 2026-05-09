@@ -13,18 +13,26 @@ const DeleteMusicButton = ({ id }) => {
   const dispatch = useDispatch();
 
   function confirmDelete() {
-    musicAPI.deleteMusic(id)
+    musicAPI
+      .deleteMusic(id)
       .then(() => {
         dispatch(refreshList(true));
         toast.success("Music deleted successfully.", { autoClose: 1500 });
       })
-      .catch((error) => toast.error(error?.response?.data || "Error deleting music", { autoClose: 1500 }))
+      .catch((error) =>
+        toast.error(error?.response?.data || "Error deleting music", {
+          autoClose: 1500,
+        }),
+      )
       .finally(() => setShowModal(false));
   }
 
   return (
     <>
-      <button onClick={() => setShowModal(true)} className="text-red-600 hover:text-red-800 transition-colors flex items-center gap-1">
+      <button
+        onClick={() => setShowModal(true)}
+        className="text-red-600 hover:text-red-800 transition-colors flex items-center gap-1"
+      >
         <FaTrash /> <span className="text-xs font-semibold">Delete</span>
       </button>
       <Modal

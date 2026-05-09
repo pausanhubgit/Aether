@@ -4,7 +4,8 @@ function formatParams(searchParams) {
   Object.entries(searchParams).map((param) => {
     const [key, value] = param;
 
-    if (value) query = `${query == "" ? "" : query + "&"}${key}=${encodeURIComponent(value)}`;
+    if (value)
+      query = `${query == "" ? "" : query + "&"}${key}=${encodeURIComponent(value)}`;
   });
 
   return query;

@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const artComponents = () => {
-  return (
-    <div>artComponents</div>
-  )
-}
+  return <div>artComponents</div>;
+};
 
-export default artComponents
+export default artComponents;

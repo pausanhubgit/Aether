@@ -25,17 +25,18 @@ const NotFoundPage = () => {
             404
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-             <div className="bg-white/80 dark:bg-[#160327]/80 backdrop-blur-xl border border-white/20 dark:border-purple-900/40 px-10 py-4 rounded-3xl shadow-2xl rotate-[-2deg]">
-                <h2 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">
-                   Dimension Lost
-                </h2>
-             </div>
+            <div className="bg-white/80 dark:bg-[#160327]/80 backdrop-blur-xl border border-white/20 dark:border-purple-900/40 px-10 py-4 rounded-3xl shadow-2xl rotate-[-2deg]">
+              <h2 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">
+                Dimension Lost
+              </h2>
+            </div>
           </div>
         </div>
 
         <div className="max-w-2xl mx-auto space-y-6">
           <p className="text-xl md:text-2xl text-slate-600 dark:text-purple-200/70 font-medium leading-relaxed">
-            The masterpiece you&apos;re looking for has drifted into another realm. Let&apos;s guide you back to the hub.
+            The masterpiece you&apos;re looking for has drifted into another
+            realm. Let&apos;s guide you back to the hub.
           </p>
 
           <div className="flex flex-wrap justify-center gap-6 pt-10">
@@ -45,9 +46,9 @@ const NotFoundPage = () => {
                 Return to Hub
               </span>
             </Link>
-            
-            <Link 
-              href="/dashboard-home" 
+
+            <Link
+              href="/dashboard-home"
               className="flex items-center gap-3 bg-white dark:bg-[#160327] border border-slate-200 dark:border-purple-900/40 text-gray-700 dark:text-white px-10 py-4 rounded-[2rem] font-bold text-lg hover:shadow-2xl hover:border-primary/50 transition-all duration-300 hover:scale-105 active:scale-95"
             >
               <FiCompass className="text-xl transition-transform" />
@@ -56,16 +57,31 @@ const NotFoundPage = () => {
           </div>
 
           <div className="pt-12 grid grid-cols-3 gap-8 opacity-40 hover:opacity-80 transition-opacity duration-500">
-            <Link href="/arts" className="flex flex-col items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors">
-              <span className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-2xl"><FaPalette /></span>
+            <Link
+              href="/arts"
+              className="flex flex-col items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors"
+            >
+              <span className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-2xl">
+                <FaPalette />
+              </span>
               Arts
             </Link>
-            <Link href="/music" className="flex flex-col items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors">
-              <span className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-2xl"><FiMusic /></span>
+            <Link
+              href="/music"
+              className="flex flex-col items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors"
+            >
+              <span className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-2xl">
+                <FiMusic />
+              </span>
               Music
             </Link>
-            <Link href="/video" className="flex flex-col items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors">
-              <span className="p-3 bg-green-100 dark:bg-green-900/20 rounded-2xl"><FaVideo /></span>
+            <Link
+              href="/video"
+              className="flex flex-col items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors"
+            >
+              <span className="p-3 bg-green-100 dark:bg-green-900/20 rounded-2xl">
+                <FaVideo />
+              </span>
               Video
             </Link>
           </div>

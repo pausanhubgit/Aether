@@ -1,28 +1,28 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useRouter } from 'next/navigation';
-import { FaPhone, FaMapPin, FaEnvelope, FaCreditCard } from 'react-icons/fa';
-import { clearCart } from '@/lib/slices/cartSlice';
-import orderAPI from '@/api/order';
-import { ToastContainer, toast } from 'react-toastify';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { FaPhone, FaMapPin, FaEnvelope, FaCreditCard } from "react-icons/fa";
+import { clearCart } from "@/lib/slices/cartSlice";
+import orderAPI from "@/api/order";
+import { ToastContainer, toast } from "react-toastify";
 
 function CheckoutPage() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { items = [], total = 0 } = useSelector(state => state.cart || {});
-  const { user } = useSelector(state => state.auth);
+  const { items = [], total = 0 } = useSelector((state) => state.cart || {});
+  const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('khalti');
+  const [paymentMethod, setPaymentMethod] = useState("khalti");
   const [formData, setFormData] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-    address: user?.address || '',
-    city: '',
-    postalCode: '',
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    address: user?.address || "",
+    city: "",
+    postalCode: "",
   });
 
   const taxAmount = total * 0.1;
@@ -30,23 +30,23 @@ function CheckoutPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleCheckout = async (e) => {
     e.preventDefault();
-    
+
     if (!user) {
-      toast.error('Please login to continue');
-      router.push('/login');
+      toast.error("Please login to continue");
+      router.push("/login");
       return;
     }
 
     if (items.length === 0) {
-      toast.error('Cart is empty');
+      toast.error("Cart is empty");
       return;
     }
 
@@ -54,9 +54,9 @@ function CheckoutPage() {
     try {
       const orderData = {
         userId: user.id,
-        items: items.map(item => ({
+        items: items.map((item) => ({
           productId: item.id || item._id,
-          productType: item.type || 'art',
+          productType: item.type || "art",
           quantity: item.quantity,
           price: item.price,
         })),
@@ -69,12 +69,12 @@ function CheckoutPage() {
       };
 
       const response = await orderAPI.createOrder(orderData);
-      
-      toast.success('Order securely saved! Please complete your payment.');
+
+      toast.success("Order securely saved! Please complete your payment.");
       dispatch(clearCart());
       router.push(`/orders?status=pending`);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to place order');
+      toast.error(error.response?.data?.message || "Failed to place order");
     } finally {
       setLoading(false);
     }
@@ -86,7 +86,7 @@ function CheckoutPage() {
       const checkout = new window.KhaltiCheckout({
         publicKey: process.env.NEXT_PUBLIC_KHALTI_KEY,
         productIdentity: orderData.orderId,
-        productName: 'Order',
+        productName: "Order",
         productUrl: typeof window !== "undefined" ? window.location.href : "",
         eventHandler: {
           onSuccess: async (payload) => {
@@ -95,15 +95,15 @@ function CheckoutPage() {
                 orderId: orderData.orderId,
                 paymentId: payload.token,
               });
-              toast.success('Payment successful!');
+              toast.success("Payment successful!");
               dispatch(clearCart());
               router.push(`/order-status/${orderData.orderId}`);
             } catch (error) {
-              toast.error('Payment verification failed');
+              toast.error("Payment verification failed");
             }
           },
           onError: (error) => {
-            toast.error('Payment failed: ' + error.message);
+            toast.error("Payment failed: " + error.message);
           },
         },
         amount: finalTotal * 100,
@@ -114,15 +114,19 @@ function CheckoutPage() {
 
   const initializeStripePayment = (orderData) => {
     // Stripe payment initialization
-    toast.info('Redirecting to payment...');
+    toast.info("Redirecting to payment...");
     // Implementation depends on Stripe setup
   };
 
   if (items.length === 0) {
     return (
       <div className="py-10 px-4 text-center">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Checkout</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">Your cart is empty</p>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">
+          Checkout
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          Your cart is empty
+        </p>
         <a
           href="/arts"
           className="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition font-semibold"
@@ -135,7 +139,9 @@ function CheckoutPage() {
 
   return (
     <div className="py-10 px-4">
-      <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">Checkout</h1>
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">
+        Checkout
+      </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Checkout Form */}
@@ -146,7 +152,7 @@ function CheckoutPage() {
               <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
                 Billing Information
               </h2>
-              
+
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <input
                   type="text"
@@ -234,11 +240,14 @@ function CheckoutPage() {
 
               <div className="space-y-3">
                 {[
-                  { value: 'khalti', label: 'Khalti' },
-                  { value: 'stripe', label: 'Stripe' },
-                  { value: 'cod', label: 'Cash on Delivery' },
-                ].map(method => (
-                  <label key={method.value} className="flex items-center gap-3 cursor-pointer">
+                  { value: "khalti", label: "Khalti" },
+                  { value: "stripe", label: "Stripe" },
+                  { value: "cod", label: "Cash on Delivery" },
+                ].map((method) => (
+                  <label
+                    key={method.value}
+                    className="flex items-center gap-3 cursor-pointer"
+                  >
                     <input
                       type="radio"
                       name="paymentMethod"
@@ -247,7 +256,9 @@ function CheckoutPage() {
                       onChange={(e) => setPaymentMethod(e.target.value)}
                       className="w-4 h-4"
                     />
-                    <span className="text-gray-700 dark:text-gray-300 font-medium">{method.label}</span>
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">
+                      {method.label}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -258,18 +269,23 @@ function CheckoutPage() {
               disabled={loading}
               className="w-full px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:bg-gray-400 transition font-bold text-lg"
             >
-              {loading ? 'Processing...' : 'Place Order'}
+              {loading ? "Processing..." : "Place Order"}
             </button>
           </form>
         </div>
 
         {/* Order Summary */}
         <div className="bg-white dark:bg-[#160327] rounded-lg p-6 shadow-lg h-fit sticky top-20">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Order Summary</h2>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+            Order Summary
+          </h2>
 
           <div className="space-y-3 mb-6 max-h-64 overflow-y-auto">
             {items.map((item, index) => (
-              <div key={item.id || index} className="flex justify-between pb-3 gap-4 border-b border-gray-200 dark:border-gray-700">
+              <div
+                key={item.id || index}
+                className="flex justify-between pb-3 gap-4 border-b border-gray-200 dark:border-gray-700"
+              >
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-gray-800 dark:text-white truncate">
                     {item.title || item.name}

@@ -5,10 +5,12 @@ const CallToAction = () => {
       <div className="container-7xl relative z-10">
         <div className="mb-10 text-center">
           <h2 className="text-4xl font-semibold mb-4 text-white uppercase tracking-wider">
-            Join Our <span className="text-secondary dark:text-white">Newsletter</span>
+            Join Our{" "}
+            <span className="text-secondary dark:text-white">Newsletter</span>
           </h2>
           <p className="text-white/80 max-w-xl mx-auto text-lg font-medium">
-            Stay updated with the latest arrivals, exclusive collections, and community events directly in your inbox.
+            Stay updated with the latest arrivals, exclusive collections, and
+            community events directly in your inbox.
           </p>
         </div>
         <form className="flex flex-col md:flex-row gap-4 justify-center max-w-2xl mx-auto">

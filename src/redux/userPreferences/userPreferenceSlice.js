@@ -20,6 +20,7 @@ const userPreferencesSlice = createSlice({
   },
 });
 
-export const { toggleTheme, toggleProductView: toggleArtView } = userPreferencesSlice.actions;
+export const { toggleTheme, toggleProductView: toggleArtView } =
+  userPreferencesSlice.actions;
 
 export default userPreferencesSlice.reducer;

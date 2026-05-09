@@ -4,7 +4,7 @@ import api from "./api";
 async function login({ email, password }) {
   return await api.post(`/api/auths/login`, {
     email,
-    password
+    password,
   });
 }
 
@@ -17,10 +17,7 @@ async function forgotPassword(data) {
 }
 
 async function resetPassword(data) {
-  return await api.post(
-    `/api/auths/reset-password`,
-    data
-  );
+  return await api.post(`/api/auths/reset-password`, data);
 }
 
 async function googleLogin(token) {

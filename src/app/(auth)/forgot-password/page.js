@@ -6,12 +6,12 @@ import { useForm } from "react-hook-form";
 import Button from "@/components/Button";
 import Link from "next/link";
 import authAPI from "@/api/auth";
-const { forgotPassword } = authAPI;
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { FaEnvelope, FaPhone } from "react-icons/fa";
 import { COUNTRIES, DEFAULT_COUNTRY } from "@/constants/countries";
 import { useRouter } from "next/navigation";
+const { forgotPassword } = authAPI;
 
 const ForgotPasswordPage = () => {
   const {
@@ -30,22 +30,29 @@ const ForgotPasswordPage = () => {
 
   function submitForm(data) {
     setLoading(true);
-    const identifier = method === "email" ? data.identifier : `${selectedCountry.dialCode}${data.identifier}`;
+    const identifier =
+      method === "email"
+        ? data.identifier
+        : `${selectedCountry.dialCode}${data.identifier}`;
 
     forgotPassword({
       identifier,
       method,
-      redirectUrl: `${window.location.origin}/reset-password`
+      redirectUrl: `${window.location.origin}/reset-password`,
     })
       .then(() => {
         toast.success(`Reset code sent successfully to your ${method}.`);
-        // Redirect to reset password page with userId if returned, 
+        // Redirect to reset password page with userId if returned,
         // or just let them go there (backend usually returns a message)
-        router.push(`/reset-password?identifier=${encodeURIComponent(identifier)}&method=${method}`);
+        router.push(
+          `/reset-password?identifier=${encodeURIComponent(identifier)}&method=${method}`,
+        );
       })
       .catch((error) => {
         console.error("[FORGOT PASSWORD] Error:", error);
-        toast.error(error.response?.data?.message || "Failed to send reset code.");
+        toast.error(
+          error.response?.data?.message || "Failed to send reset code.",
+        );
       })
       .finally(() => setLoading(false));
   }
@@ -53,8 +60,12 @@ const ForgotPasswordPage = () => {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:bg-[#160327] dark:border-gray-800">
-        <h1 className="text-2xl font-semibold text-black dark:text-white">Forgot password?</h1>
-        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">No worries! Enter your email and we'll send you a reset code.</p>
+        <h1 className="text-2xl font-semibold text-black dark:text-white">
+          Forgot password?
+        </h1>
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          No worries! Enter your email and we will send you a reset code.
+        </p>
       </div>
 
       <form
@@ -74,10 +85,14 @@ const ForgotPasswordPage = () => {
               pattern: {
                 value: EMAIL_REGEX,
                 message: "Please enter a valid email address.",
-              }
+              },
             })}
           />
-          {errors.identifier && <p className="text-red-500 text-xs mt-1">{errors.identifier.message}</p>}
+          {errors.identifier && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.identifier.message}
+            </p>
+          )}
         </div>
 
         <div className="flex items-start gap-3 py-2">
@@ -93,13 +108,16 @@ const ForgotPasswordPage = () => {
             htmlFor="terms"
             className="text-xs text-gray-500 dark:text-gray-400"
           >
-            I accept the <span className="text-purple-600 hover:underline cursor-pointer">Terms and Conditions</span>
+            I accept the{" "}
+            <span className="text-purple-600 hover:underline cursor-pointer">
+              Terms and Conditions
+            </span>
           </label>
         </div>
 
-        <Button 
-          loading={loading} 
-          label={loading ? "Sending Code..." : "Send Reset Code"} 
+        <Button
+          loading={loading}
+          label={loading ? "Sending Code..." : "Send Reset Code"}
           className="w-full bg-purple-600 hover:bg-purple-700 text-white transition-all py-2.5 rounded-xl shadow-lg shadow-purple-200 dark:shadow-none"
         />
 

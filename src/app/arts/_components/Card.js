@@ -15,7 +15,7 @@ import CommentsSection from "@/components/CommentsSection";
 
 const ArtCard = ({ art, artView }) => {
   const dispatch = useDispatch();
-  const { user, isAuthenticated } = useSelector(state => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
   const [liked, setLiked] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
   const [showComments, setShowComments] = useState(false);
@@ -33,18 +33,28 @@ const ArtCard = ({ art, artView }) => {
     setIsLiking(true);
     try {
       if (liked) {
-        await dispatch(unlikeArtAsync({ artId: art.id, userId: user?._id || user?.id || 'guest' })).unwrap();
+        await dispatch(
+          unlikeArtAsync({
+            artId: art.id,
+            userId: user?._id || user?.id || "guest",
+          }),
+        ).unwrap();
         setLiked(false);
       } else {
-        await dispatch(likeArtAsync({ artId: art.id, userId: user?._id || user?.id || 'guest' })).unwrap();
+        await dispatch(
+          likeArtAsync({
+            artId: art.id,
+            userId: user?._id || user?.id || "guest",
+          }),
+        ).unwrap();
         setLiked(true);
       }
     } catch (error) {
-      console.error('Error liking/unliking art:', error);
+      console.error("Error liking/unliking art:", error);
       if (!isAuthenticated) {
-        toast.info('Enjoying the art? Login to save your likes forever!');
+        toast.info("Enjoying the art? Login to save your likes forever!");
       } else {
-        toast.error('Failed to update like. Please try again.');
+        toast.error("Failed to update like. Please try again.");
       }
     } finally {
       setIsLiking(false);
@@ -78,7 +88,9 @@ const ArtCard = ({ art, artView }) => {
           </Link>
         </div>
         <h3 className="font-semibold text-xl hover:text-secondary dark:hover:text-primary transition-all duration-300 mb-2">
-          <Link href={`${ART_ROUTE}/${art.id || art._id}`}>{art.title || art.name}</Link>
+          <Link href={`${ART_ROUTE}/${art.id || art._id}`}>
+            {art.title || art.name}
+          </Link>
         </h3>
         <div className="flex justify-between items-center mt-auto">
           <div>
@@ -90,29 +102,31 @@ const ArtCard = ({ art, artView }) => {
             <button
               onClick={handleLike}
               disabled={isLiking}
-              className={`text-xl ${liked ? 'text-red-500' : 'text-gray-400'} hover:text-red-500 transition-colors ${isLiking ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`text-xl ${liked ? "text-red-500" : "text-gray-400"} hover:text-red-500 transition-colors ${isLiking ? "opacity-50 cursor-not-allowed" : ""}`}
               title="Like"
             >
               <FaHeart />
             </button>
             <button
               onClick={() => setShowComments(!showComments)}
-              className={`text-xl ${showComments ? 'text-blue-500' : 'text-gray-400'} hover:text-blue-500 transition-colors flex items-center gap-1`}
+              className={`text-xl ${showComments ? "text-blue-500" : "text-gray-400"} hover:text-blue-500 transition-colors flex items-center gap-1`}
               title="Comments"
             >
               <FaComment />
-              <span className="text-xs font-bold">{art.comments?.length || 0}</span>
+              <span className="text-xs font-bold">
+                {art.comments?.length || 0}
+              </span>
             </button>
             <AddToCart product={art} />
           </div>
         </div>
       </div>
-      
+
       {showComments && (
         <div className="border-t border-gray-100 dark:border-gray-600 p-4 bg-gray-50 dark:bg-[#160327] animate-in slide-in-from-top duration-200">
-          <CommentsSection 
-            itemId={art.id || art._id} 
-            itemType="art" 
+          <CommentsSection
+            itemId={art.id || art._id}
+            itemType="art"
             initialComments={art.comments}
             autoFocus={true}
           />

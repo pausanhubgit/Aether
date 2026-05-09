@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const rock = () => {
-  return (
-    <div>
-        rock
-    </div>
-  )
-}
+  return <div>rock</div>;
+};
 
-export default rock
+export default rock;

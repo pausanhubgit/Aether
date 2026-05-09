@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import orderApi from '@/api/order';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import orderApi from "@/api/order";
 
 export const fetchOrders = createAsyncThunk(
-  'orders/fetchOrders',
+  "orders/fetchOrders",
   async (_, { rejectWithValue }) => {
     try {
       const response = await orderApi.getOrders();
@@ -10,11 +10,11 @@ export const fetchOrders = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchOrdersByUser = createAsyncThunk(
-  'orders/fetchOrdersByUser',
+  "orders/fetchOrdersByUser",
   async (status, { rejectWithValue }) => {
     try {
       const response = await orderApi.getOrdersByUser(status);
@@ -22,11 +22,11 @@ export const fetchOrdersByUser = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchOrdersByMerchant = createAsyncThunk(
-  'orders/fetchOrdersByMerchant',
+  "orders/fetchOrdersByMerchant",
   async (_, { rejectWithValue }) => {
     try {
       const response = await orderApi.getOrdersByMerchant();
@@ -34,11 +34,11 @@ export const fetchOrdersByMerchant = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const createNewOrder = createAsyncThunk(
-  'orders/createOrder',
+  "orders/createOrder",
   async (orderData, { rejectWithValue }) => {
     try {
       const response = await orderApi.createOrder(orderData);
@@ -46,11 +46,11 @@ export const createNewOrder = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const updateOrderAsync = createAsyncThunk(
-  'orders/updateOrder',
+  "orders/updateOrder",
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await orderApi.updateOrder(id, data);
@@ -58,11 +58,11 @@ export const updateOrderAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const deleteOrderAsync = createAsyncThunk(
-  'orders/deleteOrder',
+  "orders/deleteOrder",
   async (id, { rejectWithValue }) => {
     try {
       await orderApi.deleteOrder(id);
@@ -70,11 +70,11 @@ export const deleteOrderAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const payOrderViaKhalti = createAsyncThunk(
-  'orders/payViaKhalti',
+  "orders/payViaKhalti",
   async (orderId, { rejectWithValue }) => {
     try {
       const response = await orderApi.payViaKhalti(orderId);
@@ -82,11 +82,11 @@ export const payOrderViaKhalti = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const payOrderViaStripe = createAsyncThunk(
-  'orders/payViaStripe',
+  "orders/payViaStripe",
   async (orderId, { rejectWithValue }) => {
     try {
       const response = await orderApi.payViaStripe(orderId);
@@ -94,11 +94,11 @@ export const payOrderViaStripe = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const confirmOrderPayment = createAsyncThunk(
-  'orders/confirmPayment',
+  "orders/confirmPayment",
   async ({ orderId, data }, { rejectWithValue }) => {
     try {
       const response = await orderApi.confirmPayment(orderId, data);
@@ -106,7 +106,7 @@ export const confirmOrderPayment = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 const initialState = {
@@ -117,7 +117,7 @@ const initialState = {
 };
 
 const ordersSlice = createSlice({
-  name: 'orders',
+  name: "orders",
   initialState,
   reducers: {
     clearError: (state) => {
@@ -170,7 +170,9 @@ const ordersSlice = createSlice({
         state.currentOrder = action.payload;
       })
       .addCase(updateOrderAsync.fulfilled, (state, action) => {
-        const index = state.orders.findIndex(order => order.id === action.payload.id);
+        const index = state.orders.findIndex(
+          (order) => order.id === action.payload.id,
+        );
         if (index !== -1) {
           state.orders[index] = action.payload;
         }
@@ -179,7 +181,9 @@ const ordersSlice = createSlice({
         }
       })
       .addCase(deleteOrderAsync.fulfilled, (state, action) => {
-        state.orders = state.orders.filter(order => order.id !== action.payload);
+        state.orders = state.orders.filter(
+          (order) => order.id !== action.payload,
+        );
         if (state.currentOrder?.id === action.payload) {
           state.currentOrder = null;
         }
@@ -187,9 +191,6 @@ const ordersSlice = createSlice({
   },
 });
 
-export const {
-  clearError,
-  setCurrentOrder,
-} = ordersSlice.actions;
+export const { clearError, setCurrentOrder } = ordersSlice.actions;
 
 export default ordersSlice.reducer;

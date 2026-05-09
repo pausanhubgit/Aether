@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
-const Artlayout = ({children}) => {
-  return (
-    <div>
-      {children}
-    </div>
-  )
-}
+const Artlayout = ({ children }) => {
+  return <div>{children}</div>;
+};
 
-export default Artlayout
+export default Artlayout;

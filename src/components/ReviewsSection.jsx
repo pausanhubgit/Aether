@@ -15,7 +15,11 @@ function getApi(itemType) {
   return null;
 }
 
-export default function ReviewsSection({ itemId, itemType, initialComments = [] }) {
+export default function ReviewsSection({
+  itemId,
+  itemType,
+  initialComments = [],
+}) {
   const auth = useSelector((state) => state.auth);
   const user = auth?.user;
   const isAuthenticated = auth?.isAuthenticated || !!auth?.token;
@@ -31,11 +35,15 @@ export default function ReviewsSection({ itemId, itemType, initialComments = [] 
   }, [initialComments]);
 
   // Compute aggregate rating
-  const ratedComments = comments.filter((c) => (c.rating && c.rating > 0) || (c.starRating && c.starRating > 0));
+  const ratedComments = comments.filter(
+    (c) => (c.rating && c.rating > 0) || (c.starRating && c.starRating > 0),
+  );
   const avgRating =
     ratedComments.length > 0
-      ? ratedComments.reduce((acc, curr) => acc + (curr.rating || curr.starRating || 0), 0) /
-        ratedComments.length
+      ? ratedComments.reduce(
+          (acc, curr) => acc + (curr.rating || curr.starRating || 0),
+          0,
+        ) / ratedComments.length
       : 0;
 
   const handleSubmit = async (e) => {
@@ -44,41 +52,45 @@ export default function ReviewsSection({ itemId, itemType, initialComments = [] 
       toast.warn("Please add a comment or rating.");
       return;
     }
-    
+
     setSubmitting(true);
-    const payload = { 
-      text: text.trim(), 
+    const payload = {
+      text: text.trim(),
       comment: text.trim(),
       content: text.trim(),
       rating: Number(rating) || 0,
-      starRating: Number(rating) || 0
+      starRating: Number(rating) || 0,
     };
 
     try {
       const api = getApi(itemType);
       const response = await api.addComment(itemId, payload);
-      
+
       const data = response.data;
       if (data.comments && Array.isArray(data.comments)) {
         setComments(data.comments);
       } else if (Array.isArray(data)) {
         setComments(data);
-      } else if (data && typeof data === 'object') {
+      } else if (data && typeof data === "object") {
         const newComment = {
           ...data,
           username: data.username || user?.name || user?.username || "You",
           userId: data.userId || user?._id || user?.id,
-          createdAt: data.createdAt || new Date().toISOString()
+          createdAt: data.createdAt || new Date().toISOString(),
         };
-        setComments(prev => [...prev, newComment]);
+        setComments((prev) => [...prev, newComment]);
       }
-      
+
       setText("");
       setRating(0);
       toast.success("Review posted!");
     } catch (err) {
       console.error("[Reviews] Post error:", err);
-      toast.error(err.response?.data?.error || err.response?.data?.message || "Failed to post review.");
+      toast.error(
+        err.response?.data?.error ||
+          err.response?.data?.message ||
+          "Failed to post review.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -192,7 +204,11 @@ export default function ReviewsSection({ itemId, itemType, initialComments = [] 
               <div className="rv-stat-value">{avgRating.toFixed(1)}</div>
               <div className="rv-stars-avg">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <FaStar key={s} size={10} color={s <= Math.round(avgRating) ? "#f59e0b" : "#cbd5e1"} />
+                  <FaStar
+                    key={s}
+                    size={10}
+                    color={s <= Math.round(avgRating) ? "#f59e0b" : "#cbd5e1"}
+                  />
                 ))}
               </div>
               <div className="rv-stat-label">Avg Rating</div>
@@ -233,7 +249,13 @@ export default function ReviewsSection({ itemId, itemType, initialComments = [] 
                 disabled={submitting}
                 className="rv-submit-btn"
               >
-                {submitting ? "Posting..." : <><FaCheck /> Post Review</>}
+                {submitting ? (
+                  "Posting..."
+                ) : (
+                  <>
+                    <FaCheck /> Post Review
+                  </>
+                )}
               </button>
             </form>
           </div>
@@ -245,11 +267,15 @@ export default function ReviewsSection({ itemId, itemType, initialComments = [] 
 
         <div className="rv-list">
           {comments.length === 0 ? (
-            <div className="rv-empty">No reviews yet. Be the first to share your thoughts!</div>
+            <div className="rv-empty">
+              No reviews yet. Be the first to share your thoughts!
+            </div>
           ) : (
             [...comments].reverse().map((comment) => {
               const cId = comment._id || comment.id;
-              const isOwner = user && (comment.userId === user._id || comment.userId === user.id);
+              const isOwner =
+                user &&
+                (comment.userId === user._id || comment.userId === user.id);
               const isAdmin = user && user.roles?.includes("ADMIN");
               const canDelete = isOwner || isAdmin;
 
@@ -261,11 +287,18 @@ export default function ReviewsSection({ itemId, itemType, initialComments = [] 
                   <div className="rv-content">
                     <div className="rv-item-header">
                       <div>
-                        <div className="rv-user-name">{comment.username || "Anonymous"}</div>
+                        <div className="rv-user-name">
+                          {comment.username || "Anonymous"}
+                        </div>
                         <div className="rv-date">
-                          {new Date(comment.createdAt).toLocaleDateString("en-US", {
-                            year: "numeric", month: "short", day: "numeric"
-                          })}
+                          {new Date(comment.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            },
+                          )}
                         </div>
                       </div>
                       {canDelete && (
@@ -278,14 +311,27 @@ export default function ReviewsSection({ itemId, itemType, initialComments = [] 
                         </button>
                       )}
                     </div>
-                    {((comment.rating || comment.starRating) > 0) && (
+                    {(comment.rating || comment.starRating) > 0 && (
                       <div className="rv-item-stars">
                         {[1, 2, 3, 4, 5].map((s) => (
-                          <FaStar key={s} size={12} color={s <= (comment.rating || comment.starRating) ? "#f59e0b" : "#cbd5e1"} />
+                          <FaStar
+                            key={s}
+                            size={12}
+                            color={
+                              s <= (comment.rating || comment.starRating)
+                                ? "#f59e0b"
+                                : "#cbd5e1"
+                            }
+                          />
                         ))}
                       </div>
                     )}
-                    <div className="rv-text">{comment.text || comment.comment || comment.content || comment.message}</div>
+                    <div className="rv-text">
+                      {comment.text ||
+                        comment.comment ||
+                        comment.content ||
+                        comment.message}
+                    </div>
                   </div>
                 </div>
               );

@@ -12,7 +12,13 @@ export default function ManagementLayout({ children }) {
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
-    setHasMounted(true);
+    const timer = window.setTimeout(() => {
+      setHasMounted(true);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -32,4 +38,4 @@ export default function ManagementLayout({ children }) {
   }
 
   return <div>{children}</div>;
-}
+}

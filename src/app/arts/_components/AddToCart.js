@@ -145,7 +145,11 @@ const AddToCart = ({ art, Art, product, label }) => {
             </>
           )}
         </button>
-        <button onClick={shareArt} className="atc-share-btn" title="Share via WhatsApp">
+        <button
+          onClick={shareArt}
+          className="atc-share-btn"
+          title="Share via WhatsApp"
+        >
           <FaShare />
         </button>
       </>
@@ -168,7 +172,7 @@ const AddToCart = ({ art, Art, product, label }) => {
           transition: "all 0.2s",
           display: "flex",
           alignItems: "center",
-          gap: "0.3rem"
+          gap: "0.3rem",
         }}
       >
         {added ? <FaCheck /> : <FaCartPlus />}
@@ -183,7 +187,7 @@ const AddToCart = ({ art, Art, product, label }) => {
           color: "currentColor",
           padding: "0.35rem",
           display: "flex",
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
         <FaShare />

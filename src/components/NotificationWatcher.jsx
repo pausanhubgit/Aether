@@ -40,10 +40,18 @@ export default function NotificationWatcher() {
       if (latest) {
         const icon = TYPE_ICONS[latest.type] || "🔔";
         toast(
-          <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+          <div
+            style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}
+          >
             <span style={{ fontSize: "18px", lineHeight: 1 }}>{icon}</span>
             <div>
-              <div style={{ fontWeight: 700, fontSize: "13px", marginBottom: "2px" }}>
+              <div
+                style={{
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  marginBottom: "2px",
+                }}
+              >
                 {latest.title}
               </div>
               <div style={{ fontSize: "12px", opacity: 0.8, lineHeight: 1.4 }}>
@@ -63,7 +71,7 @@ export default function NotificationWatcher() {
             progressStyle: { background: "rgba(139,92,246,0.7)" },
             icon: false,
             autoClose: 4000,
-          }
+          },
         );
       }
     }

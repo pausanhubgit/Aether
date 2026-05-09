@@ -1,11 +1,9 @@
 "use client";
 
-const ArtByIdError = ({error}) => {
+const ArtByIdError = ({ error }) => {
   return (
-    <div className="py-5 px-4 text-center text-red-500">
-     {error.message}
-    </div>
-  )
-}
+    <div className="py-5 px-4 text-center text-red-500">{error.message}</div>
+  );
+};
 
-export default ArtByIdError
+export default ArtByIdError;

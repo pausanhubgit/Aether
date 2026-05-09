@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import musicAPI from '@/api/music';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import musicAPI from "@/api/music";
 
 export const fetchMusic = createAsyncThunk(
-  'music/fetchMusic',
+  "music/fetchMusic",
   async (searchParams, { rejectWithValue }) => {
     try {
       const response = await musicAPI.getMusic(searchParams);
@@ -10,11 +10,11 @@ export const fetchMusic = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchMusicById = createAsyncThunk(
-  'music/fetchMusicById',
+  "music/fetchMusicById",
   async (id, { rejectWithValue }) => {
     try {
       const response = await musicAPI.getMusicById(id);
@@ -22,11 +22,11 @@ export const fetchMusicById = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const createMusic = createAsyncThunk(
-  'music/createMusic',
+  "music/createMusic",
   async (data, { rejectWithValue }) => {
     try {
       const response = await musicAPI.createMusic(data);
@@ -34,11 +34,11 @@ export const createMusic = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const updateMusicAsync = createAsyncThunk(
-  'music/updateMusic',
+  "music/updateMusic",
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await musicAPI.updateMusic(id, data);
@@ -46,11 +46,11 @@ export const updateMusicAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const deleteMusicAsync = createAsyncThunk(
-  'music/deleteMusic',
+  "music/deleteMusic",
   async (id, { rejectWithValue }) => {
     try {
       await musicAPI.deleteMusic(id);
@@ -58,11 +58,11 @@ export const deleteMusicAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchGenres = createAsyncThunk(
-  'music/fetchGenres',
+  "music/fetchGenres",
   async (_, { rejectWithValue }) => {
     try {
       const response = await musicAPI.getGenres();
@@ -70,11 +70,11 @@ export const fetchGenres = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const likeMusicAsync = createAsyncThunk(
-  'music/likeMusic',
+  "music/likeMusic",
   async ({ musicId, userId }, { rejectWithValue }) => {
     try {
       const response = await musicAPI.likeMusic(musicId, userId);
@@ -82,11 +82,11 @@ export const likeMusicAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const unlikeMusicAsync = createAsyncThunk(
-  'music/unlikeMusic',
+  "music/unlikeMusic",
   async ({ musicId, userId }, { rejectWithValue }) => {
     try {
       const response = await musicAPI.unlikeMusic(musicId, userId);
@@ -94,11 +94,11 @@ export const unlikeMusicAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const addCommentAsync = createAsyncThunk(
-  'music/addComment',
+  "music/addComment",
   async ({ musicId, data }, { rejectWithValue }) => {
     try {
       const response = await musicAPI.addComment(musicId, data);
@@ -106,11 +106,11 @@ export const addCommentAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchCommentsAsync = createAsyncThunk(
-  'music/fetchComments',
+  "music/fetchComments",
   async (musicId, { rejectWithValue }) => {
     try {
       const response = await musicAPI.getComments(musicId);
@@ -118,11 +118,11 @@ export const fetchCommentsAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const deleteCommentAsync = createAsyncThunk(
-  'music/deleteComment',
+  "music/deleteComment",
   async ({ musicId, commentId }, { rejectWithValue }) => {
     try {
       await musicAPI.deleteComment(musicId, commentId);
@@ -130,11 +130,11 @@ export const deleteCommentAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchLikesAnalyticsAsync = createAsyncThunk(
-  'music/fetchLikesAnalytics',
+  "music/fetchLikesAnalytics",
   async (merchantId, { rejectWithValue }) => {
     try {
       const response = await musicAPI.getLikesAnalytics(merchantId);
@@ -142,7 +142,7 @@ export const fetchLikesAnalyticsAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 const initialState = {
@@ -156,7 +156,7 @@ const initialState = {
 };
 
 const musicSlice = createSlice({
-  name: 'music',
+  name: "music",
   initialState,
   reducers: {
     clearError: (state) => {
@@ -169,16 +169,16 @@ const musicSlice = createSlice({
       state.music.push(action.payload);
     },
     updateMusicLocal: (state, action) => {
-      const index = state.music.findIndex(m => m.id === action.payload.id);
+      const index = state.music.findIndex((m) => m.id === action.payload.id);
       if (index !== -1) {
         state.music[index] = action.payload;
       }
     },
     deleteMusicLocal: (state, action) => {
-      state.music = state.music.filter(m => m.id !== action.payload);
+      state.music = state.music.filter((m) => m.id !== action.payload);
     },
     likeMusic: (state, action) => {
-      const m = state.music.find(mu => mu.id === action.payload);
+      const m = state.music.find((mu) => mu.id === action.payload);
       if (m) {
         m.likes += 1;
       }
@@ -187,7 +187,7 @@ const musicSlice = createSlice({
       state.comments.push(action.payload);
     },
     removeComment: (state, action) => {
-      state.comments = state.comments.filter(c => c.id !== action.payload);
+      state.comments = state.comments.filter((c) => c.id !== action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -220,13 +220,13 @@ const musicSlice = createSlice({
         state.music.push(action.payload);
       })
       .addCase(updateMusicAsync.fulfilled, (state, action) => {
-        const index = state.music.findIndex(m => m.id === action.payload.id);
+        const index = state.music.findIndex((m) => m.id === action.payload.id);
         if (index !== -1) {
           state.music[index] = action.payload;
         }
       })
       .addCase(deleteMusicAsync.fulfilled, (state, action) => {
-        state.music = state.music.filter(m => m.id !== action.payload);
+        state.music = state.music.filter((m) => m.id !== action.payload);
       })
       .addCase(fetchGenres.fulfilled, (state, action) => {
         state.genres = action.payload;
@@ -248,7 +248,9 @@ const musicSlice = createSlice({
         state.comments = action.payload;
       })
       .addCase(deleteCommentAsync.fulfilled, (state, action) => {
-        state.comments = state.comments.filter(c => c.id !== action.payload.commentId);
+        state.comments = state.comments.filter(
+          (c) => c.id !== action.payload.commentId,
+        );
       })
       .addCase(fetchLikesAnalyticsAsync.fulfilled, (state, action) => {
         state.likesAnalytics = action.payload;

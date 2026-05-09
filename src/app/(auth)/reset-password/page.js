@@ -5,11 +5,11 @@ import { useForm } from "react-hook-form";
 import Button from "@/components/Button";
 import Link from "next/link";
 import authAPI from "@/api/auth";
-const { resetPassword } = authAPI;
 import { toast } from "react-toastify";
 import { Suspense, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { LOGIN_ROUTE } from "@/constants/routes";
+const { resetPassword } = authAPI;
 
 const ResetPasswordForm = () => {
   const router = useRouter();
@@ -46,16 +46,22 @@ const ResetPasswordForm = () => {
       confirmPassword: data.confirmPassword,
     })
       .then(() => {
-        toast.success("Password reset successful! Please login with your new password.", {
-          autoClose: 2000,
-        });
+        toast.success(
+          "Password reset successful! Please login with your new password.",
+          {
+            autoClose: 2000,
+          },
+        );
         reset();
         setTimeout(() => {
           router.push(LOGIN_ROUTE);
         }, 2000);
       })
       .catch((error) => {
-        const errorMessage = error.response?.data?.message || error.response?.data || "Failed to reset password. Code may be invalid or expired.";
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data ||
+          "Failed to reset password. Code may be invalid or expired.";
         toast.error(errorMessage, {
           autoClose: 3000,
         });
@@ -66,9 +72,12 @@ const ResetPasswordForm = () => {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:bg-[#160327] dark:border-gray-800">
-        <h1 className="text-2xl font-semibold text-black dark:text-white">Reset password</h1>
+        <h1 className="text-2xl font-semibold text-black dark:text-white">
+          Reset password
+        </h1>
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          Enter the code sent to {identifier || "your device"} and choose a new password.
+          Enter the code sent to {identifier || "your device"} and choose a new
+          password.
         </p>
       </div>
 
@@ -77,7 +86,9 @@ const ResetPasswordForm = () => {
         onSubmit={handleSubmit(submitForm)}
       >
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Reset Code (6 Digits)</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            Reset Code (6 Digits)
+          </label>
           <input
             type="text"
             className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-[#160327] dark:border-gray-700 dark:text-white"
@@ -85,14 +96,18 @@ const ResetPasswordForm = () => {
             {...register("code", {
               required: "Reset code is required.",
               minLength: { value: 6, message: "Code must be 6 digits." },
-              maxLength: { value: 6, message: "Code must be 6 digits." }
+              maxLength: { value: 6, message: "Code must be 6 digits." },
             })}
           />
-          {errors.code && <p className="text-red-500 text-xs mt-1">{errors.code.message}</p>}
+          {errors.code && (
+            <p className="text-red-500 text-xs mt-1">{errors.code.message}</p>
+          )}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">New Password</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            New Password
+          </label>
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -100,7 +115,10 @@ const ResetPasswordForm = () => {
               placeholder="••••••••"
               {...register("password", {
                 required: "New password is required.",
-                minLength: { value: 8, message: "Password must be at least 8 characters." }
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters.",
+                },
               })}
             />
             <button
@@ -111,11 +129,17 @@ const ResetPasswordForm = () => {
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
-          {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Confirm Password</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            Confirm Password
+          </label>
           <div className="relative">
             <input
               type={showConfirmPassword ? "text" : "password"}
@@ -123,7 +147,8 @@ const ResetPasswordForm = () => {
               placeholder="••••••••"
               {...register("confirmPassword", {
                 required: "Confirm password is required.",
-                validate: (value) => value === passwordValue || "Passwords do not match"
+                validate: (value) =>
+                  value === passwordValue || "Passwords do not match",
               })}
             />
             <button
@@ -134,12 +159,16 @@ const ResetPasswordForm = () => {
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
-          {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>}
+          {errors.confirmPassword && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.confirmPassword.message}
+            </p>
+          )}
         </div>
 
-        <Button 
-          loading={loading} 
-          label={loading ? "Resetting..." : "Reset Password"} 
+        <Button
+          loading={loading}
+          label={loading ? "Resetting..." : "Reset Password"}
           className="w-full bg-purple-600 hover:bg-purple-700 text-white transition-all py-2.5 rounded-xl shadow-lg shadow-purple-200 dark:shadow-none"
         />
 

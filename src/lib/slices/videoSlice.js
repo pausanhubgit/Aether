@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import videoAPI from '@/api/video';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import videoAPI from "@/api/video";
 
 export const fetchVideo = createAsyncThunk(
-  'video/fetchVideo',
+  "video/fetchVideo",
   async (searchParams, { rejectWithValue }) => {
     try {
       const response = await videoAPI.getVideo(searchParams);
@@ -10,11 +10,11 @@ export const fetchVideo = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchVideoById = createAsyncThunk(
-  'video/fetchVideoById',
+  "video/fetchVideoById",
   async (id, { rejectWithValue }) => {
     try {
       const response = await videoAPI.getVideoById(id);
@@ -22,11 +22,11 @@ export const fetchVideoById = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const createVideo = createAsyncThunk(
-  'video/createVideo',
+  "video/createVideo",
   async (data, { rejectWithValue }) => {
     try {
       const response = await videoAPI.createVideo(data);
@@ -34,11 +34,11 @@ export const createVideo = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const updateVideoAsync = createAsyncThunk(
-  'video/updateVideo',
+  "video/updateVideo",
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await videoAPI.updateVideo(id, data);
@@ -46,11 +46,11 @@ export const updateVideoAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const deleteVideoAsync = createAsyncThunk(
-  'video/deleteVideo',
+  "video/deleteVideo",
   async (id, { rejectWithValue }) => {
     try {
       await videoAPI.deleteVideo(id);
@@ -58,11 +58,11 @@ export const deleteVideoAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchGenres = createAsyncThunk(
-  'video/fetchGenres',
+  "video/fetchGenres",
   async (_, { rejectWithValue }) => {
     try {
       const response = await videoAPI.getGenres();
@@ -70,11 +70,11 @@ export const fetchGenres = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const likeVideoAsync = createAsyncThunk(
-  'video/likeVideo',
+  "video/likeVideo",
   async ({ videoId, userId }, { rejectWithValue }) => {
     try {
       const response = await videoAPI.likeVideo(videoId, userId);
@@ -82,11 +82,11 @@ export const likeVideoAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const unlikeVideoAsync = createAsyncThunk(
-  'video/unlikeVideo',
+  "video/unlikeVideo",
   async ({ videoId, userId }, { rejectWithValue }) => {
     try {
       const response = await videoAPI.unlikeVideo(videoId, userId);
@@ -94,11 +94,11 @@ export const unlikeVideoAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const addCommentAsync = createAsyncThunk(
-  'video/addComment',
+  "video/addComment",
   async ({ videoId, data }, { rejectWithValue }) => {
     try {
       const response = await videoAPI.addComment(videoId, data);
@@ -106,11 +106,11 @@ export const addCommentAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchCommentsAsync = createAsyncThunk(
-  'video/fetchComments',
+  "video/fetchComments",
   async (videoId, { rejectWithValue }) => {
     try {
       const response = await videoAPI.getComments(videoId);
@@ -118,11 +118,11 @@ export const fetchCommentsAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const deleteCommentAsync = createAsyncThunk(
-  'video/deleteComment',
+  "video/deleteComment",
   async ({ videoId, commentId }, { rejectWithValue }) => {
     try {
       await videoAPI.deleteComment(videoId, commentId);
@@ -130,11 +130,11 @@ export const deleteCommentAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const fetchLikesAnalyticsAsync = createAsyncThunk(
-  'video/fetchLikesAnalytics',
+  "video/fetchLikesAnalytics",
   async (merchantId, { rejectWithValue }) => {
     try {
       const response = await videoAPI.getLikesAnalytics(merchantId);
@@ -142,7 +142,7 @@ export const fetchLikesAnalyticsAsync = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 const initialState = {
@@ -156,7 +156,7 @@ const initialState = {
 };
 
 const videoSlice = createSlice({
-  name: 'video',
+  name: "video",
   initialState,
   reducers: {
     clearError: (state) => {
@@ -169,16 +169,16 @@ const videoSlice = createSlice({
       state.videos.push(action.payload);
     },
     updateVideoLocal: (state, action) => {
-      const index = state.videos.findIndex(v => v.id === action.payload.id);
+      const index = state.videos.findIndex((v) => v.id === action.payload.id);
       if (index !== -1) {
         state.videos[index] = action.payload;
       }
     },
     deleteVideoLocal: (state, action) => {
-      state.videos = state.videos.filter(v => v.id !== action.payload);
+      state.videos = state.videos.filter((v) => v.id !== action.payload);
     },
     likeVideo: (state, action) => {
-      const v = state.videos.find(vi => vi.id === action.payload);
+      const v = state.videos.find((vi) => vi.id === action.payload);
       if (v) {
         v.likes += 1;
       }
@@ -187,7 +187,7 @@ const videoSlice = createSlice({
       state.comments.push(action.payload);
     },
     removeComment: (state, action) => {
-      state.comments = state.comments.filter(c => c.id !== action.payload);
+      state.comments = state.comments.filter((c) => c.id !== action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -220,13 +220,13 @@ const videoSlice = createSlice({
         state.videos.push(action.payload);
       })
       .addCase(updateVideoAsync.fulfilled, (state, action) => {
-        const index = state.videos.findIndex(v => v.id === action.payload.id);
+        const index = state.videos.findIndex((v) => v.id === action.payload.id);
         if (index !== -1) {
           state.videos[index] = action.payload;
         }
       })
       .addCase(deleteVideoAsync.fulfilled, (state, action) => {
-        state.videos = state.videos.filter(v => v.id !== action.payload);
+        state.videos = state.videos.filter((v) => v.id !== action.payload);
       })
       .addCase(fetchGenres.fulfilled, (state, action) => {
         state.genres = action.payload;
@@ -248,7 +248,9 @@ const videoSlice = createSlice({
         state.comments = action.payload;
       })
       .addCase(deleteCommentAsync.fulfilled, (state, action) => {
-        state.comments = state.comments.filter(c => c.id !== action.payload.commentId);
+        state.comments = state.comments.filter(
+          (c) => c.id !== action.payload.commentId,
+        );
       })
       .addCase(fetchLikesAnalyticsAsync.fulfilled, (state, action) => {
         state.likesAnalytics = action.payload;

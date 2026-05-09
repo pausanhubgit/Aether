@@ -24,21 +24,24 @@ const CoverImage = ({ user }) => {
 
     const userId = user?._id || user?.id;
     if (!userId) {
-        toast.error("User ID not found. Please log in again.");
-        return;
+      toast.error("User ID not found. Please log in again.");
+      return;
     }
 
-    userApi.updateCoverImage(userId, formData)
+    userApi
+      .updateCoverImage(userId, formData)
       .then((response) => {
         const updatedUser = response.data?.user || response.data;
         const newImageUrl = updatedUser.coverImageUrl;
         if (newImageUrl) {
-            dispatch(updateUser({ ...user, coverImageUrl: newImageUrl }));
+          dispatch(updateUser({ ...user, coverImageUrl: newImageUrl }));
         }
         toast.success("Cover image updated successfully!", { autoClose: 1500 });
       })
       .catch((error) => {
-        toast.error(error?.response?.data || "Failed to update cover image", { autoClose: 1500 });
+        toast.error(error?.response?.data || "Failed to update cover image", {
+          autoClose: 1500,
+        });
       })
       .finally(() => {
         setLoading(false);
@@ -48,7 +51,9 @@ const CoverImage = ({ user }) => {
 
   return (
     <div className="flex flex-col gap-4 mb-8 pb-8 border-b border-gray-100 dark:border-gray-700">
-      <h4 className="text-sm font-bold text-gray-500 dark:text-gray-400">Profile Cover Photo</h4>
+      <h4 className="text-sm font-bold text-gray-500 dark:text-gray-400">
+        Profile Cover Photo
+      </h4>
       <div className="relative group w-full h-40 rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#160327] flex items-center justify-center">
         {user?.coverImageUrl ? (
           <Image
@@ -60,8 +65,8 @@ const CoverImage = ({ user }) => {
           />
         ) : (
           <div className="text-center">
-             <FaImage className="mx-auto h-10 w-10 text-gray-300 mb-2" />
-             <p className="text-xs text-gray-400">No cover photo set</p>
+            <FaImage className="mx-auto h-10 w-10 text-gray-300 mb-2" />
+            <p className="text-xs text-gray-400">No cover photo set</p>
           </div>
         )}
 
@@ -76,8 +81,10 @@ const CoverImage = ({ user }) => {
             <Spinner className="h-8 w-8 text-white fill-white" />
           ) : (
             <div className="flex flex-col items-center gap-2">
-                <FaCamera className="h-8 w-8 text-white" />
-                <span className="text-white text-xs font-bold uppercase tracking-wider">Change Cover</span>
+              <FaCamera className="h-8 w-8 text-white" />
+              <span className="text-white text-xs font-bold uppercase tracking-wider">
+                Change Cover
+              </span>
             </div>
           )}
         </button>
@@ -91,7 +98,9 @@ const CoverImage = ({ user }) => {
           onChange={updateImage}
         />
       </div>
-      <p className="text-[10px] text-gray-400">Recommended size: 1200x400. Max file size: 5MB.</p>
+      <p className="text-[10px] text-gray-400">
+        Recommended size: 1200x400. Max file size: 5MB.
+      </p>
     </div>
   );
 };
