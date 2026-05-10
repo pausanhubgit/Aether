@@ -30,7 +30,7 @@ const Testimonials = () => {
             <p className="text-sm text-slate-600 dark:text-slate-300 text-justify">
               Aether Art Hub is a game changer for digital creators. The
               platform is intuitive, and the community is incredibly supportive.
-              I've found amazing artworks here that perfectly suit my home
+              I have found amazing artworks here that perfectly suit my home
               office. The quality of curated pieces is simply outstanding!
             </p>
             <div className="text-yellow-500 text-sm py-3 flex">
@@ -45,7 +45,7 @@ const Testimonials = () => {
                 height={64}
                 width={64}
                 src={user1}
-                alt=""
+                alt="Micheal Jackson - Satisfied Customer"
                 className="h-12 w-12 object-cover rounded-full border border-slate-400"
               />
               <div>
@@ -63,7 +63,7 @@ const Testimonials = () => {
             <p className="text-sm text-slate-600 dark:text-slate-300 text-justify">
               Aether Art Hub is a game changer for digital creators. The
               platform is intuitive, and the community is incredibly supportive.
-              I've found amazing artworks here that perfectly suit my home
+              I have found amazing artworks here that perfectly suit my home
               office. The quality of curated pieces is simply outstanding!
             </p>
             <div className="text-yellow-500 text-sm py-3 flex">
@@ -78,7 +78,7 @@ const Testimonials = () => {
                 height={64}
                 width={64}
                 src={user2}
-                alt=""
+                alt="Sarah Jameson - Satisfied Customer"
                 className="h-12 w-12 object-cover rounded-full border border-slate-400"
               />
               <div>
@@ -96,7 +96,7 @@ const Testimonials = () => {
             <p className="text-sm text-slate-600 dark:text-slate-300 text-justify">
               Aether Art Hub is a game changer for digital creators. The
               platform is intuitive, and the community is incredibly supportive.
-              I've found amazing artworks here that perfectly suit my home
+              I have found amazing artworks here that perfectly suit my home
               office. The quality of curated pieces is simply outstanding!
             </p>
             <div className="text-yellow-500 text-sm py-3 flex">
@@ -111,7 +111,7 @@ const Testimonials = () => {
                 height={64}
                 width={64}
                 src={user3}
-                alt=""
+                alt="Jonathan White - Satisfied Customer"
                 className="h-12 w-12 object-cover rounded-full border border-slate-400"
               />
               <div>
@@ -129,7 +129,7 @@ const Testimonials = () => {
             <p className="text-sm text-slate-600 dark:text-slate-300 text-justify">
               Aether Art Hub is a game changer for digital creators. The
               platform is intuitive, and the community is incredibly supportive.
-              I've found amazing artworks here that perfectly suit my home
+              I have found amazing artworks here that perfectly suit my home
               office. The quality of curated pieces is simply outstanding!
             </p>
             <div className="text-yellow-500 text-sm py-3 flex">
@@ -144,7 +144,7 @@ const Testimonials = () => {
                 height={64}
                 width={64}
                 src={user4}
-                alt=""
+                alt="Scarlett Johansson - Satisfied Customer"
                 className="h-12 w-12 object-cover rounded-full border border-slate-400"
               />
               <div>

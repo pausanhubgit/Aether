@@ -10,6 +10,7 @@ import {
 } from "@/lib/slices/cartSlice";
 import { FaTrash, FaMinus, FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
+import Image from "next/image";
 import Link from "next/link";
 
 function CartPage() {

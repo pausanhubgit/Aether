@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { FaPhone, FaMapPin, FaEnvelope, FaCreditCard } from "react-icons/fa";
 import { clearCart } from "@/lib/slices/cartSlice";
 import orderAPI from "@/api/order";
@@ -127,12 +128,11 @@ function CheckoutPage() {
         <p className="text-gray-600 dark:text-gray-400 mb-6">
           Your cart is empty
         </p>
-        <a
+        <Link
           href="/arts"
-          className="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition font-semibold"
-        >
+          className="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition font-semibold">
           Continue Shopping
-        </a>
+        </Link>
       </div>
     );
   }

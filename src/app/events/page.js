@@ -138,7 +138,7 @@ const EventsPage = () => {
           </h1>
           <p className="text-xl text-gray-300 mb-10 font-medium">
             Host or join high-stakes competitions in Arts, Music, and Video.
-            Show the world what you're made of.
+            Show the world what you are made of.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <button

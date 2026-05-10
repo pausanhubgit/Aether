@@ -49,6 +49,89 @@ const makeInitials = (name) => {
     .substring(0, 2);
 };
 
+const MediaContent = ({ className = "", isOwner, type, item, isVideo, mediaRef, handleMediaPlay, handleMediaEnded, mediaUrl, handleDelete }) => (
+  <div className={`relative overflow-hidden shrink-0 ${className}`}>
+    {isOwner && (
+      <div className="absolute top-2 right-2 z-10 flex gap-2">
+        <Link
+          href={`/dashboard/${type}/edit/${item._id}`}
+          className="p-2 bg-white/90 dark:bg-[#160327]/90 backdrop-blur-sm rounded-full text-blue-600 shadow-lg hover:scale-110 transition-transform"
+          title="Edit"
+        >
+          <FaEdit size={14} />
+        </Link>
+        <button
+          onClick={handleDelete}
+          className="p-2 bg-white/90 dark:bg-[#160327]/90 backdrop-blur-sm rounded-full text-red-600 shadow-lg hover:scale-110 transition-transform"
+          title="Delete"
+        >
+          <FaTrash size={14} />
+        </button>
+      </div>
+    )}
+    {isVideo || (type === "music" && item.videoUrls?.length > 0) ? (
+      <video
+        ref={mediaRef}
+        controls
+        playsInline
+        crossOrigin="anonymous"
+        preload="metadata"
+        poster={formatImageUrl(
+          item.imageUrls?.[0] || item.thumbnail || item.image,
+        )}
+        src={formatImageUrl(item.videoUrls?.[0] || mediaUrl)}
+        className="w-full h-full object-cover bg-black"
+        onPlay={handleMediaPlay}
+        onEnded={handleMediaEnded}
+      />
+    ) : type === "music" ? (
+      <div className="w-full h-full bg-gradient-to-br from-[#1a0533] to-[#3b0764] flex flex-col items-center justify-center p-5 gap-3 relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div
+            className="w-32 h-32 rounded-full border-2 border-purple-500/20 animate-ping"
+            style={{ animationDuration: "2.5s" }}
+          />
+          <div
+            className="absolute w-20 h-20 rounded-full border-2 border-purple-500/30 animate-ping"
+            style={{ animationDuration: "1.8s" }}
+          />
+        </div>
+        <div className="text-5xl text-purple-300 drop-shadow-lg relative z-10 select-none">
+          ♫
+        </div>
+        <p className="text-purple-200 text-xs font-semibold truncate max-w-full relative z-10 text-center px-2">
+          {item.title}
+        </p>
+        <audio
+          ref={mediaRef}
+          controls
+          src={item.audioUrls?.[0] || mediaUrl}
+          className="w-full h-10 relative z-10"
+          style={{ filter: "invert(1) hue-rotate(280deg)" }}
+          onPlay={handleMediaPlay}
+          onEnded={handleMediaEnded}
+        />
+      </div>
+    ) : (
+      <Image
+        src={
+          mediaUrl && typeof mediaUrl === "string" && mediaUrl.trim() !== ""
+            ? mediaUrl
+            : "/assets/images/placeholder.jpg"
+        }
+        alt={item.title || item.name || "Media gallery preview"}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        className="object-cover"
+        style={{ objectFit: "cover" }}
+        onError={(e) => {
+          e.currentTarget.src = "/assets/images/placeholder.jpg";
+        }}
+      />
+    )}
+  </div>
+);
+
 export default function MediaCard({ item, type, view }) {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -143,6 +226,7 @@ export default function MediaCard({ item, type, view }) {
       setLikes(item.reactions);
     }
   }, [user, item.likes, item.reactions]);
+
 
   const getApi = () => {
     if (type === "music") return musicApi;
@@ -451,7 +535,7 @@ export default function MediaCard({ item, type, view }) {
     );
   }
 
-  // ─────────────────────────────────────────────────────────
+ 
   // VIDEO CARD (Grid) — Cinematic thumbnail with play overlay
   // ─────────────────────────────────────────────────────────
   if (!isListView && type === "video") {
@@ -596,93 +680,9 @@ export default function MediaCard({ item, type, view }) {
     );
   }
 
-  // ─────────────────────────────────────────────────────────
-  // ART / GENERIC MEDIA CONTENT (for list view reuse)
-  // ─────────────────────────────────────────────────────────
-  const MediaContent = ({ className = "" }) => (
-    <div className={`relative overflow-hidden shrink-0 ${className}`}>
-      {isOwner && (
-        <div className="absolute top-2 right-2 z-10 flex gap-2">
-          <Link
-            href={`/dashboard/${type}/edit/${item._id}`}
-            className="p-2 bg-white/90 dark:bg-[#160327]/90 backdrop-blur-sm rounded-full text-blue-600 shadow-lg hover:scale-110 transition-transform"
-            title="Edit"
-          >
-            <FaEdit size={14} />
-          </Link>
-          <button
-            onClick={handleDelete}
-            className="p-2 bg-white/90 dark:bg-[#160327]/90 backdrop-blur-sm rounded-full text-red-600 shadow-lg hover:scale-110 transition-transform"
-            title="Delete"
-          >
-            <FaTrash size={14} />
-          </button>
-        </div>
-      )}
-      {isVideo || (type === "music" && item.videoUrls?.length > 0) ? (
-        <video
-          ref={mediaRef}
-          controls
-          playsInline
-          crossOrigin="anonymous"
-          preload="metadata"
-          poster={formatImageUrl(
-            item.imageUrls?.[0] || item.thumbnail || item.image,
-          )}
-          src={formatImageUrl(item.videoUrls?.[0] || mediaUrl)}
-          className="w-full h-full object-cover bg-black"
-          onPlay={handleMediaPlay}
-          onEnded={handleMediaEnded}
-        />
-      ) : type === "music" ? (
-        <div className="w-full h-full bg-gradient-to-br from-[#1a0533] to-[#3b0764] flex flex-col items-center justify-center p-5 gap-3 relative overflow-hidden">
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div
-              className="w-32 h-32 rounded-full border-2 border-purple-500/20 animate-ping"
-              style={{ animationDuration: "2.5s" }}
-            />
-            <div
-              className="absolute w-20 h-20 rounded-full border-2 border-purple-500/30 animate-ping"
-              style={{ animationDuration: "1.8s" }}
-            />
-          </div>
-          <div className="text-5xl text-purple-300 drop-shadow-lg relative z-10 select-none">
-            ♫
-          </div>
-          <p className="text-purple-200 text-xs font-semibold truncate max-w-full relative z-10 text-center px-2">
-            {item.title}
-          </p>
-          <audio
-            ref={mediaRef}
-            controls
-            src={item.audioUrls?.[0] || mediaUrl}
-            className="w-full h-10 relative z-10"
-            style={{ filter: "invert(1) hue-rotate(280deg)" }}
-            onPlay={handleMediaPlay}
-            onEnded={handleMediaEnded}
-          />
-        </div>
-      ) : (
-        <Image
-          src={
-            mediaUrl && typeof mediaUrl === "string" && mediaUrl.trim() !== ""
-              ? mediaUrl
-              : "/assets/images/placeholder.jpg"
-          }
-          alt={item.title || item.name || "Media gallery preview"}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover"
-          style={{ objectFit: "cover" }}
-          onError={(e) => {
-            e.currentTarget.src = "/assets/images/placeholder.jpg";
-          }}
-        />
-      )}
-    </div>
-  );
 
-  // ─────────────────────────────────────────────────────────
+
+
   // LIST VIEW (all types)
   // ─────────────────────────────────────────────────────────
   if (isListView) {
@@ -695,7 +695,7 @@ export default function MediaCard({ item, type, view }) {
         style={{ minHeight: "220px" }}
       >
         <div className="w-full md:w-[300px] lg:w-[340px] relative h-52 md:h-auto flex-shrink-0 overflow-hidden">
-          <MediaContent className="w-full h-full" />
+          <MediaContent className="w-full h-full" isOwner={isOwner} type={type} item={item} isVideo={isVideo} mediaRef={mediaRef} handleMediaPlay={handleMediaPlay} handleMediaEnded={handleMediaEnded} mediaUrl={mediaUrl} handleDelete={handleDelete} />
         </div>
         <div className="p-6 flex flex-col flex-grow justify-between min-w-0">
           <div>
@@ -741,11 +741,7 @@ export default function MediaCard({ item, type, view }) {
               </div>
             </div>
             <Link
-              href={
-                type === "art"
-                  ? `/arts/${item._id}`
-                  : `/${type}/detail/${item._id}`
-              }
+              href={`/${type}/detail/${item._id}`}
               className="block text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2 truncate"
             >
               {item.title || item.name}

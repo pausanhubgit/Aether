@@ -72,7 +72,7 @@ export default function UserProfile() {
       }
     }
     if (id) fetchProfile();
-  }, [id, currentUser]);
+  }, [id, currentUser, followedUserIds]);
 
   const handleFollowToggle = async () => {
     if (!currentUser) {
@@ -171,8 +171,11 @@ export default function UserProfile() {
         {/* Cover Banner */}
         <div className="h-56 md:h-72 relative overflow-hidden">
           {user.coverImageUrl ? (
-            <img
-              src={user.coverImageUrl ? formatImageUrl(user.coverImageUrl) : ""}
+            <Image
+              src={formatImageUrl(user.coverImageUrl)}
+              fill
+              priority
+              sizes="100vw"
               className="w-full h-full object-cover"
               alt={`${user.name || user.username || "User"}'s profile cover image`}
             />
@@ -457,10 +460,12 @@ export default function UserProfile() {
                     >
                       <div className="h-10 w-10 rounded-xl bg-purple-500/20 flex items-center justify-center font-bold text-purple-400 text-xs shadow-inner overflow-hidden">
                         {uPic ? (
-                          <img
+                          <Image
                             src={formatImageUrl(uPic)}
                             className="w-full h-full object-cover"
                             alt={uName}
+                            width={40}
+                            height={40}
                           />
                         ) : (
                           uName.charAt(0).toUpperCase()

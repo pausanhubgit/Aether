@@ -233,7 +233,7 @@ const CheckoutPage = () => {
             <p className="flex items-start sm:items-center justify-center gap-2 text-white/40 text-[10px] sm:text-xs mt-4 mt-top text-center sm:text-left">
               <FaLock size={12} className="mt-0.5 sm:mt-0 flex-shrink-0" />
               <span>
-                You'll choose your payment method (Khalti / Stripe / COD) on the
+                You will choose your payment method (Khalti / Stripe / COD) on the
                 next step.
               </span>
             </p>

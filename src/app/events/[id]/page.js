@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
+import Image from "next/image";
 import {
   FaCalendarAlt,
   FaTrophy,
@@ -185,7 +186,7 @@ export default function EventDetailPage() {
           Showdown Not Found
         </h1>
         <p className="text-gray-500 dark:text-gray-400 max-w-md mb-10 text-lg leading-relaxed">
-          The competition you're looking for might have vanished into the
+          The competition you are looking for might have vanished into the
           Aether.
         </p>
         <Link
@@ -218,11 +219,14 @@ export default function EventDetailPage() {
         {/* Main Cover Image */}
         {event.image ? (
           <div className="absolute inset-0 w-full h-full">
-            <img
+            <Image
               src={formatImageUrl(event.image)}
               alt={event.title}
-              className="w-full h-full object-cover"
+              layout="fill"
+              objectFit="cover"
+              className="opacity-80"
             />
+            
             {/* Dark Overlay for Readability */}
             <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#0d0118] via-[#0d0118]/40 to-transparent"></div>
           </div>

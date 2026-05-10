@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Logo from "./Logo";
 import NavMenu from "./NavMenu";
 import { useAuth } from "@/lib/authContext";
+import Image from "next/image";
 import {
   IoSunnyOutline,
   IoMoonOutline,
@@ -117,10 +118,11 @@ const Header = () => {
                   aria-label="Profile"
                 >
                   {user?.profileImageUrl ? (
-                    <img
+                    <Image
                       src={formatImageUrl(user.profileImageUrl)}
                       alt="Profile"
-                      className="h-full w-full object-cover rounded-full"
+                      fill
+                      className="object-cover rounded-full"
                     />
                   ) : (
                     <FaUserCircle size={20} />

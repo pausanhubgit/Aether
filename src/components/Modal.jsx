@@ -15,6 +15,8 @@ const Modal = ({
 
   useEffect(() => {
     setMounted(true);
+    
+    return () => setMounted(false);
   }, []);
 
   function closeModal() {

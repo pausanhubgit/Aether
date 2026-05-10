@@ -22,8 +22,14 @@ const OrderStatusContent = () => {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchOrders();
+    if (!isAuthenticated) return;
+
+    let isMounted = true;
+
+    const loadOrders = async () => {
+      if (isMounted) {
+        await fetchOrders();
+      }
 
       // Handle Payment Success Parameters
       const pidx = searchParams.get("pidx");
@@ -31,20 +37,28 @@ const OrderStatusContent = () => {
       const purchaseOrderId = searchParams.get("purchase_order_id");
 
       if (status === "Completed" && pidx && purchaseOrderId) {
-        orderApi
-          .confirmPayment(purchaseOrderId, { status: "success", pidx })
-          .then(() => {
-            fetchOrders();
-            // Clear URL to avoid reprocessing
-            window.history.replaceState(
-              {},
-              document.title,
-              window.location.pathname,
-            );
-          })
-          .catch((err) => console.error("Payment confirmation failed:", err));
+        try {
+          await orderApi.confirmPayment(purchaseOrderId, { status: "success", pidx });
+          if (isMounted) {
+            await fetchOrders();
+          }
+          // Clear URL to avoid reprocessing
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname,
+          );
+        } catch (err) {
+          console.error("Payment confirmation failed:", err);
+        }
       }
-    }
+    };
+
+    loadOrders();
+
+    return () => {
+      isMounted = false;
+    };
   }, [isAuthenticated, fetchOrders, searchParams]);
 
   const updateOrderStatus = async (orderId, newStatus) => {

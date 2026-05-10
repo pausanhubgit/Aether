@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import {
   FiMapPin as FaMapMarkerAlt,
   FiPhone as FaPhone,
@@ -65,7 +64,7 @@ const Contact = () => {
             Contact <span className="text-primary italic">Aether</span>
           </h1>
           <p className="text-xl text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-2xl">
-            Have questions or feedback? We'd love to hear from you. Reach out to
+            Have questions or feedback? We would love to hear from you. We would love to hear from you. Reach out to
             the Aether Hub team.
           </p>
         </div>
@@ -78,7 +77,7 @@ const Contact = () => {
                 Get in Touch
               </h2>
               <p className="text-gray-600 dark:text-purple-300/70 mb-8">
-                We're here to help and answer any question you might have. We
+                We are here to help and answer any question you might have. We
                 look forward to hearing from you.
               </p>
             </div>
@@ -155,7 +154,7 @@ const Contact = () => {
               <div className="text-center py-8">
                 <div className="bg-green-100 text-green-800 p-4 rounded-lg mb-4">
                   <FaPaperPlane className="inline mr-2" />
-                  Thank you for your message! We'll get back to you soon.
+                  Thank you for your message! We will get back to you soon.
                 </div>
               </div>
             ) : (

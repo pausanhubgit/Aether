@@ -73,7 +73,7 @@ const Contact = () => {
               Dress to Impress
             </h2>
             <p className="text-slate-700 dark:text-gray-300 md:text-lg">
-              Explore Aether Art Hub's spectacular curated collections to
+              Explore Aether Art Hubs spectacular curated collections to
               discover unique, breathtaking pieces that express your true
               artistic aesthetic. Elevate your surroundings today with
               authentic, vibrant masterworks crafted by visionary artists

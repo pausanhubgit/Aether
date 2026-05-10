@@ -11,7 +11,7 @@ export default function OrderLayout({ children }) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
+    queueMicrotask(() => setIsClient(true));
     if (!user) {
       router.push(LOGIN_ROUTE);
     }

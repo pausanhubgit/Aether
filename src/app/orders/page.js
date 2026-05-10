@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import {
   FaBox,
   FaClock,
@@ -228,10 +229,11 @@ const OrdersPage = () => {
                     >
                       <div className="h-12 w-12 relative rounded-lg overflow-hidden border border-white">
                         {imageUrl ? (
-                          <img
+                          <Image
+                            fill
                             src={formatImageUrl(imageUrl)}
                             alt={art.title || "Art"}
-                            className="object-cover h-full w-full"
+                            className="object-cover"
                           />
                         ) : (
                           <div className="h-full w-full bg-purple-100 flex items-center justify-center text-purple-400 text-xs font-bold">
