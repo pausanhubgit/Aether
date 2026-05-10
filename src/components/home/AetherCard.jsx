@@ -56,7 +56,7 @@ const AetherCard = ({ item, type, butterflyImg }) => {
           <Image
             fill
             src={mainImg || butterflyImg?.src || butterflyImg}
-            alt={item.title}
+            alt={item.title || "Aether content thumbnail"}
             className="object-cover group-hover:scale-110 transition-transform duration-700"
           />
         )}

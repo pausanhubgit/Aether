@@ -221,7 +221,7 @@ export default function EventDetailPage() {
           <div className="absolute inset-0 w-full h-full">
             <Image
               src={formatImageUrl(event.image)}
-              alt={event.title}
+              alt={event.title || "Event cover image"}
               layout="fill"
               objectFit="cover"
               className="opacity-80"

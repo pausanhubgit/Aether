@@ -70,7 +70,7 @@ const UsersTable = () => {
                 {user.profileImageUrl ? (
                   <Image
                     src={user.profileImageUrl}
-                    alt=""
+                    alt={`${user.name || "User"}'s profile`}
                     height={40}
                     width={40}
                     className="h-10 w-10 rounded-full object-cover"
@@ -148,7 +148,7 @@ const UsersTable = () => {
                     {user.profileImageUrl ? (
                       <Image
                         src={user.profileImageUrl}
-                        alt=""
+                        alt={`${user.name || "User"}'s profile`}
                         height={64}
                         width={64}
                         className="h-10 w-10 rounded-full object-cover"

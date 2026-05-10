@@ -229,7 +229,7 @@ const EventsPage = () => {
                   <div className="absolute inset-0 w-full h-full z-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none">
                     <img
                       src={formatImageUrl(evt.image)}
-                      alt={evt.title}
+                      alt={evt.title || "Event cover thumbnail"}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#160327] to-transparent"></div>

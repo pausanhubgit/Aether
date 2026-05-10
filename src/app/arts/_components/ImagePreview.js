@@ -15,7 +15,7 @@ const ImagePreview = ({ imageUrls = [] }) => {
         ) : (
           <Image
             src={imageUrls[index]}
-            alt=""
+            alt={`Artwork preview image ${index + 1}`}
             height={600}
             width={800}
             className="h-full w-auto object-contain"
@@ -27,7 +27,7 @@ const ImagePreview = ({ imageUrls = [] }) => {
           <Image
             key={i}
             src={url}
-            alt=""
+            alt={`Artwork thumbnail ${i + 1}`}
             height={200}
             width={200}
             className={`w-16 h-16 object-cover p-1 border-2 bg-gray-100 rounded-lg ${

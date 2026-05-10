@@ -277,7 +277,7 @@ const ArtForm = ({ art, isEditing = false }) => {
                       <Image
                         height={80}
                         width={80}
-                        alt=""
+                        alt={`New art preview ${index + 1}`}
                         src={url}
                         className="h-20 w-20 object-cover p-1 rounded-xl bg-white dark:bg-slate-800 border-2 border-purple-500 shadow-md transform group-hover:scale-105 transition-transform"
                       />
