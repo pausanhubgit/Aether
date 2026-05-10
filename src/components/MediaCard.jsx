@@ -817,7 +817,7 @@ export default function MediaCard({ item, type, view }) {
     >
       {/* Background Media */}
       <div className="absolute inset-0 z-0">
-        <MediaContent className="w-full h-full" />
+        <MediaContent className="w-full h-full" isOwner={isOwner} type={type} item={item} isVideo={isVideo} mediaRef={mediaRef} handleMediaPlay={handleMediaPlay} handleMediaEnded={handleMediaEnded} mediaUrl={mediaUrl} handleDelete={handleDelete} />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0d0118]/80 via-[#0d0118]/10 to-transparent transition-opacity duration-500 group-hover:opacity-90 pointer-events-none" />
       </div>
 

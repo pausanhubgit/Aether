@@ -114,7 +114,7 @@ const Header = () => {
                 {/* Profile Avatar */}
                 <Link
                   href="/profile"
-                  className="text-gray-700 dark:text-purple-200 hover:text-purple-700 transition p-0.5 rounded-full bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 flex items-center justify-center overflow-hidden h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0"
+                  className="relative text-gray-700 dark:text-purple-200 hover:text-purple-700 transition p-0.5 rounded-full bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 flex items-center justify-center overflow-hidden h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0"
                   aria-label="Profile"
                 >
                   {user?.profileImageUrl ? (

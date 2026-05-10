@@ -4,7 +4,7 @@ import { ART_ROUTE } from "@/constants/routes";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import heroImg from "@/assets/images/Background/butterfly.jpg";
+import heroImg from "@/assets/images/Background/butterfly_new.png";
 import musicImg from "@/assets/images/home/music.jpg";
 import videoImg from "@/assets/images/home/video.jpg";
 

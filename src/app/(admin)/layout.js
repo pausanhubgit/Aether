@@ -2,7 +2,7 @@
 
 import { LOGIN_ROUTE } from "@/constants/routes";
 import { ADMIN_ROLE } from "@/constants/userRoles";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 import Spinner from "@/components/Spinner";
@@ -12,10 +12,10 @@ const AdminLayout = ({ children }) => {
   const { user } = useSelector((state) => state.auth);
   const router = useRouter();
   const pathname = usePathname();
-  const hasMountedRef = useRef(false);
+  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
-    hasMountedRef.current = true;
+    setHasMounted(true);
   }, []);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const AdminLayout = ({ children }) => {
     <div className={`relative ${showSidebar ? "lg:pl-64" : ""}`}>
       {showSidebar && <Sidebar />}
       <section
-        className={`bg-gray-50 dark:bg-[#0d0118] min-h-screen py-4 sm:py-8`}
+        className={`bg-gray-50 dark:bg-[#0d0118] min-h-screen py-8 sm:py-12`}
       >
         {children}
       </section>

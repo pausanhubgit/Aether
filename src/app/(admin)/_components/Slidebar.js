@@ -120,7 +120,7 @@ const Sidebar = () => {
       {/* Mobile Hamburger Trigger */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed top-20 left-4 z-30 lg:hidden p-3 bg-white dark:bg-[#160327] rounded-2xl shadow-lg border border-gray-100 dark:border-purple-900/50 text-gray-700 dark:text-purple-200 hover:scale-110 transition-transform"
+        className="fixed top-20 left-4 z-[70] lg:hidden p-3 bg-white dark:bg-[#160327] rounded-2xl shadow-lg border border-gray-100 dark:border-purple-900/50 text-gray-700 dark:text-purple-200 hover:scale-110 transition-transform"
         aria-label="Open sidebar"
       >
         <FaBars className="text-lg" />
@@ -129,14 +129,14 @@ const Sidebar = () => {
       {/* Mobile Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80] lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Sidebar — always shown on lg, drawer on sm/md */}
       <div
-        className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white dark:bg-[#160327] z-50 border-r border-gray-200 dark:border-purple-900/50 transition-transform duration-300 ease-in-out overflow-y-auto
+        className={`fixed lg:top-16 top-0 left-0 lg:h-[calc(100vh-4rem)] h-full w-64 bg-white dark:bg-[#160327] z-[90] lg:z-50 border-r border-gray-200 dark:border-purple-900/50 transition-transform duration-300 ease-in-out overflow-y-auto
           lg:translate-x-0 ${
             isOpen
               ? "translate-x-0 shadow-2xl"

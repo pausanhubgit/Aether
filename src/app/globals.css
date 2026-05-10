@@ -174,27 +174,10 @@ body {
   }
 }
 
-/* ─── Section Padding ──────────────────────────────────────── */
+/* ─── Section Spacing ──────────────────────────────────────── */
 section {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
   width: 100%;
   overflow-x: hidden;
-  position: relative;
-}
-
-@media (max-width: 1024px) {
-  section {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
-  }
-}
-
-@media (max-width: 768px) {
-  section {
-    padding-top: 2.5rem;
-    padding-bottom: 2.5rem;
-  }
 }
 
 /* ─── Overflow Guards ──────────────────────────────────────── */

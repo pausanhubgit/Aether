@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "preserve",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "allowJs": true,
-    "checkJs": false
+    "checkJs": false,
+    "noEmit": true
   },
   "include": ["src/**/*"]
 }
