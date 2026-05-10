@@ -11,19 +11,13 @@ const Modal = ({
   info,
   confirmAction,
 }) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    
-    return () => setMounted(false);
-  }, []);
+  const isBrowser = typeof window !== "undefined" && typeof document !== "undefined";
 
   function closeModal() {
     setShowModal(false);
   }
 
-  if (!mounted) return null;
+  if (!isBrowser) return null;
 
   return createPortal(
     <div className={showModal ? "" : "hidden"}>

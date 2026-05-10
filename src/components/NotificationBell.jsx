@@ -106,13 +106,9 @@ export default function NotificationBell() {
 
   const [open, setOpen] = useState(false);
   const [animateBell, setAnimateBell] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(true);
   const panelRef = useRef(null);
   const bellRef = useRef(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // close on outside click
   useEffect(() => {
@@ -133,9 +129,12 @@ export default function NotificationBell() {
   // bell wiggle on new unread
   useEffect(() => {
     if (unreadCount > 0) {
-      setAnimateBell(true);
-      const t = setTimeout(() => setAnimateBell(false), 800);
-      return () => clearTimeout(t);
+      const startTimeout = setTimeout(() => setAnimateBell(true), 0);
+      const stopTimeout = setTimeout(() => setAnimateBell(false), 800);
+      return () => {
+        clearTimeout(startTimeout);
+        clearTimeout(stopTimeout);
+      };
     }
   }, [unreadCount]);
 

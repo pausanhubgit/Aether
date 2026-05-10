@@ -22,7 +22,7 @@ const NavMenu = ({ onClose }) => {
 
   // Close on route change
   useEffect(() => {
-    setIsOpen(false);
+    onClose?.();
   }, [pathname]);
 
   const handleLinkClick = () => {

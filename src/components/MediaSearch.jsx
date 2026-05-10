@@ -9,11 +9,7 @@ const MediaSearch = ({ placeholder = "Search..." }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("name") || "");
-
-  useEffect(() => {
-    setSearchTerm(searchParams.get("name") || "");
-  }, [searchParams]);
+  const [searchTerm, setSearchTerm] = useState(() => searchParams.get("name") || "");
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
