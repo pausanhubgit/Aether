@@ -105,7 +105,7 @@ function CommentsSection({
           disabled={loading}
         />
         <button
-          onClick={handleAddComment}
+          onClick={() => handleAddComment()}
           disabled={loading || !newComment.trim()}
           className="px-4 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition text-sm font-bold disabled:opacity-50"
         >
